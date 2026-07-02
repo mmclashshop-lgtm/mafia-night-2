@@ -285,6 +285,10 @@
   }
 }
 
+.animate-fade-in {
+  will-change: transform, opacity;
+}
+
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }

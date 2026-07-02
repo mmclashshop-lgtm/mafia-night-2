@@ -336,5 +336,111 @@
         "daysSurvived": 3
       }
     ]
+  },
+  {
+    "id": "game_mr3yjjusd80ybfx",
+    "roomCode": "F5TYNJ",
+    "startedAt": 1783024268918,
+    "endedAt": 1783024293927,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 25010,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "طكمنةن",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Alice",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sophia",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr3ykxnx0vfyy9p",
+    "roomCode": "3XZVE4",
+    "startedAt": 1783024312486,
+    "endedAt": 1783024327598,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 15112,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "نتالرالانتى",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Diana",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Leo",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Wendy",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
   }
 ]

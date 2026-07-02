@@ -31,6 +31,7 @@ export const PlayerAvatar = memo(function PlayerAvatar({ avatar, name, size = 'm
       <img
         src={getDiceBearUrl(name)}
         alt={name}
+        loading="lazy"
         className={`${SIZES[size]} rounded-full object-cover bg-gray-800 ${className}`}
         crossOrigin="anonymous"
       />
@@ -42,6 +43,7 @@ export const PlayerAvatar = memo(function PlayerAvatar({ avatar, name, size = 'm
       <img
         src={avatar.replace('upload:', '')}
         alt={name}
+        loading="lazy"
         className={`${SIZES[size]} rounded-full object-cover ${className}`}
       />
     );
@@ -61,6 +63,7 @@ export const PlayerAvatar = memo(function PlayerAvatar({ avatar, name, size = 'm
     <img
       src={getDiceBearUrl(name)}
       alt={name}
+      loading="lazy"
       className={`${SIZES[size]} rounded-full object-cover bg-gray-800 ${className}`}
       crossOrigin="anonymous"
     />

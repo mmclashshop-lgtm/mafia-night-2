@@ -149,32 +149,21 @@ export function Profile() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white mb-3">{t('profile.roleStatistics')}</h3>
             {Object.entries(profile.roleStats).length === 0 ? (
-              <EmptyState
-                icon={<Swords className="w-8 h-8 text-gray-500" />}
-                title={t('profile.noRoleData')}
-              />
+              <EmptyState icon={<Swords className="w-8 h-8 text-gray-500" />} title={t('profile.noRoleData')} />
             ) : (
-              <div className="space-y-2">
-                {Object.entries(profile.roleStats)
-                  .sort(([, a], [, b]) => b.games - a.games)
-                  .map(([roleId, stats]) => (
-                    <div key={roleId} className="flex items-center justify-between p-3 rounded-lg bg-white/5">
-                      <div>
-                        <p className="text-sm font-medium text-white capitalize">
-                          {roleId.replace('_', ' ')}
-                        </p>
-                        <p className="text-xs text-gray-500">{t('profile.games', { count: stats.games })}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-green-400">
-                          {stats.wins}W
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0}{t('profile.winPercent')}
-                        </p>
-                      </div>
+              <div className="space-y-2" style={{ contentVisibility: 'auto' }}>
+                {Object.entries(profile.roleStats).sort(([, a], [, b]) => b.games - a.games).map(([roleId, stats]) => (
+                  <div key={roleId} className="flex items-center justify-between p-3 rounded-lg bg-white/5">
+                    <div>
+                      <p className="text-sm font-medium text-white capitalize">{roleId.replace('_', ' ')}</p>
+                      <p className="text-xs text-gray-500">{t('profile.games', { count: stats.games })}</p>
                     </div>
-                  ))}
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-green-400">{stats.wins}W</p>
+                      <p className="text-xs text-gray-500">{stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0}{t('profile.winPercent')}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

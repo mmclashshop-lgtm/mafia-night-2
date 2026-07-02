@@ -89,7 +89,7 @@ export function Leaderboard() {
         ))}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2" style={{ contentVisibility: 'auto' }}>
         {sorted.map((entry, idx) => (
           <TiltCard key={entry.name} maxTilt={5} glare={false} scale={1.01}>
             <div

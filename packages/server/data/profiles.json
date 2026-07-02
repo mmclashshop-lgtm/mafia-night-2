@@ -63,5 +63,59 @@
         "startedAt": 1783016602723
       }
     ]
+  },
+  "طكمنةن": {
+    "name": "طكمنةن",
+    "totalGames": 1,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 5,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "doctor": {
+        "games": 1,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783024293960
+      }
+    ]
+  },
+  "نتالرالانتى": {
+    "name": "نتالرالانتى",
+    "totalGames": 1,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 5,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "cop": {
+        "games": 1,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783024327619
+      }
+    ]
   }
 }
