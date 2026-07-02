@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0A0A"/>
+      <stop offset="100%" style="stop-color:#1A1A1A"/>
+    </linearGradient>
+    <linearGradient id="mask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B0000"/>
+      <stop offset="100%" style="stop-color:#B22222"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="38" fill="url(#bg)" stroke="#8B0000" stroke-width="3"/>
+  <g transform="translate(96,96)">
+    <path d="M-54,-38 C-54,-38 -34,-54 0,-54 C34,-54 54,-38 54,-38 C54,-16 62,20 54,34 C46,48 28,58 0,58 C-28,58 -46,48 -54,34 C-62,20 -54,-16 -54,-38Z" fill="url(#mask)" opacity="0.9"/>
+    <ellipse cx="-22" cy="-16" rx="10" ry="12" fill="#0A0A0A"/>
+    <ellipse cx="22" cy="-16" rx="10" ry="12" fill="#0A0A0A"/>
+    <path d="M-14,20 Q0,34 14,20" stroke="#0A0A0A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M-38,-34 Q-28,-46 0,-46 Q28,-46 38,-34" stroke="#0A0A0A" stroke-width="2.5" fill="none" opacity="0.5"/>
+  </g>
+</svg>

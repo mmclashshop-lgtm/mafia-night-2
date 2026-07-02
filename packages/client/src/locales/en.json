@@ -1,0 +1,224 @@
+{
+  "brand": {
+    "name": "Mafia Night",
+    "tagline": "Deception. Strategy. Survival.",
+    "description": "Online multiplayer social deduction game"
+  },
+  "nav": {
+    "home": "Home",
+    "leaderboard": "Leaderboard",
+    "tutorial": "How to Play",
+    "language": "Language"
+  },
+  "home": {
+    "hero": {
+      "title": "Mafia",
+      "titleAccent": "Night",
+      "subtitle": "Deception. Strategy. Survival.",
+      "cta": "Play Now",
+      "secondary": "Learn More"
+    },
+    "features": {
+      "title": "Why Play Mafia Night?",
+      "multiplayer": {
+        "title": "Multiplayer Mayhem",
+        "desc": "Play with 4-12 players online. Real-time deception and deduction."
+      },
+      "roles": {
+        "title": "14 Unique Roles",
+        "desc": "From Mafia to Doctor, Cop to Jester — every game is different."
+      },
+      "voice": {
+        "title": "Voice Chat",
+        "desc": "Built-in voice chat for immersive gameplay. Talk, bluff, and accuse."
+      },
+      "ai": {
+        "title": "AI Bots",
+        "desc": "Practice solo with intelligent AI opponents across 3 difficulty levels."
+      },
+      "stats": {
+        "title": "Track Your Stats",
+        "desc": "Leaderboards, win rates, and detailed game history."
+      },
+      "crossplay": {
+        "title": "Cross-Platform",
+        "desc": "Play on any device. Desktop, tablet, or mobile."
+      }
+    },
+    "howToPlay": {
+      "title": "How to Play",
+      "step1": {
+        "title": "Create or Join",
+        "desc": "Create a room and share the code with friends, or join an existing one."
+      },
+      "step2": {
+        "title": "Get Your Role",
+        "desc": "Each player gets a secret role. Mafia kills at night, Town investigates and votes."
+      },
+      "step3": {
+        "title": "Discuss & Deceive",
+        "desc": "During the day, debate who the Mafia is. Lie, bluff, and build trust."
+      },
+      "step4": {
+        "title": "Vote & Survive",
+        "desc": "Vote to eliminate suspects. The last team standing wins!"
+      }
+    },
+    "cta": {
+      "title": "Ready to Play?",
+      "subtitle": "Enter your name and join a game. No sign-up required.",
+      "yourName": "Your Name",
+      "namePlaceholder": "Enter your name...",
+      "createRoom": "Create Room",
+      "joinRoom": "Join Room",
+      "orJoinWithCode": "or join with code",
+      "roomCode": "ROOM CODE",
+      "creating": "Creating...",
+      "joining": "Joining...",
+      "fourToTwelve": "4-12 Players",
+      "classicRoles": "Classic Roles"
+    },
+    "rolesSection": {
+      "title": "Unique Roles",
+      "subtitle": "Each role has unique abilities and win strategies"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
+  },
+  "lobby": {
+    "title": "Game Lobby",
+    "shareCode": "Share the code with friends to join",
+    "leave": "Leave",
+    "addBots": "Add Bots",
+    "adding": "Adding...",
+    "settings": "Settings",
+    "start": "Start",
+    "starting": "Starting...",
+    "notReady": "not ready",
+    "host": "Host",
+    "bot": "Bot",
+    "player": "Player",
+    "ready": "Ready!",
+    "clickToReady": "Click to Ready Up",
+    "waitingForPlayers": "Waiting for at least {count} players...",
+    "roomIsFull": "Room is full",
+    "addedBots": "Added {count} bot(s)",
+    "roomCodeCopied": "Room code copied!"
+  },
+  "game": {
+    "loading": "Loading game...",
+    "reconnecting": "Reconnecting to server...",
+    "leaveGame": "Leave Game",
+    "mafiaWins": "Mafia Wins!",
+    "townWins": "Town Wins!",
+    "neutralWins": "Neutral Wins!",
+    "gameLasted": "Game lasted {days} day(s) with {players} players.",
+    "playAgain": "Play Again",
+    "restarting": "Restarting...",
+    "allRoles": "All Roles",
+    "alive": "Alive",
+    "dead": "Dead",
+    "nightFalls": "Night falls over the town... close your eyes",
+    "dayHasCome": "Day has come. Discuss who might be Mafia!",
+    "deadCount": "Dead ({count})",
+    "nightActionSubmitted": "Night action submitted",
+    "voteSubmitted": "Vote submitted",
+    "day": "Day {number}",
+    "remaining": "remaining"
+  },
+  "roles": {
+    "mafia": {
+      "name": "Mafia",
+      "desc": "Kills one player every night. Works with fellow mafia members."
+    },
+    "godfather": {
+      "name": "Godfather",
+      "desc": "The mafia leader. Appears innocent to the Cop. Cannot be killed at night."
+    },
+    "doctor": {
+      "name": "Doctor",
+      "desc": "Can save one player from death each night."
+    },
+    "cop": {
+      "name": "Cop",
+      "desc": "Can investigate one player each night to learn their alignment."
+    },
+    "detective": {
+      "name": "Detective",
+      "desc": "Can investigate one player each night to learn their exact role."
+    },
+    "medic": {
+      "name": "Medic",
+      "desc": "Can protect a player from death but cannot protect the same player twice in a row."
+    },
+    "vigilante": {
+      "name": "Vigilante",
+      "desc": "Can kill one player at night. Uses limited bullets."
+    },
+    "sniper": {
+      "name": "Sniper",
+      "desc": "Can kill one player every other night."
+    },
+    "mayor": {
+      "name": "Mayor",
+      "desc": "Your vote counts as 2. Can reveal yourself once to confirm your identity."
+    },
+    "villager": {
+      "name": "Villager",
+      "desc": "No special abilities. Your voice and vote matter during the day."
+    },
+    "serial_killer": {
+      "name": "Serial Killer",
+      "desc": "Kills one player every night. Wins by being the last alive."
+    },
+    "jester": {
+      "name": "Jester",
+      "desc": "Wins only if lynched during the day. No night action."
+    },
+    "spy": {
+      "name": "Spy",
+      "desc": "Can observe one player each night to learn their role."
+    },
+    "witch": {
+      "name": "Witch",
+      "desc": "Has two potions: one to save, one to kill. Each used once."
+    },
+    "lovers": {
+      "name": "Lover",
+      "desc": "Two lovers. If one dies, the other dies of heartbreak. Win together."
+    },
+    "yourRole": "Your Role",
+    "team": "{team} Team",
+    "mafiaHint": "Mafia members: work together to eliminate the Town."
+  },
+  "loading": {
+    "tip": "Tip",
+    "tip1": "Listen carefully to what others say during the day.",
+    "tip2": "Mafia members can chat privately at night — coordinate wisely.",
+    "tip3": "The Doctor can save one player each night. Choose carefully.",
+    "tip4": "The Cop can investigate one player each night to learn their alignment.",
+    "tip5": "The Jester wins only if they get lynched. Don't fall for their tricks!",
+    "tip6": "The Mayor's vote counts as two. A powerful hidden role.",
+    "tip7": "Lovers win together. If one dies, the other dies of heartbreak.",
+    "tip8": "The Witch has two potions: one to save, one to kill. Use them wisely.",
+    "tip9": "Trust no one. Anyone could be Mafia.",
+    "tip10": "The Godfather appears innocent to the Cop. Don't trust investigations blindly.",
+    "tip11": "The Serial Killer wins alone. Watch out for solo players.",
+    "tip12": "Vote strategically — one wrong elimination could cost your team the game."
+  },
+  "matchmaking": {
+    "quickPlay": "Quick Play",
+    "searching": "Searching for players...",
+    "playersInQueue": "{count} player(s) in queue",
+    "cancel": "Cancel",
+    "cancelling": "Cancelling..."
+  },
+  "common": {
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "room": "Room",
+    "back": "Back",
+    "loading": "Loading..."
+  }
+}

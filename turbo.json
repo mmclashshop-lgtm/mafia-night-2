@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "build/**"],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:init": {
+      "cache": false
+    }
+  },
+  "globalDependencies": [".env*"],
+  "globalEnv": ["NODE_ENV", "PORT", "DATABASE_URL", "CLIENT_URL"]
+}

@@ -1,0 +1,36 @@
+{
+  "name": "mafia-game",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "NODE_OPTIONS=\"--import tsx/esm\" node packages/server/dist/index.js",
+    "build:client": "turbo run build --filter=client",
+    "build:server": "turbo run build --filter=server",
+    "build:shared": "turbo run build --filter=shared",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:init": "turbo run db:init --filter=server",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "prettier": "^3.3.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0"
+  },
+  "packageManager": "npm@10.8.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "i18next": "^26.3.4",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "react-i18next": "^17.0.8"
+  }
+}
