@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getPlayerStats, type PlayerStatsData } from '../lib/api';
 import { ArrowLeft, Skull, Heart, Target, Award, Calendar } from 'lucide-react';
+import { TiltCard } from '../components/common/TiltCard';
 
 export function PlayerStats() {
   const { t } = useTranslation();
@@ -55,26 +56,20 @@ export function PlayerStats() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card p-4 text-center">
-          <Award className="w-5 h-5 text-green-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{stats.winRate}%</p>
-          <p className="text-xs text-gray-500">{t('playerStats.winRate', { wins: stats.totalWins, total: stats.totalGames })}</p>
-        </div>
-        <div className="card p-4 text-center">
-          <Target className="w-5 h-5 text-red-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{stats.totalKills}</p>
-          <p className="text-xs text-gray-500">{t('playerStats.totalKills')}</p>
-        </div>
-        <div className="card p-4 text-center">
-          <Heart className="w-5 h-5 text-red-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{stats.survivalRate}%</p>
-          <p className="text-xs text-gray-500">{t('playerStats.survivalRate', { survived: stats.totalSurvived, total: stats.totalGames })}</p>
-        </div>
-        <div className="card p-4 text-center">
-          <Calendar className="w-5 h-5 text-yellow-400 mx-auto mb-2" />
-          <p className="text-2xl font-bold">{stats.totalGames}</p>
-          <p className="text-xs text-gray-500">{t('playerStats.gamesPlayed')}</p>
-        </div>
+        {[
+          { icon: Award, color: 'text-green-400', label: t('playerStats.winRate', { wins: stats.totalWins, total: stats.totalGames }), value: `${stats.winRate}%` },
+          { icon: Target, color: 'text-red-400', label: t('playerStats.totalKills'), value: stats.totalKills },
+          { icon: Heart, color: 'text-red-400', label: t('playerStats.survivalRate', { survived: stats.totalSurvived, total: stats.totalGames }), value: `${stats.survivalRate}%` },
+          { icon: Calendar, color: 'text-yellow-400', label: t('playerStats.gamesPlayed'), value: stats.totalGames },
+        ].map((stat, i) => (
+          <TiltCard key={i} maxTilt={8} glare={false} scale={1.02}>
+            <div className="card p-4 text-center">
+              <stat.icon className={`w-5 h-5 ${stat.color} mx-auto mb-2`} />
+              <p className="text-2xl font-bold">{stat.value}</p>
+              <p className="text-xs text-gray-500">{stat.label}</p>
+            </div>
+          </TiltCard>
+        ))}
       </div>
 
       {roleEntries.length > 0 && (

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Player, Phase, TEAM_COLORS } from '@mafia/shared';
 import { cn } from '../../lib/utils';
 import { RoleAvatar } from '../common/RoleAvatar';
+import { PlayerAvatar } from '../common/PlayerAvatar';
 
 interface PlayerCardProps {
   player: Player;
@@ -22,7 +23,7 @@ export function PlayerCard({ player, isCurrentPlayer, phase, isDead = false, onA
       onClick={canInteract ? onAction : undefined}
       disabled={!canInteract}
       className={cn(
-        'card p-3 text-center transition-all duration-200',
+        'card p-3 text-center transition-all duration-200 card-shine',
         canInteract && 'hover:border-gray-600 hover:bg-gray-800/50 cursor-pointer active:scale-95',
         isCurrentPlayer && 'ring-2 ring-red-700',
         !player.alive && 'opacity-40 grayscale',
@@ -30,19 +31,15 @@ export function PlayerCard({ player, isCurrentPlayer, phase, isDead = false, onA
         player.votedFor && 'ring-1 ring-yellow-500'
       )}
     >
-      <div
-        className="w-11 h-11 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden"
+      <div className="w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center overflow-hidden"
         style={{
-          backgroundColor: player.role ? `${TEAM_COLORS[player.team]}20` : '#374151',
           border: `2px solid ${player.role ? TEAM_COLORS[player.team] : '#374151'}40`,
         }}
       >
         {player.role ? (
           <RoleAvatar roleId={player.role.id} size="md" />
         ) : (
-          <span className="text-sm font-bold text-white">
-            {player.name.charAt(0).toUpperCase()}
-          </span>
+          <PlayerAvatar avatar={player.avatar} name={player.name} size="sm" />
         )}
       </div>
       <p className="text-sm font-medium truncate">{player.name}</p>

@@ -44,6 +44,7 @@ export interface NightAction {
 export interface Player {
   id: PlayerId;
   name: string;
+  avatar: string;
   role: Role | null;
   team: Team;
   alive: boolean;

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLeaderboard, getTotalStats, type LeaderboardEntry, type TotalStats } from '../lib/api';
 import { Trophy, ArrowLeft, TrendingUp, Users, Activity, Crown } from 'lucide-react';
+import { TiltCard } from '../components/common/TiltCard';
+import { PlayerAvatar } from '../components/common/PlayerAvatar';
+import { EmptyState } from '../components/common/EmptyState';
 
 const RANK_ICONS: Record<string, string> = {
   'Bronze': '🥉',
@@ -88,49 +91,42 @@ export function Leaderboard() {
 
       <div className="space-y-2">
         {sorted.map((entry, idx) => (
-          <div
-            key={entry.name}
-            className="card-hover p-3 flex items-center gap-3 cursor-pointer"
-            onClick={() => navigate(`/profile/${encodeURIComponent(entry.name)}`)}
-          >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-              idx === 0 ? 'bg-yellow-600 text-yellow-100 shadow-[0_0_10px_rgba(234,179,8,0.5)]' :
-              idx === 1 ? 'bg-gray-400 text-gray-900' :
-              idx === 2 ? 'bg-amber-700 text-amber-100' :
-              'bg-gray-800 text-gray-400'
-            }`}>
-              {idx + 1}
-            </div>
+          <TiltCard key={entry.name} maxTilt={5} glare={false} scale={1.01}>
+            <div
+              className="card-hover p-3 flex items-center gap-3 cursor-pointer"
+              onClick={() => navigate(`/profile/${encodeURIComponent(entry.name)}`)}
+            >
+              <PlayerAvatar avatar={entry.avatar ?? 'dicebear'} name={entry.name} size="sm" />
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate flex items-center gap-2">
+                  {entry.name}
+                  <span className={RANK_COLORS[entry.rank] ?? 'text-gray-400'}>
+                    {RANK_ICONS[entry.rank] ?? '🥉'}
+                  </span>
+                </p>
+                <p className="text-xs text-gray-500">{entry.rank} · {entry.score} {t('leaderboard.pts')}</p>
+              </div>
 
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate flex items-center gap-2">
-                {entry.name}
-                <span className={RANK_COLORS[entry.rank] ?? 'text-gray-400'}>
-                  {RANK_ICONS[entry.rank] ?? '🥉'}
-                </span>
-              </p>
-              <p className="text-xs text-gray-500">{entry.rank} · {entry.score} {t('leaderboard.pts')}</p>
-            </div>
+              <div className="hidden sm:block text-center min-w-[80px]">
+                <p className="text-sm font-medium text-white">{entry.winRate}%</p>
+                <p className="text-xs text-gray-500">
+                  {entry.wins}W / {entry.games - entry.wins}L
+                </p>
+              </div>
 
-            <div className="hidden sm:block text-center min-w-[80px]">
-              <p className="text-sm font-medium text-white">{entry.winRate}%</p>
-              <p className="text-xs text-gray-500">
-                {entry.wins}W / {entry.games - entry.wins}L
-              </p>
+              <div className="text-right text-sm min-w-[80px]">
+                <p className="text-gray-400">{entry.games} <span className="text-gray-600">{t('leaderboard.gamesLabel')}</span></p>
+                <p className="text-xs text-gray-500">{entry.kills} {t('leaderboard.killsLabel')}</p>
+              </div>
             </div>
-
-            <div className="text-right text-sm min-w-[80px]">
-              <p className="text-gray-400">{entry.games} <span className="text-gray-600">{t('leaderboard.gamesLabel')}</span></p>
-              <p className="text-xs text-gray-500">{entry.kills} {t('leaderboard.killsLabel')}</p>
-            </div>
-          </div>
+          </TiltCard>
         ))}
         {sorted.length === 0 && (
-          <div className="card p-8 text-center text-gray-500">
-            <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{t('leaderboard.noGamesPlayed')}</p>
-            <p className="text-sm mt-1">{t('leaderboard.noStatsDesc')}</p>
-          </div>
+          <EmptyState
+            icon={<Activity className="w-8 h-8 text-gray-500" />}
+            title={t('leaderboard.noGamesPlayed')}
+            description={t('leaderboard.noStatsDesc')}
+          />
         )}
       </div>
     </div>

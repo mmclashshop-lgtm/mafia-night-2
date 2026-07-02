@@ -12,6 +12,8 @@
   --mafia-accent: #FF4444;
   --mafia-glow: 0 0 20px rgba(139, 0, 0, 0.4);
   --mafia-glow-strong: 0 0 40px rgba(139, 0, 0, 0.6);
+  --glare-x: 50%;
+  --glare-y: 50%;
 }
 
 @layer base {
@@ -22,27 +24,36 @@
   body {
     @apply bg-[#0A0A0A] text-[#F5F5F5] antialiased;
     font-family: 'Inter', 'Cairo', system-ui, -apple-system, sans-serif;
+    scroll-behavior: smooth;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-[#1A1A1A];
+    @apply bg-[#0A0A0A];
+    border-left: 1px solid rgba(139, 0, 0, 0.08);
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-700 rounded-full;
+    @apply rounded-full;
+    background: linear-gradient(180deg, #8B0000, #B22222);
+    border: 2px solid #0A0A0A;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-600;
+    background: linear-gradient(180deg, #B22222, #FF4444);
   }
 
   [dir="rtl"] body {
     font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  ::selection {
+    background: rgba(139, 0, 0, 0.4);
+    color: #fff;
   }
 }
 
@@ -67,12 +78,48 @@
     box-shadow: var(--mafia-glow-strong);
   }
 
+  .card-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .card-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.03) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%) rotate(25deg);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+  }
+  .card-shine:hover::after {
+    transform: translateX(100%) rotate(25deg);
+  }
+
   .btn-primary {
     @apply px-6 py-3 text-white font-semibold rounded-lg 
            transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-           active:scale-95 cursor-pointer;
+           active:scale-95 cursor-pointer relative overflow-hidden;
     background: var(--mafia-red);
     box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+  .btn-primary:hover::after {
+    transform: translateX(100%);
   }
   .btn-primary:hover:not(:disabled) {
     background: var(--mafia-red-light);
@@ -82,10 +129,21 @@
   .btn-secondary {
     @apply px-6 py-3 text-gray-200 font-semibold rounded-lg 
            transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-           border border-gray-700 active:scale-95 cursor-pointer;
+           border border-gray-700 active:scale-95 cursor-pointer relative overflow-hidden;
     background: rgba(26, 26, 26, 0.8);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+  }
+  .btn-secondary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(139,0,0,0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+  .btn-secondary:hover::after {
+    transform: translateX(100%);
   }
   .btn-secondary:hover:not(:disabled) {
     background: rgba(139, 0, 0, 0.15);
@@ -95,7 +153,18 @@
   .btn-danger {
     @apply px-6 py-3 bg-[#8B0000] hover:bg-[#B22222] text-white font-semibold rounded-lg 
            transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-           active:scale-95 cursor-pointer;
+           active:scale-95 cursor-pointer relative overflow-hidden;
+  }
+  .btn-danger::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+  }
+  .btn-danger:hover::after {
+    transform: translateX(100%);
   }
 
   .btn-ghost {
@@ -216,6 +285,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
 .phase-night {
   animation: nightFade 0.8s ease-in-out;
 }
@@ -241,4 +319,47 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientShift 4s ease infinite;
+}
+
+@keyframes rippleAnim {
+  to { transform: scale(3); opacity: 0; }
+}
+
+@keyframes nightFade {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(0.3) saturate(1.2); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes dayRise {
+  0% { opacity: 0; transform: translateY(20px); filter: brightness(0.5); }
+  100% { opacity: 1; transform: translateY(0); filter: brightness(1); }
+}
+
+@keyframes votingZoom {
+  0% { opacity: 0; transform: scale(0.95); }
+  50% { transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gameOver {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.toggle {
+  @apply appearance-none w-10 h-5 rounded-full relative cursor-pointer transition-colors duration-200;
+  background: #333;
+}
+.toggle:checked {
+  background: var(--mafia-red);
+}
+.toggle::before {
+  content: '';
+  @apply absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-200;
+  left: 0.125rem;
+}
+.toggle:checked::before {
+  left: calc(100% - 1.125rem);
 }

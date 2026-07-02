@@ -5,8 +5,11 @@ import { useGameStore } from '../store/gameStore';
 import { useSocket } from '../hooks/useSocket';
 import { useUIStore } from '../store/uiStore';
 import { SettingsPanel } from '../components/lobby/SettingsPanel';
+import { PlayerAvatar } from '../components/common/PlayerAvatar';
+import { TiltCard } from '../components/common/TiltCard';
+import { RippleButton } from '../components/common/RippleButton';
 import { copyToClipboard } from '../lib/utils';
-import { Copy, LogOut, Play, Users, Clock, CheckCircle2 } from 'lucide-react';
+import { Copy, LogOut, Play, Users, Clock, CheckCircle2, Bot } from 'lucide-react';
 
 export function Lobby() {
   const { t } = useTranslation();
@@ -103,19 +106,19 @@ export function Lobby() {
                 onUpdate={async (s) => { await updateSettings(s); }}
               />
               <button onClick={handleAddBots} disabled={addingBots} className="btn-secondary flex items-center gap-2 text-sm">
-                <Users className="w-4 h-4" />
+                <Bot className="w-4 h-4" />
                 {addingBots ? t('lobby.adding') : t('lobby.addBots')}
               </button>
               {players.length >= (gameState?.settings?.minPlayers ?? 4) && (
-                <button
+                <RippleButton
                   onClick={handleStart}
                   disabled={starting || unreadyHumanCount > 0}
-                  className="btn-primary flex items-center gap-2"
-                  title={unreadyHumanCount > 0 ? t('lobby.notReadyCount', { count: unreadyHumanCount }) : t('lobby.start')}
+                  variant="primary"
+                  className="flex items-center gap-2"
                 >
                   <Play className="w-4 h-4" />
                   {starting ? t('lobby.starting') : unreadyHumanCount > 0 ? t('lobby.notReadyCount', { count: unreadyHumanCount }) : t('lobby.start')}
-                </button>
+                </RippleButton>
               )}
             </div>
           )}
@@ -123,21 +126,21 @@ export function Lobby() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {players.map((player, idx) => (
-            <div
-              key={player.id}
-              className={`card p-3 flex items-center gap-3 ${player.id === playerId ? 'ring-2 ring-red-700 shadow-[0_0_12px_rgba(139,0,0,0.3)]' : ''} ${player.disconnected ? 'opacity-50' : ''}`}
-            >
-              <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-sm font-bold">
-                {player.name.charAt(0).toUpperCase()}
+            <TiltCard key={player.id} maxTilt={5} glare={false} className={`${player.id === playerId ? 'ring-2 ring-red-700 shadow-[0_0_12px_rgba(139,0,0,0.3)] rounded-xl' : ''}`}>
+              <div className={`card p-3 flex items-center gap-3 ${player.disconnected ? 'opacity-50' : ''} h-full`}>
+                <PlayerAvatar avatar={player.avatar} name={player.name} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{player.name}</p>
+                  <p className="text-xs text-gray-500">
+                    {idx === 0 ? t('lobby.host') : player.isBot ? t('lobby.bot') : t('lobby.player')}
+                    {player.isBot && ' 🤖'}
+                  </p>
+                </div>
+                {player.ready && (
+                  <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                )}
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate">{player.name}</p>
-                <p className="text-xs text-gray-500">{idx === 0 ? t('lobby.host') : player.isBot ? t('lobby.bot') : t('lobby.player')}</p>
-              </div>
-              {player.ready && (
-                <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
-              )}
-            </div>
+            </TiltCard>
           ))}
         </div>
 
@@ -145,10 +148,10 @@ export function Lobby() {
           <div className="mt-4">
             <button
               onClick={toggleReady}
-              className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`w-full py-3 rounded-lg text-sm font-medium transition-all duration-200 relative overflow-hidden ${
                 currentPlayer.ready
-                  ? 'bg-green-600 hover:bg-green-700 text-white'
-                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/30'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white'
               }`}
             >
               {currentPlayer.ready ? t('lobby.ready') : t('lobby.clickToReady')}
@@ -157,7 +160,7 @@ export function Lobby() {
         )}
 
         {players.length < (gameState?.settings?.minPlayers ?? 4) && (
-          <div className="mt-4 flex items-center gap-2 text-sm text-yellow-400">
+          <div className="mt-4 flex items-center gap-2 text-sm text-yellow-400 animate-pulse-slow">
             <Clock className="w-4 h-4" />
             {t('lobby.waitingForPlayers', { count: gameState?.settings?.minPlayers ?? 4 })}
           </div>

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Header } from './Header';
 import { Toasts } from '../common/Toasts';
 import { LoadingScreen } from '../common/LoadingScreen';
+import { BackgroundSystem } from '../backgrounds/BackgroundSystem';
 
 interface LayoutProps {
   children: ReactNode;
@@ -32,18 +33,20 @@ export function Layout({ children }: LayoutProps) {
   return (
     <>
       {initialLoading && <LoadingScreen />}
-      <div
-        className={`min-h-screen flex flex-col transition-opacity duration-500 ${
-          initialLoading ? 'opacity-0' : 'opacity-100'
-        }`}
-        dir="rtl"
-      >
-        <Header />
-        <main className={`flex-1 ${isHome ? '' : 'container mx-auto max-w-5xl px-4 py-6'}`}>
-          {children}
-        </main>
-        <Toasts />
-      </div>
+      <BackgroundSystem>
+        <div
+          className={`min-h-screen flex flex-col transition-all duration-700 ${
+            initialLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
+          }`}
+          dir="rtl"
+        >
+          <Header />
+          <main className={`flex-1 ${isHome ? '' : 'container mx-auto max-w-5xl px-4 py-6'}`}>
+            {children}
+          </main>
+          <Toasts />
+        </div>
+      </BackgroundSystem>
     </>
   );
 }

@@ -7,6 +7,7 @@ export interface LeaderboardEntry {
   survivalRate: number;
   score: number;
   rank: string;
+  avatar?: string;
 }
 
 export interface TotalStats {

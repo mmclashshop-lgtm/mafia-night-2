@@ -202,6 +202,7 @@ export class RoomManager {
     const botPlayers: Player[] = names.map(name => ({
       id: generateId('bot_') as PlayerId,
       name,
+      avatar: 'dicebear',
       role: null,
       team: 'town',
       alive: true,
@@ -635,6 +636,7 @@ export class RoomManager {
     const player: Player = {
       id: generateId('p_') as PlayerId,
       name,
+      avatar: 'dicebear',
       role: null,
       team: 'town',
       alive: true,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../store/gameStore';
@@ -14,7 +14,9 @@ import { RoleCard } from '../components/game/RoleCard';
 import { DeathReveal } from '../components/game/DeathReveal';
 import { SpectatorOverlay } from '../components/game/SpectatorOverlay';
 import { VoiceChat } from '../components/game/VoiceChat';
-import { LoadingSpinner } from '../components/common/LoadingSpinner';
+import { CinematicDeathOverlay } from '../components/cinematic/CinematicDeathOverlay';
+import { WinCelebration } from '../components/cinematic/WinCelebration';
+import { SkeletonGame } from '../components/common/Skeleton';
 import { useSound } from '../hooks/useSound';
 
 export function Game() {
@@ -26,6 +28,8 @@ export function Game() {
   const { leaveRoom, submitNightAction, submitVote, playAgain } = useSocket();
   const { addToast } = useUIStore();
   const [playAgainLoading, setPlayAgainLoading] = useState(false);
+  const [showDeathEffect, setShowDeathEffect] = useState(false);
+  const prevAliveRef = useRef(true);
   useSound();
 
   const phase = gameState?.phase ?? 'lobby';
@@ -38,18 +42,24 @@ export function Game() {
   const isDay = phase === 'day';
   const isVoting = phase === 'voting';
 
+  useEffect(() => {
+    if (currentPlayer && prevAliveRef.current && !currentPlayer.alive) {
+      setShowDeathEffect(true);
+      const timer = setTimeout(() => setShowDeathEffect(false), 3000);
+      return () => clearTimeout(timer);
+    }
+    prevAliveRef.current = currentPlayer?.alive ?? true;
+  }, [currentPlayer?.alive]);
+
   if (!gameState) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <LoadingSpinner text={t('game.loading')} />
-      </div>
-    );
+    return <SkeletonGame />;
   }
 
   if (!connected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <LoadingSpinner text={t('game.reconnecting')} />
+        <div className="w-16 h-16 border-4 border-[#8B0000] border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-400 animate-pulse">{t('game.reconnecting')}</p>
         <button onClick={() => { leaveRoom(); navigate('/'); }} className="btn-secondary text-sm">
           {t('game.leaveGame')}
         </button>
@@ -59,45 +69,24 @@ export function Game() {
 
   if (phase === 'ended') {
     const winnerTeam = gameState.winner;
-
     return (
-      <div className="animate-fade-in space-y-6">
-        <div className="card p-8 max-w-lg mx-auto text-center space-y-4">
-          <h2 className="text-3xl font-bold">
-            {winnerTeam === 'mafia' && t('game.mafiaWins')}
-            {winnerTeam === 'town' && t('game.townWins')}
-            {winnerTeam === 'neutral' && t('game.neutralWins')}
-          </h2>
-          <p className="text-gray-400">
-            {t('game.gameLasted', { days: gameState.day, players: players.length })}
-          </p>
-          <div className="flex gap-3 justify-center mt-4">
-            <button
-              onClick={async () => {
-                setPlayAgainLoading(true);
-                try {
-                  await playAgain();
-                  navigate('/lobby');
-                } catch {
-                  addToast('error', t('game.failedToRestart'));
-                  setPlayAgainLoading(false);
-                }
-              }}
-              disabled={playAgainLoading}
-              className="btn-primary"
-            >
-              {playAgainLoading ? t('game.restarting') : t('game.playAgain')}
-            </button>
-            <button
-              onClick={() => leaveRoom()}
-              className="btn-secondary"
-            >
-              {t('game.leave')}
-            </button>
-          </div>
-        </div>
-
-        <div className="card p-6">
+      <>
+        <WinCelebration
+          winner={winnerTeam}
+          onPlayAgain={async () => {
+            setPlayAgainLoading(true);
+            try {
+              await playAgain();
+              navigate('/lobby');
+            } catch {
+              addToast('error', t('game.failedToRestart'));
+              setPlayAgainLoading(false);
+            }
+          }}
+          onLeave={() => leaveRoom()}
+          playAgainLoading={playAgainLoading}
+        />
+        <div className="card p-6 mt-4">
           <h3 className="text-lg font-bold mb-4">{t('game.allRoles')}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {players.map((p) => (
@@ -114,22 +103,23 @@ export function Game() {
             ))}
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
     <>
+      {showDeathEffect && <CinematicDeathOverlay onComplete={() => setShowDeathEffect(false)} />}
       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in ${isNight ? 'relative' : ''}`}>
         <div className="md:col-span-1 lg:col-span-2 space-y-4">
           <PhaseIndicator phase={phase} day={gameState.day} endsAt={gameState.phaseEndsAt} />
 
           {currentPlayer?.role && !isDead && <RoleCard role={currentPlayer.role} />}
 
-          {isDead && <DeathReveal />}
+          {isDead && currentPlayer?.role && <DeathReveal role={currentPlayer.role} />}
 
           {isNight && (
-            <div className="card p-4">
+            <div className="card p-4 border-indigo-800/30 bg-indigo-950/20">
               <p className="text-sm text-indigo-300 text-center">
                 {t('game.nightFalls')}
               </p>

@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Trophy, Swords, Heart, Skull, Star, Zap, Gamepad2 } from 'lucide-react';
+import { PlayerAvatar } from '../components/common/PlayerAvatar';
+import { EmptyState } from '../components/common/EmptyState';
 
 interface ProfileData {
   name: string;
+  avatar?: string;
   totalGames: number;
   totalWins: number;
   winRate: number;
@@ -92,7 +95,9 @@ export function Profile() {
       </button>
 
       <div className="card p-6 mb-4 text-center">
-        <div className="text-5xl mb-3">{profile.rankIcon}</div>
+        <div className="flex justify-center mb-3">
+          <PlayerAvatar avatar={profile.avatar ?? 'dicebear'} name={profile.name} size="lg" />
+        </div>
         <h1 className="text-2xl font-bold mb-1">{profile.name}</h1>
         <div className="flex items-center justify-center gap-2 text-sm">
           <span className="text-[#8B0000] font-semibold">{profile.rank}</span>
@@ -144,7 +149,10 @@ export function Profile() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white mb-3">{t('profile.roleStatistics')}</h3>
             {Object.entries(profile.roleStats).length === 0 ? (
-              <p className="text-gray-500 text-sm">{t('profile.noRoleData')}</p>
+              <EmptyState
+                icon={<Swords className="w-8 h-8 text-gray-500" />}
+                title={t('profile.noRoleData')}
+              />
             ) : (
               <div className="space-y-2">
                 {Object.entries(profile.roleStats)
@@ -176,11 +184,11 @@ export function Profile() {
           <div>
             <h3 className="font-semibold text-white mb-3">{t('profile.achievementsTitle')}</h3>
             {profile.achievementDetails.length === 0 ? (
-              <div className="text-center py-8">
-                <Star className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">{t('profile.noAchievements')}</p>
-                <p className="text-gray-600 text-xs mt-1">{t('profile.playMore')}</p>
-              </div>
+              <EmptyState
+                icon={<Star className="w-8 h-8 text-gray-500" />}
+                title={t('profile.noAchievements')}
+                description={t('profile.playMore')}
+              />
             ) : (
               <div className="grid gap-2">
                 {profile.achievementDetails.map((achievement) => (
@@ -208,7 +216,10 @@ export function Profile() {
           <div>
             <h3 className="font-semibold text-white mb-3">{t('profile.recentGames')}</h3>
             {profile.recentGames.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-8">{t('profile.noGamesPlayed')}</p>
+              <EmptyState
+                icon={<Gamepad2 className="w-8 h-8 text-gray-500" />}
+                title={t('profile.noGamesPlayed')}
+              />
             ) : (
               <div className="space-y-2">
                 {[...profile.recentGames].reverse().slice(-10).reverse().map((game, i) => (
