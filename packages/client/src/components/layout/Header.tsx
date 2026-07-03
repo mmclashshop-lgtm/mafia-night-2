@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useGameStore } from '../../store/gameStore';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useAuth } from '../../hooks/useAuth';
@@ -22,14 +23,14 @@ export function Header() {
     <header className="glass sticky top-0 z-50">
       <div className="container mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <a href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tight">
+          <Link to="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tight">
             <MaskIcon />
             <span className="text-[#F5F5F5]">{t('brand.name')}</span>
-          </a>
-          <a href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
+          </Link>
+          <Link to="/leaderboard" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
             <Trophy className="w-3.5 h-3.5" />
             {t('nav.leaderboard')}
-          </a>
+          </Link>
         </div>
 
         <div className="flex items-center gap-3 text-sm">

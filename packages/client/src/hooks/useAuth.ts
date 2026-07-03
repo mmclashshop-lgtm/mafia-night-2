@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useAuthStore } from '../store/authStore';
+import { API_ORIGIN } from '../lib/api';
 
 export function useAuth() {
   const { userId, name, avatar, profile, setAuth, updateProfile, logout, updateElo, updateXP, updateDailyQuests } = useAuthStore();
@@ -10,7 +11,7 @@ export function useAuth() {
 
   const reconnect = useCallback(async (storedUserId: string, storedName: string, storedAvatar: string) => {
     try {
-      const response = await fetch('/api/auth/reconnect', {
+      const response = await fetch(`${API_ORIGIN}/api/auth/reconnect`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: storedUserId, name: storedName }),

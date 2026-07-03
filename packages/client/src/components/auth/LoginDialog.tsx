@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useUIStore } from '../../store/uiStore';
+import { API_ORIGIN } from '../../lib/api';
 import { X, Zap, User } from 'lucide-react';
 
 declare global {
@@ -55,7 +56,7 @@ export function LoginDialog({ open, onClose, onGuestLogin }: LoginDialogProps) {
       client_id: GOOGLE_CLIENT_ID,
       callback: async (res) => {
         try {
-          const resp = await fetch('/api/auth/google', {
+          const resp = await fetch(`${API_ORIGIN}/api/auth/google`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ credential: res.credential }),
@@ -93,7 +94,7 @@ export function LoginDialog({ open, onClose, onGuestLogin }: LoginDialogProps) {
       if (res.authResponse) {
         try {
           FB.api('/me', { fields: 'name,picture' }, async (fbData) => {
-            const resp = await fetch('/api/auth/facebook', {
+            const resp = await fetch(`${API_ORIGIN}/api/auth/facebook`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({

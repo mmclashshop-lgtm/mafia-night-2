@@ -36,10 +36,14 @@ export interface PlayerStatsData {
   }[];
 }
 
-const BASE_URL = import.meta.env.PROD ? '/api' : '/api';
+const API_BASE = import.meta.env.VITE_SOCKET_URL
+  ? `${import.meta.env.VITE_SOCKET_URL}/api`
+  : '/api';
+
+export const API_ORIGIN = import.meta.env.VITE_SOCKET_URL || '';
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${url}`);
+  const res = await fetch(`${API_BASE}${url}`);
   if (!res.ok) throw new Error(res.statusText);
   return res.json();
 }

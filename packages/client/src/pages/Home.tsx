@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSocket } from '../hooks/useSocket';
 import { useGameStore } from '../store/gameStore';
@@ -9,6 +9,7 @@ import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
 import { RoleAvatarWithFallback } from '../components/common/RoleAvatar';
 import { LoginDialog } from '../components/auth/LoginDialog';
 import { ROLE_ICON_MAP } from '../lib/roleConfig';
+import { API_ORIGIN } from '../lib/api';
 import type { RoleId } from '@mafia/shared';
 import {
   Sword, Users, Mic, Bot, Trophy, Monitor,
@@ -97,7 +98,7 @@ export function Home() {
 
   const handleGuestLogin = async (guestName: string) => {
     try {
-      const resp = await fetch('/api/auth/guest', {
+      const resp = await fetch(`${API_ORIGIN}/api/auth/guest`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: guestName }),
@@ -432,12 +433,12 @@ export function Home() {
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500">
-              <a href="/leaderboard" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
+              <Link to="/leaderboard" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
                 {t('nav.leaderboard')} →
-              </a>
-              <a href="/tutorial" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
+              </Link>
+              <Link to="/tutorial" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
                 {t('nav.tutorial')} →
-              </a>
+              </Link>
             </div>
           </div>
         </div>
