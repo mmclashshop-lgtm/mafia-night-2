@@ -37,3 +37,58 @@ authRoutes.post('/auth/reconnect', (req, res) => {
   const profile = getPlayerProfileByUserId(userId);
   res.json({ userId: updated.userId, name: displayName, avatar: updated.avatar, profile });
 });
+
+function verifyGoogleToken(token: string): Promise<{ sub: string; name: string; picture: string } | null> {
+  return fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => data?.sub ? { sub: data.sub, name: data.name || 'User', picture: data.picture || '' } : null)
+    .catch(() => null);
+}
+
+function verifyFacebookToken(accessToken: string, userId: string): Promise<{ name: string; picture: string } | null> {
+  return fetch(`https://graph.facebook.com/v19.0/${userId}?fields=name,picture&access_token=${accessToken}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => data?.name ? { name: data.name, picture: data.picture?.data?.url || '' } : null)
+    .catch(() => null);
+}
+
+authRoutes.post('/auth/google', async (req, res) => {
+  const { credential } = req.body;
+  if (!credential) {
+    res.status(400).json({ error: 'Missing credential' });
+    return;
+  }
+  const payload = await verifyGoogleToken(credential);
+  if (!payload) {
+    res.status(401).json({ error: 'Invalid Google token' });
+    return;
+  }
+  const oauthId = `google:${payload.sub}`;
+  let user = getUser(oauthId);
+  if (!user) {
+    user = getOrCreateUser(oauthId, payload.name);
+  }
+  const profile = getPlayerProfileByUserId(oauthId);
+  res.json({ userId: user.userId, name: payload.name, avatar: payload.picture || user.avatar, profile });
+});
+
+authRoutes.post('/auth/facebook', async (req, res) => {
+  const { accessToken, userId: fbUserId, name: fbName, avatar: fbAvatar } = req.body;
+  if (!accessToken || !fbUserId) {
+    res.status(400).json({ error: 'Missing access token or user ID' });
+    return;
+  }
+  const payload = await verifyFacebookToken(accessToken, fbUserId);
+  if (!payload) {
+    res.status(401).json({ error: 'Invalid Facebook token' });
+    return;
+  }
+  const oauthId = `facebook:${fbUserId}`;
+  const displayName = fbName || payload.name;
+  let user = getUser(oauthId);
+  if (!user) {
+    user = getOrCreateUser(oauthId, displayName);
+  }
+  const profile = getPlayerProfileByUserId(oauthId);
+  res.json({ userId: user.userId, name: displayName, avatar: fbAvatar || payload.picture || user.avatar, profile });
+});

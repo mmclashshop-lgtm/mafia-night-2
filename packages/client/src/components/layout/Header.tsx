@@ -7,7 +7,7 @@ import { Trophy, Globe } from 'lucide-react';
 
 function MaskIcon() {
   return (
-    <img src="/logo.svg" alt="Mafia Night" className="w-7 h-7 shrink-0" />
+    <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Mafia Night" className="w-7 h-7 shrink-0" />
   );
 }
 
