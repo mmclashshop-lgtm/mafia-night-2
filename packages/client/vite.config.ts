@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
-export default defineConfig({
+export default defineConfig(({ command, mode }) => ({
   plugins: [
     react(),
     VitePWA({
@@ -17,7 +17,7 @@ export default defineConfig({
         background_color: '#0A0A0A',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: mode === 'development' ? '/' : '/mafia-night-2/',
         icons: [
           { src: 'pwa-192x192.svg', sizes: '192x192', type: 'image/svg+xml' },
           { src: 'pwa-512x512.svg', sizes: '512x512', type: 'image/svg+xml' },
@@ -73,4 +73,4 @@ export default defineConfig({
     cssMinify: true,
     reportCompressedSize: true,
   },
-});
+}));
