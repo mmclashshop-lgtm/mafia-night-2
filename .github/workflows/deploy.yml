@@ -34,7 +34,8 @@ jobs:
         run: npm ci
 
       - name: Build shared package
-        run: npm run build:shared
+        working-directory: packages/shared
+        run: npx tsc
 
       - name: Build client for Pages
         run: npx vite build --base=/mafia-night-2/
