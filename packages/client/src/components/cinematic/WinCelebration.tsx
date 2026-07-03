@@ -58,7 +58,7 @@ function ParticleBurst() {
 
 export function WinCelebration({ winner, onPlayAgain, onLeave, playAgainLoading }: WinCelebrationProps) {
   const [show, setShow] = useState(false);
-  const config = WINNER_CONFIG[winner ?? ''] ?? WINNER_CONFIG.town;
+  const config = WINNER_CONFIG[winner ?? ''] ?? WINNER_CONFIG['town']!;
   const Icon = config.icon;
 
   useEffect(() => {

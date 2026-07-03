@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSocket } from '../hooks/useSocket';
 import { useGameStore } from '../store/gameStore';
+import { useUIStore } from '../store/uiStore';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
 import { RoleAvatarWithFallback } from '../components/common/RoleAvatar';
 import { ROLE_ICON_MAP } from '../lib/roleConfig';
@@ -68,6 +69,7 @@ export function Home() {
   const [showJoin, setShowJoin] = useState(false);
   const [matchmaking, setMatchmaking] = useState(false);
   const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
+  const { addToast } = useUIStore();
   const navigate = useNavigate();
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const featuresRef = useRef<HTMLDivElement>(null);
@@ -97,7 +99,8 @@ export function Home() {
       const code = await createRoom();
       await joinRoom(code, name.trim());
       navigate('/lobby');
-    } catch {
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : t('errors.createRoom'));
       setCreating(false);
     }
   };
@@ -109,7 +112,8 @@ export function Home() {
       setPlayerName(name.trim());
       await joinRoom(roomCode.toUpperCase(), name.trim());
       navigate('/lobby');
-    } catch {
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : t('errors.joinRoom'));
       setJoining(false);
     }
   };
@@ -120,8 +124,8 @@ export function Home() {
       setPlayerName(name.trim());
       await joinMatchmaking(name.trim());
       setMatchmaking(true);
-    } catch {
-      // Failed to join queue
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : t('errors.matchmaking'));
     }
   };
 

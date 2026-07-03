@@ -1,9 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Trophy, Swords, Heart, Skull, Star, Zap, Gamepad2 } from 'lucide-react';
+import { ArrowLeft, Trophy, Swords, Heart, Skull, Star, Zap, Gamepad2, Shield } from 'lucide-react';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
 import { EmptyState } from '../components/common/EmptyState';
+import { getLevel, getLevelProgress } from '@mafia/shared';
+
+const ELO_TIERS = [
+  { min: 0, name: 'Bronze', color: 'text-amber-700' },
+  { min: 1200, name: 'Silver', color: 'text-gray-300' },
+  { min: 1500, name: 'Gold', color: 'text-yellow-400' },
+  { min: 1800, name: 'Platinum', color: 'text-cyan-400' },
+  { min: 2100, name: 'Diamond', color: 'text-blue-400' },
+  { min: 2500, name: 'Mafia Lord', color: 'text-red-400' },
+];
+
+function getEloTier(elo: number): { name: string; color: string } {
+  let tier = ELO_TIERS[0]!;
+  for (const t of ELO_TIERS) {
+    if (elo >= t.min) tier = t;
+  }
+  return tier;
+}
 
 interface ProfileData {
   name: string;
@@ -29,6 +47,10 @@ interface ProfileData {
     dayCount: number;
     startedAt: number;
   }>;
+  elo?: { casual: number; competitive: number };
+  xp?: number;
+  level?: number;
+  userId?: string;
 }
 
 export function Profile() {
@@ -100,10 +122,43 @@ export function Profile() {
         </div>
         <h1 className="text-2xl font-bold mb-1">{profile.name}</h1>
         <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="text-[#8B0000] font-semibold">{profile.rank}</span>
+          <span className={ELO_TIERS.find(t => t.name === profile.rank)?.color ?? 'text-gray-400'}>
+            {profile.rank ? `${profile.rank}` : getEloTier(1000).name}
+          </span>
           <span className="text-gray-500">·</span>
           <span className="text-gray-400">{profile.score.toLocaleString()} {t('profile.pts')}</span>
         </div>
+
+        {(profile.elo || profile.level) && ((profile.elo?.casual ?? 0) > 0 || (profile.level ?? 0) > 0) && (
+          <div className="flex items-center justify-center gap-4 mt-3 text-sm">
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-4 h-4 text-yellow-400" />
+              <span className="text-yellow-400 font-medium">{profile.elo?.casual ?? 1000}</span>
+              <span className="text-gray-500">{t('profile.elo')}</span>
+            </div>
+            <div className="w-px h-4 bg-gray-700" />
+            <div className="flex items-center gap-1.5">
+              <Star className="w-4 h-4 text-blue-400" />
+              <span className="text-blue-400 font-medium">{profile.level ?? 1}</span>
+              <span className="text-gray-500">{t('profile.level')}</span>
+            </div>
+          </div>
+        )}
+
+        {(profile.level ?? 0) > 0 && (
+          <div className="mt-3 max-w-xs mx-auto">
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <span>{t('profile.level')} {profile.level}</span>
+              <span>{profile.xp ?? 0} / {getLevelProgress(profile.xp ?? 0).nextLevelXP} XP</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-gray-700 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#8B0000] to-red-600 transition-all duration-500"
+                style={{ width: `${Math.min(100, ((profile.xp ?? 0) / getLevelProgress(profile.xp ?? 0).nextLevelXP) * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
         {profile.bestWinStreak > 1 && (
           <div className="flex items-center justify-center gap-1 mt-2 text-sm text-gray-500">
             <Zap className="w-3.5 h-3.5" />

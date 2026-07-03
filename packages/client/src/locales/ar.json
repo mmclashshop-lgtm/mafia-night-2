@@ -7,6 +7,8 @@
   "nav": {
     "home": "الرئيسية",
     "leaderboard": "المتصدرين",
+    "profile": "الملف الشخصي",
+    "friends": "الأصدقاء",
     "tutorial": "كيف تلعب",
     "language": "اللغة"
   },
@@ -272,7 +274,9 @@
     "noGamesPlayed": "لم تلعب أي ألعاب بعد",
     "day": "اليوم {count}",
     "won": "فوز",
-    "lost": "خسارة"
+    "lost": "خسارة",
+    "elo": "ELO",
+    "level": "المستوى"
   },
   "leaderboard": {
     "title": "المتصدرين",
@@ -283,6 +287,8 @@
     "wins": "فوز",
     "games": "ألعاب",
     "kills": "قتلى",
+    "elo": "ELO",
+    "level": "المستوى",
     "noGamesPlayed": "لم تلعب أي ألعاب بعد",
     "noStatsDesc": "أكمل لعبة لرؤية الإحصائيات هنا",
     "pts": "نقاط",
@@ -408,5 +414,42 @@
     "room": "الغرفة",
     "back": "رجوع",
     "loading": "جارٍ التحميل..."
+  },
+  "friends": {
+    "title": "الأصدقاء",
+    "total": "صديق",
+    "addFriend": "إضافة صديق",
+    "searchPlaceholder": "ابحث عن لاعب...",
+    "noResults": "لم يتم العثور على لاعبين",
+    "add": "إضافة",
+    "online": "متصل الآن",
+    "offline": "غير متصل",
+    "inGame": "يلعب الآن",
+    "pendingRequests": "طلبات الصداقة",
+    "accept": "قبول",
+    "reject": "رفض",
+    "invite": "دعوة",
+    "noFriends": "لا يوجد أصدقاء",
+    "noFriendsDesc": "أضف أصدقاء للعب معًا!",
+    "back": "رجوع"
+  },
+  "auth": {
+    "logout": "تسجيل الخروج"
+  },
+  "party": {
+    "title": "الحفلة",
+    "create": "إنشاء حفلة",
+    "leader": "القائد",
+    "invitedYou": "دعاك إلى حفلة",
+    "startSearch": "بدء البحث",
+    "cancelSearch": "إلغاء",
+    "ready": "جاهز",
+    "notReady": "غير جاهز"
+  },
+  "errors": {
+    "createRoom": "فشل إنشاء الغرفة",
+    "joinRoom": "فشل الانضمام إلى الغرفة",
+    "matchmaking": "فشل الانضمام إلى البحث",
+    "generic": "حدث خطأ ما"
   }
 }

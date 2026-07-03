@@ -117,5 +117,352 @@
         "startedAt": 1783024327619
       }
     ]
+  },
+  "طكمنةىةوك": {
+    "name": "طكمنةىةوك",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "cop": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783026174418
+      },
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783026189383
+      }
+    ]
+  },
+  "ظزوةى": {
+    "name": "ظزوةى",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "villager": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783029150288
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783029157819
+      }
+    ]
+  },
+  "خحغخها": {
+    "name": "خحغخها",
+    "totalGames": 3,
+    "totalWins": 1,
+    "totalKills": 0,
+    "totalSurvived": 3,
+    "score": 265,
+    "achievements": [
+      "first_blood",
+      "fast_win"
+    ],
+    "consecutiveWins": 0,
+    "bestWinStreak": 1,
+    "roleStats": {
+      "doctor": {
+        "games": 1,
+        "wins": 1
+      },
+      "villager": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "doctor",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783030006175
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783030201122
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783030453718
+      }
+    ]
+  },
+  "قااافق": {
+    "name": "قااافق",
+    "totalGames": 1,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 1,
+    "score": 205,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "villager": {
+        "games": 1,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783072491992
+      }
+    ]
+  },
+  "طكمنتال": {
+    "name": "طكمنتال",
+    "totalGames": 2,
+    "totalWins": 2,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 110,
+    "achievements": [
+      "first_blood",
+      "fast_win"
+    ],
+    "consecutiveWins": 2,
+    "bestWinStreak": 2,
+    "roleStats": {
+      "cop": {
+        "games": 2,
+        "wins": 2
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783072859356
+      },
+      {
+        "winner": "town",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783072867226
+      }
+    ]
+  },
+  "كطمةنمى": {
+    "name": "كطمةنمى",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "doctor": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783075817580
+      },
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783075829081
+      }
+    ]
+  },
+  "بلىا": {
+    "name": "بلىا",
+    "totalGames": 1,
+    "totalWins": 1,
+    "totalKills": 0,
+    "totalSurvived": 1,
+    "score": 255,
+    "achievements": [
+      "first_blood",
+      "perfect_game"
+    ],
+    "consecutiveWins": 1,
+    "bestWinStreak": 1,
+    "roleStats": {
+      "mafia": {
+        "games": 1,
+        "wins": 1
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": true,
+        "dayCount": 10,
+        "startedAt": 1783084173831
+      }
+    ]
+  },
+  "زكومنة": {
+    "name": "زكومنة",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "doctor": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783087046753
+      },
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783087053922
+      }
+    ]
+  },
+  "lklj": {
+    "name": "lklj",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "villager": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783089038493
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783089041901
+      }
+    ]
+  },
+  "ايلالب": {
+    "name": "ايلالب",
+    "totalGames": 1,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 1,
+    "score": 205,
+    "achievements": [],
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "villager": {
+        "games": 1,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783105588652
+      }
+    ]
   }
 }

@@ -7,6 +7,8 @@
   "nav": {
     "home": "Home",
     "leaderboard": "Leaderboard",
+    "profile": "Profile",
+    "friends": "Friends",
     "tutorial": "How to Play",
     "language": "Language"
   },
@@ -270,7 +272,9 @@
     "noGamesPlayed": "No games played yet",
     "day": "Day {count}",
     "won": "Won",
-    "lost": "Lost"
+    "lost": "Lost",
+    "elo": "ELO",
+    "level": "Level"
   },
   "leaderboard": {
     "title": "Leaderboard",
@@ -281,6 +285,8 @@
     "wins": "Wins",
     "games": "Games",
     "kills": "Kills",
+    "elo": "ELO",
+    "level": "Level",
     "noGamesPlayed": "No games played yet",
     "noStatsDesc": "Complete a game to see stats here",
     "pts": "pts",
@@ -400,11 +406,42 @@
     "cancel": "Cancel",
     "cancelling": "Cancelling..."
   },
-  "common": {
-    "connected": "Connected",
-    "disconnected": "Disconnected",
-    "room": "Room",
-    "back": "Back",
-    "loading": "Loading..."
+  "friends": {
+    "title": "Friends",
+    "total": "friends",
+    "addFriend": "Add Friend",
+    "searchPlaceholder": "Search by player name...",
+    "noResults": "No players found",
+    "add": "Add Friend",
+    "online": "Online",
+    "offline": "Offline",
+    "inGame": "In Game",
+    "pendingRequests": "Friend Requests",
+    "accept": "Accept",
+    "reject": "Reject",
+    "invite": "Invite",
+    "noFriends": "No friends yet",
+    "noFriendsDesc": "Add friends to play together!",
+    "back": "Back"
+  },
+  "auth": {
+    "logout": "Logout"
+  },
+  "party": {
+    "title": "Party",
+    "create": "Create Party",
+    "leader": "Leader",
+    "invitedYou": "invited you to a party",
+    "startSearch": "Start Search",
+    "cancelSearch": "Cancel",
+    "ready": "Ready",
+    "notReady": "Not Ready"
+  },
+  "errors": {
+    "createRoom": "Failed to create room",
+    "joinRoom": "Failed to join room",
+    "matchmaking": "Failed to join matchmaking",
+    "generic": "Something went wrong"
   }
 }
+

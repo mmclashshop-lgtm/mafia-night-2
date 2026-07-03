@@ -8,6 +8,8 @@ export interface LeaderboardEntry {
   score: number;
   rank: string;
   avatar?: string;
+  elo: number;
+  level: number;
 }
 
 export interface TotalStats {

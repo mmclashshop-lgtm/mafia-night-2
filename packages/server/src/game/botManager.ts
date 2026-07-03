@@ -304,10 +304,10 @@ export function botDecideVote(
   return decideVote(state, playerId, difficulty);
 }
 
-export function botRecordVote(playerId: PlayerId, voterId: PlayerId, targetId: PlayerId): void {
-  const memory = getMemory(voterId);
-  if (memory.votedForMe.includes(playerId)) return;
-  if (targetId === playerId) {
+export function botRecordVote(botId: PlayerId, voterId: PlayerId, targetId: PlayerId): void {
+  const memory = getMemory(botId);
+  if (memory.votedForMe.includes(voterId)) return;
+  if (targetId === botId) {
     memory.votedForMe.push(voterId);
   }
 }

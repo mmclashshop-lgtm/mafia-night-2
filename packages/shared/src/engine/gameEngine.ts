@@ -1,4 +1,4 @@
-import { GameState, Phase, GameEvent, Player } from '../types/game';
+import { GameState, Phase, GameEvent, Player, DEFAULT_GAME_SETTINGS } from '../types/game';
 
 export function createInitialState(id: string, roomCode: string): GameState {
   return {
@@ -11,19 +11,7 @@ export function createInitialState(id: string, roomCode: string): GameState {
     day: 0,
     winner: null,
     history: [],
-    settings: {
-      minPlayers: 4,
-      maxPlayers: 12,
-      nightDuration: 30,
-      dayDuration: 60,
-      votingDuration: 30,
-      roleDistribution: {},
-      allowSpectators: true,
-      enableVoiceChat: true,
-      enableTextChat: true,
-      enableMafiaChat: true,
-      rolePreset: 'classic',
-    },
+    settings: { ...DEFAULT_GAME_SETTINGS },
     votes: [],
     eliminated: [],
     rolesAssigned: false,
@@ -63,9 +51,6 @@ export function getPlayerById(state: GameState, id: string): Player | undefined 
 }
 
 export function canPhaseTransition(from: Phase, to: Phase): boolean {
-  const order: Phase[] = ['lobby', 'night', 'day', 'voting', 'ended'];
-  const fromIdx = order.indexOf(from);
-  const toIdx = order.indexOf(to);
   if (from === 'lobby' && to === 'night') return true;
   if (from === 'night' && to === 'day') return true;
   if (from === 'day' && to === 'voting') return true;

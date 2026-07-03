@@ -25,16 +25,33 @@ const DISTRIBUTIONS: Record<string, Distribution> = {
   advanced_12: { mafia: 2, godfather: 1, doctor: 1, cop: 1, vigilante: 1, serial_killer: 1, witch: 1, jester: 1, spy: 1, mayor: 1, villager: 1 },
 
   chaos_8: { mafia: 1, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, lovers: 2 },
-  chaos_10: { mafia: 2, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, spy: 1, sniper: 1, lovers: 2 },
+  chaos_9: { mafia: 1, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, spy: 1, lovers: 2 },
+  chaos_10: { mafia: 2, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, spy: 1, lovers: 2 },
+  chaos_11: { mafia: 2, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, spy: 1, sniper: 1, lovers: 2 },
+  chaos_12: { mafia: 2, godfather: 1, serial_killer: 1, witch: 1, jester: 1, vigilante: 1, spy: 1, sniper: 1, medic: 1, lovers: 2 },
 };
 
-function shuffleArray<T>(arr: T[]): T[] {
+function shuffleArray<T>(arr: T[], seed?: string): T[] {
   const shuffled = [...arr];
+  let rng = seed ? seededRandom(seed) : Math.random;
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(rng() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
   }
   return shuffled;
+}
+
+function seededRandom(seed: string): () => number {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & 0x7fffffff;
+  }
+  return () => {
+    hash = (hash * 1103515245 + 12345) & 0x7fffffff;
+    return hash / 0x7fffffff;
+  };
 }
 
 export function getDistribution(playerCount: number, preset = 'classic'): Distribution | null {
@@ -54,7 +71,7 @@ export function assignRoles(state: GameState, preset = 'classic'): GameState {
     }
   }
 
-  const shuffledRoles = shuffleArray(rolePool);
+  const shuffledRoles = shuffleArray(rolePool, state.id);
 
   const updatedPlayers = state.players.map((player, index) => {
     const roleId = shuffledRoles[index];
@@ -72,7 +89,7 @@ export function assignRoles(state: GameState, preset = 'classic'): GameState {
   const loverPlayers = updatedPlayers.filter(p => p.role?.id === 'lovers');
   let loverPair: [PlayerId, PlayerId] | null = null;
   if (loverPlayers.length >= 2) {
-    const shuffled = shuffleArray(loverPlayers);
+    const shuffled = shuffleArray(loverPlayers, state.id);
     loverPair = [shuffled[0]!.id, shuffled[1]!.id] as [PlayerId, PlayerId];
   }
 

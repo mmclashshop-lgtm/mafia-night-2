@@ -19,23 +19,24 @@ export function useSound() {
       if (phase === 'night') {
         sound.nightStart();
       } else if (phase === 'day') {
-        sound.dayStart();
+        if (prev === 'night') sound.nightEnd();
+        setTimeout(() => sound.dayStart(), 600);
       } else if (phase === 'voting') {
-        sound.phaseChange();
+        if (prev === 'night') sound.nightEnd();
+        setTimeout(() => sound.phaseChange(), 600);
       } else if (phase === 'ended') {
-        if (gameState.winner === 'mafia') {
-          sound.mafiaWin();
-        } else if (gameState.winner === 'neutral') {
-          sound.jesterWin();
-        } else {
-          sound.townWin();
-        }
-        sound.gameEnd();
+        if (prev === 'night') sound.nightEnd();
+        setTimeout(() => {
+          if (gameState.winner === 'mafia') {
+            sound.mafiaWin();
+          } else if (gameState.winner === 'neutral') {
+            sound.jesterWin();
+          } else {
+            sound.townWin();
+          }
+          setTimeout(() => sound.gameEnd(), 1500);
+        }, 600);
       }
-    }
-
-    if (prev === 'night' && phase !== 'night') {
-      sound.nightEnd();
     }
 
     prevPhase.current = phase;
@@ -50,8 +51,12 @@ export function useSound() {
   useEffect(() => {
     const socket = getSocket();
 
-    socket.on('player:died', () => {
-      sound.playerDied();
+    socket.on('player:died', (data: { cause?: string }) => {
+      if (data.cause === 'lynch') {
+        sound.lynch();
+      } else {
+        sound.playerDied();
+      }
     });
 
     socket.on('vote:cast', () => {
@@ -63,9 +68,7 @@ export function useSound() {
     });
 
     socket.on('game:event', (event: { type: string }) => {
-      if (event.type === 'lynch') {
-        sound.lynch();
-      } else if (event.type === 'role_reveal') {
+      if (event.type === 'role_reveal') {
         sound.roleReveal();
       } else if (event.type === 'lovers_death') {
         sound.loversDeath();

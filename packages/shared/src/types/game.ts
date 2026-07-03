@@ -55,12 +55,16 @@ export interface Player {
   ready: boolean;
   joinedAt: number;
   lastActiveAt: number;
+  actionUses: number;
+  reconnectToken?: string;
 }
 
 export interface Vote {
   from: PlayerId;
   to: PlayerId;
 }
+
+export type GameMode = 'casual' | 'competitive';
 
 export interface GameSettings {
   minPlayers: number;
@@ -74,6 +78,7 @@ export interface GameSettings {
   enableTextChat: boolean;
   enableMafiaChat: boolean;
   rolePreset: 'classic' | 'advanced' | 'chaos';
+  mode?: GameMode;
 }
 
 export interface GameEvent {
@@ -120,4 +125,5 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
   enableTextChat: true,
   enableMafiaChat: true,
   rolePreset: 'classic',
+  mode: 'casual',
 };

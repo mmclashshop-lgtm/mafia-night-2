@@ -25,7 +25,7 @@ export function useVoiceChat() {
 
   function getPlayerName(userId: string): string {
     if (!gameState) return userId.slice(0, 6);
-    for (const [, socketId] of Object.entries(getSocket().data ?? {})) {
+    for (const [, socketId] of Object.entries((getSocket() as any).data ?? {})) {
       // Simplified: use socket ID as fallback, try to find by player
     }
     const assignedPlayer = gameState.players.find(

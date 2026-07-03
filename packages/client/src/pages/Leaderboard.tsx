@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLeaderboard, getTotalStats, type LeaderboardEntry, type TotalStats } from '../lib/api';
-import { Trophy, ArrowLeft, TrendingUp, Users, Activity, Crown } from 'lucide-react';
+import { Trophy, ArrowLeft, TrendingUp, Users, Activity, Crown, Shield, Star } from 'lucide-react';
 import { TiltCard } from '../components/common/TiltCard';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
 import { EmptyState } from '../components/common/EmptyState';
@@ -25,12 +25,14 @@ const RANK_COLORS: Record<string, string> = {
   'Mafia Lord': 'text-red-400',
 };
 
+type SortKey = 'score' | 'winRate' | 'wins' | 'games' | 'kills' | 'elo' | 'level';
+
 export function Leaderboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [stats, setStats] = useState<TotalStats | null>(null);
-  const [sortBy, setSortBy] = useState<'score' | 'winRate' | 'wins' | 'games' | 'kills'>('score');
+  const [sortBy, setSortBy] = useState<SortKey>('score');
 
   useEffect(() => {
     getLeaderboard().then(setEntries).catch(() => {});
@@ -42,15 +44,19 @@ export function Leaderboard() {
     if (sortBy === 'wins') return b.wins - a.wins;
     if (sortBy === 'games') return b.games - a.games;
     if (sortBy === 'kills') return b.kills - a.kills;
+    if (sortBy === 'elo') return (b.elo ?? 1000) - (a.elo ?? 1000);
+    if (sortBy === 'level') return (b.level ?? 1) - (a.level ?? 1);
     return b.winRate - a.winRate || b.games - a.games;
   });
 
   const sortButtons = [
-    { key: 'score' as const, label: t('leaderboard.rank'), icon: Crown },
-    { key: 'winRate' as const, label: t('leaderboard.winRate'), icon: TrendingUp },
-    { key: 'wins' as const, label: t('leaderboard.wins'), icon: Trophy },
-    { key: 'games' as const, label: t('leaderboard.games'), icon: Users },
-    { key: 'kills' as const, label: t('leaderboard.kills') },
+    { key: 'score' as SortKey, label: t('leaderboard.rank'), icon: Crown },
+    { key: 'elo' as SortKey, label: t('leaderboard.elo'), icon: Shield },
+    { key: 'winRate' as SortKey, label: t('leaderboard.winRate'), icon: TrendingUp },
+    { key: 'wins' as SortKey, label: t('leaderboard.wins'), icon: Trophy },
+    { key: 'level' as SortKey, label: t('leaderboard.level'), icon: Star },
+    { key: 'games' as SortKey, label: t('leaderboard.games'), icon: Users },
+    { key: 'kills' as SortKey, label: t('leaderboard.kills') },
   ];
 
   return (
@@ -107,11 +113,25 @@ export function Leaderboard() {
                 <p className="text-xs text-gray-500">{entry.rank} · {entry.score} {t('leaderboard.pts')}</p>
               </div>
 
-              <div className="hidden sm:block text-center min-w-[80px]">
-                <p className="text-sm font-medium text-white">{entry.winRate}%</p>
-                <p className="text-xs text-gray-500">
-                  {entry.wins}W / {entry.games - entry.wins}L
-                </p>
+              <div className="hidden sm:flex items-center gap-4 text-center">
+                {sortBy === 'elo' && (
+                  <div className="min-w-[70px]">
+                    <p className="text-sm font-medium text-yellow-400">{entry.elo ?? 1000}</p>
+                    <p className="text-xs text-gray-500">{t('leaderboard.elo')}</p>
+                  </div>
+                )}
+                {sortBy === 'level' && (
+                  <div className="min-w-[50px]">
+                    <p className="text-sm font-medium text-blue-400">{entry.level ?? 1}</p>
+                    <p className="text-xs text-gray-500">{t('leaderboard.level')}</p>
+                  </div>
+                )}
+                <div className="min-w-[80px]">
+                  <p className="text-sm font-medium text-white">{entry.winRate}%</p>
+                  <p className="text-xs text-gray-500">
+                    {entry.wins}W / {entry.games - entry.wins}L
+                  </p>
+                </div>
               </div>
 
               <div className="text-right text-sm min-w-[80px]">

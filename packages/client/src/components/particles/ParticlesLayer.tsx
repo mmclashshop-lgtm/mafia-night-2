@@ -89,15 +89,15 @@ export const ParticlesLayer = memo(function ParticlesLayer() {
 
     let config: ParticleConfig;
     if (isHome) {
-      config = SCENE_CONFIGS.home;
+      config = SCENE_CONFIGS['home']!;
     } else if (isGamePage) {
-      if (phase === 'ended') config = SCENE_CONFIGS.win;
-      else if (phase === 'night') config = SCENE_CONFIGS.night;
-      else if (phase === 'day') config = SCENE_CONFIGS.day;
-      else if (phase === 'voting') config = SCENE_CONFIGS.voting;
-      else config = SCENE_CONFIGS.home;
+      if (phase === 'ended') config = SCENE_CONFIGS['win']!;
+      else if (phase === 'night') config = SCENE_CONFIGS['night']!;
+      else if (phase === 'day') config = SCENE_CONFIGS['day']!;
+      else if (phase === 'voting') config = SCENE_CONFIGS['voting']!;
+      else config = SCENE_CONFIGS['home']!;
     } else {
-      config = SCENE_CONFIGS.home;
+      config = SCENE_CONFIGS['home']!;
     }
 
     const canvas = canvasRef.current;

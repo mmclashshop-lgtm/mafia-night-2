@@ -442,5 +442,1119 @@
         "daysSurvived": 0
       }
     ]
+  },
+  {
+    "id": "game_mr3znisisu7b2jz",
+    "roomCode": "XMZ6AK",
+    "startedAt": 1783026174314,
+    "endedAt": 1783026174319,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 5,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "طكمنةىةوك",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Jack",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Bob",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr3znisisu7b2jz",
+    "roomCode": "XMZ6AK",
+    "startedAt": 1783026174314,
+    "endedAt": 1783026189370,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 15056,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "طكمنةىةوك",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Jack",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Bob",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr41g9pc0x1svxp",
+    "roomCode": "NUDBLY",
+    "startedAt": 1783029134746,
+    "endedAt": 1783029150270,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 15524,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "ظزوةى",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Diana",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Paul",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr41g9pc0x1svxp",
+    "roomCode": "NUDBLY",
+    "startedAt": 1783029134746,
+    "endedAt": 1783029157811,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 23065,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "ظزوةى",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Diana",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Paul",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr41vumr1ej4n13",
+    "roomCode": "ED9P9C",
+    "startedAt": 1783029981073,
+    "endedAt": 1783030006063,
+    "winner": "town",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 24991,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "خحغخها",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Rosa",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Nick",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr4217zbxteyfp0",
+    "roomCode": "ED9P9C",
+    "startedAt": 1783030201050,
+    "endedAt": 1783030201070,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 12,
+    "duration": 20,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "خحغخها",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Rosa",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Nick",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Xander",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Diana",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Leo",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Tina",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Frank",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Vince",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Charlie",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Kara",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr4217zbxteyfp0",
+    "roomCode": "ED9P9C",
+    "startedAt": 1783030201050,
+    "endedAt": 1783030453693,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 12,
+    "duration": 252643,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "خحغخها",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Rosa",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Nick",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Xander",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Diana",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Leo",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Tina",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Frank",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Vince",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Charlie",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Kara",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr4r8bfkgguzvo5",
+    "roomCode": "J54JFH",
+    "startedAt": 1783072491916,
+    "endedAt": 1783072491924,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 9,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "قااافق",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Jack",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Diana",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Ivy",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr4rh1qcbzkbh3a",
+    "roomCode": "S8LKGM",
+    "startedAt": 1783072838789,
+    "endedAt": 1783072859292,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 20504,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "طكمنتال",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Ivy",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr4rh1qcbzkbh3a",
+    "roomCode": "S8LKGM",
+    "startedAt": 1783072838789,
+    "endedAt": 1783072867216,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 28427,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "طكمنتال",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Ivy",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr4t8k4maxy6pv8",
+    "roomCode": "LLKGAC",
+    "startedAt": 1783075810464,
+    "endedAt": 1783075817555,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 7092,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "كطمةنمى",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Leo",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Quinn",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr4t8k4maxy6pv8",
+    "roomCode": "LLKGAC",
+    "startedAt": 1783075810464,
+    "endedAt": 1783075829068,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 18604,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "كطمةنمى",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Leo",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Quinn",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr4xkp8yjyde6en",
+    "roomCode": "PQANUT",
+    "startedAt": 1783084160053,
+    "endedAt": 1783084173802,
+    "winner": "mafia",
+    "dayCount": 10,
+    "playerCount": 4,
+    "duration": 13749,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "بلىا",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 9
+      },
+      {
+        "name": "Ivy",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 9
+      },
+      {
+        "name": "Eve",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 9
+      },
+      {
+        "name": "Diana",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 9
+      }
+    ]
+  },
+  {
+    "id": "game_mr4zxeg6e519g38",
+    "roomCode": "UN544L",
+    "startedAt": 1783087038850,
+    "endedAt": 1783087046708,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 7859,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "زكومنة",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Alice",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr4zxeg6e519g38",
+    "roomCode": "UN544L",
+    "startedAt": 1783087038850,
+    "endedAt": 1783087053910,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 15060,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "زكومنة",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Alice",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr513qvpaxr7bb7",
+    "roomCode": "N7GJ3J",
+    "startedAt": 1783089014512,
+    "endedAt": 1783089038394,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 23882,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "lklj",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Grace",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Paul",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sophia",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr513qvpaxr7bb7",
+    "roomCode": "N7GJ3J",
+    "startedAt": 1783089014512,
+    "endedAt": 1783089041890,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 27378,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "lklj",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Grace",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Paul",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sophia",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr5axpxpbuvivnk",
+    "roomCode": "AUFNMT",
+    "startedAt": 1783105588639,
+    "endedAt": 1783105588640,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 1,
+    "rolePreset": "classic",
+    "players": [
+      {
+        "name": "ايلالب",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Alice",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Grace",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Diana",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
   }
 ]

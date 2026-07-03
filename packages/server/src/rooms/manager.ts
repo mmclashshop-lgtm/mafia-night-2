@@ -8,12 +8,17 @@ import {
   canPhaseTransition,
   generateId,
   getAlivePlayers,
+  getPlayerTargets,
   GameState,
+  GameEvent,
   Player,
   PlayerId,
   Phase,
   NightAction,
+  Token,
 } from '@mafia/shared';
+import { randomUUID } from 'crypto';
+import { generateToken, storeToken } from '../auth/token';
 import { Server, Socket } from 'socket.io';
 import {
   getBotNames,
@@ -23,9 +28,9 @@ import {
   botGetNightActionDelay,
   botGetVoteDelay,
 } from '../game/botManager';
-import { saveGame, getOrCreatePlayerProfile, savePlayerProfile } from '../db';
+import { saveGame, getOrCreatePlayerProfile, savePlayerProfile, getPlayerProfileByUserId } from '../db';
 import { checkNewAchievements, checkProgressiveAchievements } from '../game/achievements';
-import { calculateScore, getRank, type AchievementId } from '@mafia/shared';
+import { calculateGameXP, calculateElo, calculateGameElo, getLevelProgress, calculateScore, getLevel, getRank, DEFAULT_ELO, type AchievementId, getAverageElo, pickDailyQuests, DAILY_QUESTS_POOL } from '@mafia/shared';
 
 const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
@@ -46,7 +51,9 @@ export class RoomManager {
   private playerSockets: Map<PlayerId, string> = new Map();
   private socketToPlayer: Map<string, PlayerId> = new Map();
   private disconnectedPlayers: Map<PlayerId, { name: string; role: Player['role']; team: string }> = new Map();
+  private disconnectTimers: Map<PlayerId, ReturnType<typeof setTimeout>> = new Map();
   private lastActivity: number = Date.now();
+  private gameStartedAt: number | null = null;
 
   constructor(io: Server, code?: string) {
     this.io = io;
@@ -60,6 +67,10 @@ export class RoomManager {
 
   get stateSnapshot(): GameState {
     return structuredClone(this.state);
+  }
+
+  getStateForSocket(socketId: string): GameState {
+    return this.getStateForPlayer(this.socketToPlayer.get(socketId));
   }
 
   get playerCount(): number {
@@ -85,8 +96,80 @@ export class RoomManager {
     }
   }
 
+  private getHostPlayerId(): PlayerId | undefined {
+    return this.state.players.find(p => !p.isBot)?.id ?? this.state.players[0]?.id;
+  }
+
+  isHostSocket(socketId: string): boolean {
+    const playerId = this.socketToPlayer.get(socketId);
+    return !!playerId && playerId === this.getHostPlayerId();
+  }
+
+  private canRevealAllRoles(viewerId?: PlayerId): boolean {
+    if (this.state.phase === 'ended') return true;
+    const viewer = viewerId ? this.state.players.find(p => p.id === viewerId) : null;
+    return !!viewer && !viewer.alive;
+  }
+
+  private sanitizeEventForPlayer(event: GameEvent, viewerId?: PlayerId, revealAll = false): GameEvent | null {
+    if (revealAll) return event;
+    if (!event.data || typeof event.data !== 'object') return event;
+
+    const data = event.data as Record<string, unknown>;
+    if (event.type === 'investigate') {
+      return data['sourceId'] === viewerId ? event : null;
+    }
+    if (event.type === 'heal') {
+      return data['sourceId'] === viewerId || data['targetId'] === viewerId ? event : null;
+    }
+    if (event.type === 'kill') {
+      return {
+        ...event,
+        data: {
+          targetId: data['targetId'],
+          cause: data['cause'],
+          killerId: null,
+          actionType: null,
+        },
+      };
+    }
+    return event;
+  }
+
+  private getStateForPlayer(playerId?: PlayerId): GameState {
+    const snapshot = structuredClone(this.state) as GameState;
+    const viewer = playerId ? this.state.players.find(p => p.id === playerId) : null;
+    const revealAll = this.canRevealAllRoles(playerId);
+    const viewerIsMafia = viewer?.team === 'mafia';
+    const viewerIsWitch = viewer?.role?.id === 'witch';
+    const viewerIsLover = !!playerId && !!this.state.loverPair?.includes(playerId);
+
+    snapshot.players = snapshot.players.map(p => {
+      const canSeePlayer = revealAll || p.id === playerId;
+      const base = canSeePlayer ? p : {
+        ...p,
+        role: null,
+        team: 'town' as const,
+        nightAction: null,
+      };
+      const { reconnectToken, ...safe } = base;
+      return safe;
+    });
+
+    snapshot.mafiaIds = revealAll || viewerIsMafia ? snapshot.mafiaIds : [];
+    snapshot.witchState = revealAll || viewerIsWitch ? snapshot.witchState : null;
+    snapshot.loverPair = revealAll || viewerIsLover ? snapshot.loverPair : null;
+    snapshot.history = snapshot.history
+      .map(event => this.sanitizeEventForPlayer(event, playerId, revealAll))
+      .filter((event): event is GameEvent => event !== null);
+
+    return snapshot;
+  }
+
   private broadcast() {
-    this.io.to(this.roomCode).emit('state:sync', { state: this.state });
+    for (const [playerId, socketId] of this.playerSockets) {
+      this.io.to(socketId).emit('state:sync', { state: this.getStateForPlayer(playerId) });
+    }
     this.lastActivity = Date.now();
   }
 
@@ -103,6 +186,9 @@ export class RoomManager {
 
     const now = Date.now();
     let durationMs = 30000;
+    if (prevPhase === 'lobby' && phase === 'night') {
+      this.gameStartedAt = now;
+    }
 
     switch (phase) {
       case 'night':
@@ -157,6 +243,7 @@ export class RoomManager {
 
     this.clearTimer();
     this.disconnectedPlayers.clear();
+    this.gameStartedAt = null;
     this.state = {
       ...createInitialState(generateId('game_'), this.roomCode),
       players,
@@ -213,6 +300,7 @@ export class RoomManager {
       ready: true,
       joinedAt: Date.now(),
       lastActiveAt: Date.now(),
+      actionUses: 0,
     }));
 
     this.state = {
@@ -226,9 +314,64 @@ export class RoomManager {
     this.broadcast();
   }
 
+  private startDisconnectTimer(playerId: PlayerId): void {
+    const existing = this.disconnectTimers.get(playerId);
+    if (existing) clearTimeout(existing);
+    const timer = setTimeout(() => {
+      this.disconnectTimers.delete(playerId);
+      const player = this.state.players.find(p => p.id === playerId);
+      if (!player?.disconnected) return;
+      // Replace disconnected player with a bot
+      this.state = {
+        ...this.state,
+        players: this.state.players.map(p =>
+          p.id === playerId
+            ? { ...p, name: p.name + ' (bot)', isBot: true, disconnected: false }
+            : p
+        ),
+      };
+      this.playerSockets.delete(playerId);
+      this.io.to(this.roomCode).emit('player:replaced', { playerId, newName: player.name + ' (bot)' });
+      this.broadcast();
+      this.scheduleBotNightActions();
+      if (this.state.phase === 'night') {
+        const { required, submitted } = this.getNightActionStatus();
+        if (required > 0 && submitted >= required) {
+          this.clearTimer();
+          this.transitionTo('day');
+        }
+      }
+    }, 120000); // 2 minutes
+    this.disconnectTimers.set(playerId, timer);
+  }
+
+  private cancelDisconnectTimer(playerId: PlayerId): void {
+    const timer = this.disconnectTimers.get(playerId);
+    if (timer) {
+      clearTimeout(timer);
+      this.disconnectTimers.delete(playerId);
+    }
+  }
+
+  private playerNeedsNightAction(player: Player): boolean {
+    if (!player.alive || player.disconnected || !player.role?.nightAction) return false;
+    if (player.role.id === 'witch') {
+      return !this.state.witchState?.savePotionUsed || !this.state.witchState?.killPotionUsed;
+    }
+    return true;
+  }
+
+  private getNightActionStatus(): { required: number; submitted: number } {
+    const requiredPlayers = this.state.players.filter(p => this.playerNeedsNightAction(p));
+    return {
+      required: requiredPlayers.length,
+      submitted: requiredPlayers.filter(p => !!p.nightAction).length,
+    };
+  }
+
   private scheduleBotNightActions() {
     const difficulty = getBotDifficulty();
-    const aliveBots = this.state.players.filter(p => p.alive && p.isBot && p.role?.nightAction);
+    const aliveBots = this.state.players.filter(p => p.isBot && this.playerNeedsNightAction(p));
 
     for (const bot of aliveBots) {
       const delay = botGetNightActionDelay(difficulty);
@@ -269,6 +412,10 @@ export class RoomManager {
   private submitNightActionForBot(botId: PlayerId, targetId: PlayerId, actionType: string): void {
     const player = this.state.players.find(p => p.id === botId);
     if (!player?.alive || this.state.phase !== 'night') return;
+    if (!this.playerNeedsNightAction(player)) return;
+    if (actionType !== player.role?.id && !(player.role?.id === 'witch' && ['witch_save', 'witch_kill'].includes(actionType))) return;
+    const validTargets = getPlayerTargets(this.state, botId);
+    if (!validTargets.some(p => p.id === targetId)) return;
 
     const action: NightAction = {
       type: actionType as NightAction['type'],
@@ -283,12 +430,9 @@ export class RoomManager {
       ),
     };
 
-    const aliveCount = getAlivePlayers(this.state).filter(p => !p.disconnected).length;
-    const submittedCount = this.state.players.filter(
-      p => p.alive && !p.disconnected && p.role?.nightAction && p.nightAction
-    ).length;
+    const { required, submitted } = this.getNightActionStatus();
 
-    if (submittedCount >= aliveCount) {
+    if (required > 0 && submitted >= required) {
       this.clearTimer();
       this.transitionTo('day');
     } else {
@@ -380,7 +524,8 @@ export class RoomManager {
     };
 
     const durationMs = (this.state.settings.nightDuration ?? 30) * 1000;
-    this.setPhaseTimer(durationMs, 'day');
+    const { required } = this.getNightActionStatus();
+    this.setPhaseTimer(required === 0 ? 1000 : durationMs, 'day');
 
     // Schedule bot night actions
     const hasBots = this.state.players.some(p => p.isBot && p.alive);
@@ -390,12 +535,25 @@ export class RoomManager {
   }
 
   private handleDay() {
-    const { state, killed } = resolveNightActions(this.state);
+    const { state, killed, investigations } = resolveNightActions(this.state);
     this.state = state;
+
+    for (const investigation of investigations) {
+      const socketId = this.getSocketByPlayerId(investigation.sourceId);
+      const target = this.state.players.find(p => p.id === investigation.targetId);
+      if (socketId) {
+        this.io.to(socketId).emit('game:special', {
+          type: 'investigation_result',
+          target: target ? { id: target.id, name: target.name } : { id: investigation.targetId, name: 'Unknown' },
+          result: investigation.result,
+        });
+      }
+    }
 
     for (const player of killed) {
       this.io.to(this.roomCode).emit('player:died', {
         playerId: player.id,
+        name: player.name,
         role: player.role?.id ?? 'unknown',
         cause: 'night',
       });
@@ -425,7 +583,10 @@ export class RoomManager {
     };
 
     const durationMs = (this.state.settings.votingDuration ?? 30) * 1000;
-    this.setPhaseTimer(durationMs, 'night');
+    this.clearTimer();
+    this.phaseTimer = setTimeout(() => {
+      this.resolveVotingPhase();
+    }, durationMs);
 
     // Schedule bot votes
     const hasBots = this.state.players.some(p => p.isBot && p.alive);
@@ -478,13 +639,25 @@ export class RoomManager {
         playerCount: this.state.players.length,
         duration: Date.now() - this.state.phaseStartedAt,
         rolePreset: this.rolePreset,
+        mode: this.state.settings.mode ?? 'casual',
         players: storedPlayers,
       });
+
+      // Collect ELOs for non-bot players
+      const playerElos = new Map<string, number>();
+      for (const player of this.state.players) {
+        if (player.isBot) continue;
+        const profile = getOrCreatePlayerProfile(player.name);
+        const mode = this.state.settings.mode ?? 'casual';
+        playerElos.set(player.id, profile.elo[mode] ?? DEFAULT_ELO);
+      }
 
       // Update profiles & check achievements
       for (const player of this.state.players) {
         if (player.isBot) continue;
         const profile = getOrCreatePlayerProfile(player.name);
+        const mode = this.state.settings.mode ?? 'casual';
+
         profile.totalGames++;
         if (player.team === winner) {
           profile.totalWins++;
@@ -511,7 +684,7 @@ export class RoomManager {
           team: player.team,
           survived: player.alive,
           dayCount: this.state.day,
-          startedAt: Date.now(),
+          startedAt: this.gameStartedAt ?? Date.now(),
         };
         profile.recentGames.push(newGameEntry);
         if (profile.recentGames.length > 20) {
@@ -526,20 +699,22 @@ export class RoomManager {
         );
 
         // Game-specific achievements
-        const gameAchievements = checkNewAchievements(
-          {
-            player: stored!,
-            allPlayers: storedPlayers,
-            winner,
-            dayCount: this.state.day,
-            playerTeamAliveCount: storedPlayers.filter(
-              (sp) => sp.team === player.team && sp.alive
-            ).length,
-            witchSaved,
-            witchKilled,
-          },
-          profile.achievements as AchievementId[]
-        );
+        const gameAchievements = stored
+          ? checkNewAchievements(
+              {
+                player: stored,
+                allPlayers: storedPlayers,
+                winner,
+                dayCount: this.state.day,
+                playerTeamAliveCount: storedPlayers.filter(
+                  (sp) => sp.team === player.team && sp.alive
+                ).length,
+                witchSaved,
+                witchKilled,
+              },
+              profile.achievements as AchievementId[]
+            )
+          : [];
 
         const allNew = [...progressive, ...gameAchievements];
         if (allNew.length > 0) {
@@ -556,7 +731,72 @@ export class RoomManager {
             : 0,
         });
 
+        // ELO calculation
+        const opponentElos: number[] = [];
+        for (const p of this.state.players) {
+          if (p.team !== player.team && !p.isBot) {
+            const elo = playerElos.get(p.id) ?? DEFAULT_ELO;
+            opponentElos.push(elo);
+          }
+        }
+        const playerElo = playerElos.get(player.id) ?? DEFAULT_ELO;
+        const { newElo, delta } = calculateGameElo(playerElo, opponentElos, player.team, winner, profile.totalGames);
+        profile.elo = { ...profile.elo, [mode]: newElo };
+
+        // XP calculation
+        const gameXP = calculateGameXP({
+          won: player.team === winner,
+          kills: killCounts.get(player.id) ?? 0,
+          survived: player.alive,
+        });
+        profile.xp += gameXP;
+        const { level: newLevel } = getLevelProgress(profile.xp);
+        profile.level = newLevel;
+
+        // Daily quest tracking
+        const today = new Date().toISOString().slice(0, 10);
+        if (profile.dailyQuestDate !== today) {
+          profile.dailyQuestDate = today;
+          profile.dailyQuests = pickDailyQuests(3).map((q) => ({ id: q.id, current: 0, completed: false }));
+        }
+        const questMap = new Map(DAILY_QUESTS_POOL.map((q) => [q.id, q]));
+        let questBonusXP = 0;
+        for (const questProgress of profile.dailyQuests) {
+          if (questProgress.completed) continue;
+          const questDef = questMap.get(questProgress.id);
+          if (!questDef) continue;
+          if (questDef.type === 'play_games') questProgress.current++;
+          if (questDef.type === 'wins' && player.team === winner) questProgress.current++;
+          if (questDef.type === 'kills') questProgress.current += killCounts.get(player.id) ?? 0;
+          if (questDef.type === 'survive' && player.alive) questProgress.current++;
+          if (questDef.type === 'mafia_win' && player.team === 'mafia' && player.team === winner) questProgress.current++;
+          if (questDef.type === 'town_win' && player.team === 'town' && player.team === winner) questProgress.current++;
+          if (questProgress.current >= questDef.requirement) {
+            questProgress.completed = true;
+            questBonusXP += questDef.reward;
+          }
+        }
+        if (questBonusXP > 0) {
+          profile.xp += questBonusXP;
+          const { level: updatedLevel } = getLevelProgress(profile.xp);
+          profile.level = updatedLevel;
+        }
+
         savePlayerProfile(profile);
+
+        // Send achievements + rewards to player
+        const socketId = this.playerSockets.get(player.id);
+        if (socketId) {
+          const socket = this.io.sockets.sockets.get(socketId);
+          socket?.emit('game:rewards', {
+            xp: gameXP,
+            eloDelta: delta,
+            newElo,
+            newLevel,
+            questBonusXP,
+            totalXP: gameXP + questBonusXP,
+          });
+        }
 
         // Send achievements to player
         if (allNew.length > 0) {
@@ -602,16 +842,31 @@ export class RoomManager {
 
   // --- Player Management ---
 
-  addPlayer(socket: Socket, name: string): { success: boolean; player?: Player; error?: string } {
+  private generateReconnectToken(): string {
+    return randomUUID();
+  }
+
+  addPlayer(socket: Socket, name: string, reconnectToken?: string): { success: boolean; player?: Player; token?: Token; error?: string } {
     // Try reconnection first
     if (this.state.phase !== 'lobby') {
-      const existingPlayer = this.state.players.find(p => p.name === name && p.disconnected);
+      let existingPlayer: Player | undefined;
+
+      if (reconnectToken) {
+        existingPlayer = this.state.players.find(p => p.reconnectToken === reconnectToken && p.disconnected);
+      } else {
+        existingPlayer = this.state.players.find(p => p.name === name && p.disconnected);
+      }
+
       if (existingPlayer) {
+        const sessionToken = generateToken();
+        storeToken(existingPlayer.id, sessionToken);
+
         socket.join(this.roomCode);
         socket.data.roomId = this.roomCode;
         this.playerSockets.set(existingPlayer.id, socket.id);
         this.socketToPlayer.set(socket.id, existingPlayer.id);
         this.disconnectedPlayers.delete(existingPlayer.id);
+        this.cancelDisconnectTimer(existingPlayer.id);
         this.state = {
           ...this.state,
           players: this.state.players.map(p =>
@@ -619,7 +874,7 @@ export class RoomManager {
           ),
         };
         this.broadcast();
-        return { success: true, player: existingPlayer };
+        return { success: true, player: existingPlayer, token: sessionToken };
       }
     }
 
@@ -633,8 +888,12 @@ export class RoomManager {
       return { success: false, error: 'Name already taken' };
     }
 
+    const playerId = generateId('p_') as PlayerId;
+    const token = generateToken();
+    storeToken(playerId, token);
+
     const player: Player = {
-      id: generateId('p_') as PlayerId,
+      id: playerId,
       name,
       avatar: 'dicebear',
       role: null,
@@ -647,6 +906,7 @@ export class RoomManager {
       ready: false,
       joinedAt: Date.now(),
       lastActiveAt: Date.now(),
+      actionUses: 0,
     };
 
     this.state = {
@@ -662,7 +922,7 @@ export class RoomManager {
     this.broadcast();
     this.io.to(this.roomCode).emit('player:joined', { player });
 
-    return { success: true, player };
+    return { success: true, player, token };
   }
 
   removePlayer(socketId: string): void {
@@ -682,7 +942,7 @@ export class RoomManager {
       if (player) {
         this.disconnectedPlayers.set(playerId, {
           name: player.name,
-          role: player.role ? { ...player.role } : null,
+          role: player.role ?? null,
           team: player.team,
         });
       }
@@ -692,6 +952,7 @@ export class RoomManager {
           p.id === playerId ? { ...p, disconnected: true } : p
         ),
       };
+      this.startDisconnectTimer(playerId);
     }
 
     this.io.to(this.roomCode).emit('player:left', { playerId });
@@ -730,6 +991,15 @@ export class RoomManager {
       return { success: false, error: `Waiting for ${unreadyPlayers.length} player(s) to ready up` };
     }
 
+    // Generate reconnect tokens for all players
+    this.state = {
+      ...this.state,
+      players: this.state.players.map(p => ({
+        ...p,
+        reconnectToken: p.isBot ? undefined : this.generateReconnectToken(),
+      })),
+    };
+
     this.transitionTo('night');
     return { success: true };
   }
@@ -748,11 +1018,42 @@ export class RoomManager {
       return { success: false, error: 'You have no night action' };
     }
 
+    // Validate action type matches player's role
+    const validActions: Record<string, string[]> = {
+      mafia: ['mafia'],
+      doctor: ['doctor'],
+      cop: ['cop'],
+      villager: ['villager'],
+      godfather: ['godfather', 'mafia'],
+      serial_killer: ['serial_killer'],
+      mayor: ['mayor'],
+      lovers: ['lovers'],
+      jester: ['jester'],
+      detective: ['detective'],
+      medic: ['medic'],
+      sniper: ['sniper'],
+      vigilante: ['vigilante'],
+      spy: ['spy'],
+      witch: ['witch_save', 'witch_kill'],
+    };
+
+    const roleId = player.role?.id;
+    if (!roleId || !validActions[roleId]) {
+      return { success: false, error: 'Invalid role for night action' };
+    }
+    const allowed = validActions[roleId] ?? [];
+    if (!allowed.includes(actionType)) {
+      return { success: false, error: 'Action type does not match your role' };
+    }
+
+    // Validate target is alive
+    const targetPlayer = this.state.players.find(p => p.id === targetId);
+    if (!targetPlayer || !targetPlayer.alive) {
+      return { success: false, error: 'Invalid target' };
+    }
+
     // Witch can save or kill (two separate action types)
     if (actionType === 'witch_save' || actionType === 'witch_kill') {
-      if (player.role?.id !== 'witch') {
-        return { success: false, error: 'Only the witch can use potions' };
-      }
       if (actionType === 'witch_save' && this.state.witchState?.savePotionUsed) {
         return { success: false, error: 'Save potion already used' };
       }
@@ -774,12 +1075,9 @@ export class RoomManager {
       ),
     };
 
-    const aliveCount = getAlivePlayers(this.state).filter(p => !p.disconnected).length;
-    const submittedCount = this.state.players.filter(
-      p => p.alive && !p.disconnected && p.role?.nightAction && p.nightAction
-    ).length;
+    const { required, submitted } = this.getNightActionStatus();
 
-    if (submittedCount >= aliveCount) {
+    if (required > 0 && submitted >= required) {
       this.clearTimer();
       this.transitionTo('day');
     } else {
@@ -827,17 +1125,19 @@ export class RoomManager {
   }
 
   private resolveVotingPhase() {
+    const prevVotes = [...this.state.votes];
     const { state, eliminated } = resolveVotes(this.state);
     this.state = state;
 
     if (eliminated) {
       this.io.to(this.roomCode).emit('vote:result', {
         eliminated: eliminated.id,
-        votes: [...state.votes],
+        votes: prevVotes,
       });
 
       this.io.to(this.roomCode).emit('player:died', {
         playerId: eliminated.id,
+        name: eliminated.name,
         role: eliminated.role?.id ?? 'unknown',
         cause: 'lynch',
       });
@@ -861,7 +1161,8 @@ export class RoomManager {
     if (!playerId) return;
 
     const player = this.state.players.find(p => p.id === playerId);
-    if (!player || (player.team !== 'mafia' && player.role?.id !== 'godfather')) return;
+    if (!player || !player.alive) return;
+    if (player.team !== 'mafia' && player.role?.id !== 'godfather') return;
 
     const mafiaIds = this.state.mafiaIds ?? this.state.players
       .filter(p => p.team === 'mafia')
@@ -886,6 +1187,10 @@ export class RoomManager {
 
     const player = this.state.players.find(p => p.id === playerId);
     if (!player) return;
+
+    // Phase validation: during night, only dead players can chat publicly
+    // Alive players must use mafia chat or other targeted channels
+    if (this.state.phase === 'night' && player.alive) return;
 
     this.io.to(this.roomCode).emit('chat:message', {
       from: playerId,

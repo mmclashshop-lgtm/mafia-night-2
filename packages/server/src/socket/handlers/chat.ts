@@ -2,10 +2,11 @@ import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
 import { PlayerId } from '@mafia/shared';
 import { roomStore } from '../../rooms/store';
-import { chatMessageSchema } from '@mafia/shared';
+import { chatMessageSchema, voiceSignalSchema } from '@mafia/shared';
+import { withRateLimit } from '../../auth/rateLimitWrapper';
 
 export function registerChatHandlers(io: Server, socket: Socket): void {
-  socket.on('chat:mafia', (data: unknown) => {
+  socket.on('chat:mafia', withRateLimit('chat:mafia', socket, (data: unknown) => {
     const parsed = chatMessageSchema.safeParse(data);
     if (!parsed.success) return;
     const { text } = parsed.data;
@@ -16,9 +17,9 @@ export function registerChatHandlers(io: Server, socket: Socket): void {
         return;
       }
     }
-  });
+  }));
 
-  socket.on('chat:message', (data: unknown) => {
+  socket.on('chat:message', withRateLimit('chat:message', socket, (data: unknown) => {
     const parsed = chatMessageSchema.safeParse(data);
     if (!parsed.success) return;
 
@@ -30,17 +31,21 @@ export function registerChatHandlers(io: Server, socket: Socket): void {
         return;
       }
     }
-  });
+  }));
 
-  socket.on('voice:signal', (data: { to: string; signal: unknown }) => {
+  socket.on('voice:signal', (data: unknown) => {
+    const parsed = voiceSignalSchema.safeParse(data);
+    if (!parsed.success) return;
+
+    const { to, signal } = parsed.data;
     for (const room of roomStore.getAll()) {
       const playerId = room.getPlayerIdBySocket(socket.id);
       if (playerId) {
-        const targetSocketId = room.getSocketByPlayerId(data.to as unknown as PlayerId);
+        const targetSocketId = room.getSocketByPlayerId(to as unknown as PlayerId);
         if (targetSocketId) {
           io.to(targetSocketId).emit('voice:signal', {
             from: socket.id,
-            signal: data.signal,
+            signal,
           });
         }
         return;

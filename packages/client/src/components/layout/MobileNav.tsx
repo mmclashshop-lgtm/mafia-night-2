@@ -1,15 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../../store/gameStore';
+import { useAuthStore } from '../../store/authStore';
 import { useLanguage } from '../../hooks/useLanguage';
-import { Home, Trophy, User, GraduationCap, Globe } from 'lucide-react';
-
-const NAV_ITEMS = [
-  { path: '/', icon: Home, labelKey: 'nav.home' },
-  { path: '/leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
-  { path: '/profile', icon: User, labelKey: 'nav.profile' },
-  { path: '/tutorial', icon: GraduationCap, labelKey: 'nav.tutorial' },
-];
+import { Home, Trophy, User, GraduationCap, Globe, Users } from 'lucide-react';
 
 export function MobileNav() {
   const { t } = useTranslation();
@@ -17,9 +11,19 @@ export function MobileNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const connected = useGameStore((s) => s.connected);
+  const { name } = useAuthStore();
+
+  const NAV_ITEMS = [
+    { path: '/', icon: Home, labelKey: 'nav.home' },
+    { path: '/leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
+    { path: name ? `/profile/${encodeURIComponent(name)}` : '/', icon: User, labelKey: 'nav.profile' },
+    { path: '/friends', icon: Users, labelKey: 'nav.friends' },
+    { path: '/tutorial', icon: GraduationCap, labelKey: 'nav.tutorial' },
+  ];
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
+    if (path.startsWith('/profile/')) return location.pathname.startsWith('/profile/');
     return location.pathname.startsWith(path);
   };
 

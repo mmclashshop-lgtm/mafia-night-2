@@ -6,8 +6,11 @@ import {
   getLeaderboard,
   getPlayerStats,
   getPlayerProfile,
+  getPlayerProfileByUserId,
+  getFriendProfiles,
 } from '../db';
 import { getRank, ACHIEVEMENTS } from '@mafia/shared';
+import { authRoutes } from './auth.js';
 
 const router = Router();
 
@@ -59,6 +62,10 @@ router.get('/stats/player/:name', (req, res) => {
     rankIcon: profile ? getRank(profile.score).icon : '🥉',
     bestWinStreak: profile?.bestWinStreak ?? 0,
     achievementDetails: (profile?.achievements ?? []).map((id) => ACHIEVEMENTS[id]).filter(Boolean),
+    elo: profile?.elo ?? { casual: 1000, competitive: 1000 },
+    xp: profile?.xp ?? 0,
+    level: profile?.level ?? 1,
+    userId: profile?.userId ?? '',
   });
 });
 
@@ -67,5 +74,23 @@ router.get('/games/recent', (req, res) => {
   const games = getRecentGames(limit);
   res.json(games);
 });
+
+// Friend list
+router.get('/friends/:userId', (req, res) => {
+  const friends = getFriendProfiles(req.params.userId);
+  res.json(friends);
+});
+
+// Profile by userId
+router.get('/profile/:userId', (req, res) => {
+  const profile = getPlayerProfileByUserId(req.params.userId);
+  if (!profile) {
+    res.status(404).json({ error: 'Profile not found' });
+    return;
+  }
+  res.json(profile);
+});
+
+router.use(authRoutes);
 
 export { router as apiRoutes };

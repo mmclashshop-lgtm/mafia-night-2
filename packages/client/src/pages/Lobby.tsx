@@ -25,7 +25,7 @@ export function Lobby() {
   const players = gameState?.players ?? [];
   const phase = gameState?.phase;
   const currentPlayer = players.find((p) => p.id === playerId);
-  const isHost = !!playerId && players[0]?.id === playerId;
+  const isHost = !!playerId && players.find(p => !p.isBot)?.id === playerId;
   const unreadyHumanCount = players.filter(p => !p.isBot && !p.ready).length;
 
   useEffect(() => {

@@ -1,8 +1,27 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { useGameStore } from './store/gameStore';
+import { useAuthStore } from './store/authStore';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { useSocialSocket } from './hooks/useSocialSocket';
+import { connectSocket } from './lib/socket';
+
+function AppInit() {
+  const { userId } = useAuthStore();
+  const token = useGameStore((s) => s.token);
+
+  // Connect socket when user is authenticated
+  useEffect(() => {
+    if (userId) {
+      connectSocket(userId, token ?? undefined);
+    }
+  }, [userId, token]);
+
+  useSocialSocket();
+
+  return null;
+}
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
 const Lobby = lazy(() => import('./pages/Lobby').then((m) => ({ default: m.Lobby })));
@@ -11,6 +30,7 @@ const Leaderboard = lazy(() => import('./pages/Leaderboard').then((m) => ({ defa
 const PlayerStats = lazy(() => import('./pages/PlayerStats').then((m) => ({ default: m.PlayerStats })));
 const Profile = lazy(() => import('./pages/Profile').then((m) => ({ default: m.Profile })));
 const Tutorial = lazy(() => import('./pages/Tutorial').then((m) => ({ default: m.Tutorial })));
+const Friends = lazy(() => import('./pages/Friends').then((m) => ({ default: m.Friends })));
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -26,6 +46,7 @@ export default function App() {
 
   return (
     <Layout>
+      <AppInit />
       <SuspenseWrapper>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,6 +62,7 @@ export default function App() {
           <Route path="/stats/:name" element={<PlayerStats />} />
           <Route path="/profile/:name" element={<Profile />} />
           <Route path="/tutorial" element={<Tutorial />} />
+          <Route path="/friends" element={<Friends />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </SuspenseWrapper>

@@ -13,8 +13,19 @@ export interface ClientToServerEvents {
   'voice:signal': (data: { to: string; signal: unknown }) => void;
   'voice:join': () => void;
   'voice:leave': () => void;
-  'matchmaking:join': (data: { name: string }, callback: (res: { success: boolean; error?: string }) => void) => void;
+  'matchmaking:join': (data: { name: string; mode?: string; avatar?: string }, callback: (res: { success: boolean; error?: string }) => void) => void;
   'matchmaking:leave': () => void;
+  'friend:request': (data: { targetUserId: string }, callback: (res: { success: boolean; error?: string }) => void) => void;
+  'friend:accept': (data: { requestId: string }, callback: (res: { success: boolean; error?: string }) => void) => void;
+  'friend:reject': (data: { requestId: string }) => void;
+  'friend:remove': (data: { targetUserId: string }) => void;
+  'party:create': (callback: (res: { success: boolean; partyId?: string }) => void) => void;
+  'party:invite': (data: { targetUserId: string }) => void;
+  'party:join': (data: { partyId: string }) => void;
+  'party:leave': () => void;
+  'party:kick': (data: { targetUserId: string }) => void;
+  'party:startSearch': (data: { mode?: string }) => void;
+  'party:cancelSearch': () => void;
 }
 
 // Server -> Client
@@ -35,6 +46,14 @@ export interface ServerToClientEvents {
   'matchmaking:update': (data: { queueSize: number }) => void;
   'matchmaking:found': (data: { roomCode: string; state: GameState }) => void;
   'achievements:unlocked': (data: { achievements: string[]; score: number; rank: string }) => void;
+  'game:rewards': (data: { xp: number; eloDelta: number; newElo: number; newLevel: number }) => void;
+  'friend:request': (data: { requestId: string; fromName: string; fromAvatar: string }) => void;
+  'friend:online': (data: { userId: string; status: string }) => void;
+  'party:invite': (data: { partyId: string; fromName: string }) => void;
+  'party:member-joined': (data: { userId: string; name: string }) => void;
+  'party:member-left': (data: { userId: string }) => void;
+  'party:member-ready': (data: { userId: string; ready: boolean }) => void;
+  'party:disbanded': () => void;
 }
 
 export interface ServerToClientEventsData {
@@ -54,4 +73,5 @@ export interface ServerToClientEventsData {
   'matchmaking:update': { queueSize: number };
   'matchmaking:found': { roomCode: string; state: GameState };
   'achievements:unlocked': { achievements: string[]; score: number; rank: string };
+  'game:rewards': { xp: number; eloDelta: number; newElo: number; newLevel: number };
 }
