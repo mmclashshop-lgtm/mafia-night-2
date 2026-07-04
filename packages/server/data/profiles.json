@@ -464,5 +464,69 @@
         "startedAt": 1783105588652
       }
     ]
+  },
+  "مححح": {
+    "userId": "legacy_",
+    "name": "مححح",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 2,
+    "score": 210,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "villager": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783167558256
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783167558256
+      }
+    ],
+    "achievements": [],
+    "coins": 26,
+    "inventory": [],
+    "elo": {
+      "casual": 961,
+      "competitive": 1000
+    },
+    "xp": 120,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "mafia_win",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "play_3",
+        "current": 2,
+        "completed": false
+      },
+      {
+        "id": "play_5",
+        "current": 2,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-04",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
   }
 }

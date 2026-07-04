@@ -1556,5 +1556,113 @@
         "daysSurvived": 1
       }
     ]
+  },
+  {
+    "id": "game_mr6bx4qieb5ntr4",
+    "roomCode": "WLLEX2",
+    "startedAt": 1783167666660,
+    "endedAt": 1783167666676,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 16,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "مححح",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Frank",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Paul",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Vito",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 2,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr6bx4qieb5ntr4",
+    "roomCode": "WLLEX2",
+    "startedAt": 1783167666660,
+    "endedAt": 1783167669391,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 2731,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "مححح",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Frank",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Paul",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Vito",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 2,
+        "daysSurvived": 1
+      }
+    ]
   }
 ]

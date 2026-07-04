@@ -1,4 +1,5 @@
 import { useRef, type ReactNode, type MouseEvent } from 'react';
+import { sound } from '../../lib/sound';
 
 interface RippleButtonProps {
   children: ReactNode;
@@ -11,6 +12,15 @@ interface RippleButtonProps {
 
 export function RippleButton({ children, onClick, className = '', variant = 'primary', disabled, type = 'button' }: RippleButtonProps) {
   const btnRef = useRef<HTMLButtonElement>(null);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const handleMouseEnter = () => {
+    hoverTimer.current = setTimeout(() => sound.hover(), 50);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimer.current) clearTimeout(hoverTimer.current);
+  };
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     const btn = btnRef.current;
@@ -38,6 +48,7 @@ export function RippleButton({ children, onClick, className = '', variant = 'pri
     btn.appendChild(ripple);
     setTimeout(() => ripple.remove(), 600);
 
+    sound.click();
     onClick?.();
   };
 
@@ -53,6 +64,8 @@ export function RippleButton({ children, onClick, className = '', variant = 'pri
       ref={btnRef}
       type={type}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       disabled={disabled}
       className={`${variantClass} relative overflow-hidden ${className}`}
     >

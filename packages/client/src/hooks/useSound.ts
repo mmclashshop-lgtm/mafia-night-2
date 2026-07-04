@@ -14,78 +14,155 @@ export function useSound() {
     setSoundMuted(muted);
   }, [muted]);
 
+  // Phase transitions
   useEffect(() => {
     if (!gameState) return;
     const phase = gameState.phase;
     const prev = prevPhase.current;
 
     if (prev && prev !== phase) {
-      sound.stopAmbient();
-
-      if (phase === 'night') {
+      if (phase === 'night' && prev === 'day') {
         sound.nightStart();
-      } else if (phase === 'day') {
-        if (prev === 'night') sound.nightEnd();
+      } else if (phase === 'night' && prev === 'voting') {
+        sound.nightStart();
+      } else if (phase === 'day' && prev === 'night') {
+        sound.nightEnd();
         setTimeout(() => sound.dayStart(), 600);
-      } else if (phase === 'voting') {
-        if (prev === 'night') sound.nightEnd();
-        setTimeout(() => sound.phaseChange(), 600);
+      } else if (phase === 'voting' && prev === 'day') {
+        sound.voteStart();
+      } else if (phase === 'voting' && prev === 'night') {
+        sound.nightEnd();
+        setTimeout(() => sound.voteStart(), 400);
       } else if (phase === 'ended') {
-        if (prev === 'night') sound.nightEnd();
+        sound.nightEnd();
         setTimeout(() => {
-          if (gameState.winner === 'mafia') {
-            sound.mafiaWin();
-          } else if (gameState.winner === 'neutral') {
-            sound.jesterWin();
-          } else {
-            sound.townWin();
-          }
+          const winner = gameState.winner;
+          if (winner === 'mafia') sound.mafiaWin();
+          else if (winner === 'neutral') sound.jesterWin();
+          else sound.townWin();
           setTimeout(() => sound.gameEnd(), 1500);
         }, 600);
+      } else if (phase === 'lobby') {
+        sound.stopAmbient();
       }
     }
 
     prevPhase.current = phase;
   }, [gameState?.phase, gameState?.winner]);
 
+  // Track day changes for potential effects
   useEffect(() => {
     if (gameState && gameState.day !== prevDay.current && gameState.day > 0) {
       prevDay.current = gameState.day;
     }
   }, [gameState?.day]);
 
+  // Socket events
   useEffect(() => {
     const socket = getSocket();
 
-    socket.on('player:died', (data: { cause?: string }) => {
+    const onPlayerDied = (data: { cause?: string; playerId?: string }) => {
       if (data.cause === 'lynch') {
         sound.lynch();
       } else {
         sound.playerDied();
       }
-    });
+    };
 
-    socket.on('vote:cast', () => {
+    const onVoteCast = () => {
       sound.voteCast();
-    });
+    };
 
-    socket.on('vote:result', () => {
+    const onVoteResult = () => {
       sound.voteResult();
-    });
+    };
 
-    socket.on('game:event', (event: { type: string }) => {
-      if (event.type === 'role_reveal') {
-        sound.roleReveal();
-      } else if (event.type === 'lovers_death') {
-        sound.loversDeath();
+    const onGameEvent = (event: { type: string; data?: any }) => {
+      switch (event.type) {
+        case 'role_reveal':
+          sound.roleReveal();
+          break;
+        case 'lovers_death':
+          sound.loversDeath();
+          break;
+        case 'heal':
+          sound.heal();
+          break;
+        case 'investigate':
+          sound.investigate();
+          break;
+        case 'jester_win':
+          sound.jesterWin();
+          break;
       }
-    });
+    };
+
+    const onPlayerJoined = () => {
+      sound.notification();
+    };
+
+    const onPlayerLeft = () => {
+      sound.error();
+    };
+
+    const onChatMessage = (data: { chatType?: string }) => {
+      sound.chatMessage(data.chatType === 'mafia');
+    };
+
+    const onMatchFound = () => {
+      sound.matchFound();
+    };
+
+    const onGameRewards = (data: { coins?: number; xp?: number; newAchievements?: string[]; newLevel?: number }) => {
+      if (data.coins && data.coins > 0) setTimeout(() => sound.coinEarn(), 500);
+      if (data.newAchievements && data.newAchievements.length > 0) {
+        setTimeout(() => sound.achievement(), 1500);
+      }
+      if (data.newLevel) setTimeout(() => sound.levelUp(), 2500);
+    };
+
+    const onGameStart = () => {
+      sound.gameStart();
+    };
+
+    const onError = () => {
+      sound.error();
+    };
+
+    const onSpecial = (data: { type: string }) => {
+      if (data.type === 'investigation' || data.type === 'role-check') {
+        sound.investigate();
+      }
+    };
+
+    socket.on('player:died', onPlayerDied);
+    socket.on('vote:cast', onVoteCast);
+    socket.on('vote:result', onVoteResult);
+    socket.on('game:event', onGameEvent);
+    socket.on('player:joined', onPlayerJoined);
+    socket.on('player:left', onPlayerLeft);
+    socket.on('chat:message', onChatMessage);
+    socket.on('matchmaking:found', onMatchFound);
+    socket.on('game:rewards', onGameRewards);
+    socket.on('game:start', onGameStart);
+    socket.on('error', onError);
+    socket.on('game:special', onSpecial);
 
     return () => {
-      socket.off('player:died');
-      socket.off('vote:cast');
-      socket.off('vote:result');
-      socket.off('game:event');
+      socket.off('player:died', onPlayerDied);
+      socket.off('vote:cast', onVoteCast);
+      socket.off('vote:result', onVoteResult);
+      socket.off('game:event', onGameEvent);
+      socket.off('player:joined', onPlayerJoined);
+      socket.off('player:left', onPlayerLeft);
+      socket.off('chat:message', onChatMessage);
+      socket.off('matchmaking:found', onMatchFound);
+      socket.off('game:rewards', onGameRewards);
+      socket.off('game:start', onGameStart);
+      socket.off('error', onError);
+      socket.off('game:special', onSpecial);
     };
   }, []);
+
+  return { sound };
 }

@@ -10,7 +10,9 @@ import {
   Users,
   ShoppingBag,
   Globe,
+  Volume2,
 } from 'lucide-react';
+import { SoundSettings } from '../common/SoundSettings';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -98,6 +100,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <Globe className="w-4.5 h-4.5 shrink-0" />
             <span>{language === 'en' ? 'English' : 'العربية'}</span>
           </button>
+          <details className="group">
+            <summary className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-gray-400
+              hover:text-white hover:bg-white/[0.04] transition-all duration-200 cursor-pointer list-none">
+              <Volume2 className="w-4.5 h-4.5 shrink-0" />
+              <span>{t('sound.settings')}</span>
+            </summary>
+            <div className="px-4 py-2">
+              <SoundSettings />
+            </div>
+          </details>
         </div>
       </aside>
     </>

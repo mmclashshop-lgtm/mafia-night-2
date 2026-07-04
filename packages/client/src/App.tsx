@@ -3,19 +3,26 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { useGameStore } from './store/gameStore';
 import { useSocialSocket } from './hooks/useSocialSocket';
+import { useSocialSound } from './hooks/useSocialSound';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { connectSocket } from './lib/socket';
+import { sound } from './lib/sound';
 
 function AppInit() {
   const connected = useGameStore((s) => s.connected);
 
   useSocialSocket();
+  useSocialSound();
 
   useEffect(() => {
     if (!connected) {
       connectSocket();
     }
   }, [connected]);
+
+  useEffect(() => {
+    sound.loadSoundPack();
+  }, []);
 
   return null;
 }

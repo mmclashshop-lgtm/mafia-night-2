@@ -279,6 +279,13 @@
     "elo": "ELO",
     "level": "Level"
   },
+  "sound": {
+    "settings": "Sound Settings",
+    "master": "Master",
+    "music": "Music",
+    "sfx": "SFX",
+    "ui": "UI"
+  },
   "store": {
     "title": "Store",
     "coins": "coins",
