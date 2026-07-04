@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PageTransition } from '../components/common/PageTransition';
 import { getPlayerStats, type PlayerStatsData } from '../lib/api';
 import { ArrowLeft, Skull, Heart, Target, Award, Calendar } from 'lucide-react';
 import { TiltCard } from '../components/common/TiltCard';
@@ -44,7 +45,8 @@ export function PlayerStats() {
   const roleEntries = Object.entries(stats.roleStats);
 
   return (
-    <div className="animate-fade-in space-y-6">
+    <PageTransition>
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">{stats.name}</h1>
@@ -125,5 +127,6 @@ export function PlayerStats() {
         </div>
       )}
     </div>
+    </PageTransition>
   );
 }

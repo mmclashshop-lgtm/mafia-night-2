@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PageTransition } from '../components/common/PageTransition';
 import { ArrowLeft, Trophy, Swords, Heart, Skull, Star, Zap, Gamepad2, Shield, Crown, Medal, Award } from 'lucide-react';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
 import { EmptyState } from '../components/common/EmptyState';
@@ -76,7 +77,8 @@ export function Profile() {
   const tier = getEloTier(profile.elo?.casual ?? 1000);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5 animate-fade-in">
+    <PageTransition>
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* Back + Header */}
       <button onClick={() => navigate(-1)} className="btn-ghost flex items-center gap-2 text-xs">
         <ArrowLeft className="w-4 h-4" /> {t('common.back')}
@@ -282,5 +284,6 @@ export function Profile() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }

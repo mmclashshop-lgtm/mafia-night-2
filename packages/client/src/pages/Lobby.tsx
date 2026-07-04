@@ -7,6 +7,7 @@ import { useUIStore } from '../store/uiStore';
 import { SettingsPanel } from '../components/lobby/SettingsPanel';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
 import { TiltCard } from '../components/common/TiltCard';
+import { PageTransition } from '../components/common/PageTransition';
 import { copyToClipboard } from '../lib/utils';
 import {
   Copy, LogOut, Play, Users, Clock, CheckCircle2, Bot, Settings,
@@ -70,7 +71,8 @@ export function Lobby() {
   };
 
   return (
-    <div className="animate-fade-in space-y-5">
+    <PageTransition>
+    <div className="space-y-5">
       {/* ─── Header ─── */}
       <div className="card-glass p-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -231,5 +233,6 @@ export function Lobby() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }

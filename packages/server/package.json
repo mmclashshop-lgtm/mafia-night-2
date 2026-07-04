@@ -10,7 +10,7 @@
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "db:init": "node -e \"require('fs').mkdirSync('./data', { recursive: true })\""
+    "db:init": "node -e \"import('fs').then(f => f.mkdirSync('./data', { recursive: true }))\""
   },
   "dependencies": {
     "@mafia/shared": "*",

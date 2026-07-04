@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PageTransition } from '../components/common/PageTransition';
 import { ArrowLeft, ShoppingBag, Coins, Check, Loader2 } from 'lucide-react';
 import { useShopStore } from '../store/shopStore';
 import { getSocket } from '../lib/socket';
@@ -54,7 +55,8 @@ export function Store() {
   ] as const;
 
   return (
-    <div className="animate-fade-in space-y-6 max-w-3xl mx-auto">
+    <PageTransition>
+    <div className="space-y-6 max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -125,5 +127,6 @@ export function Store() {
         );
       })}
     </div>
+    </PageTransition>
   );
 }

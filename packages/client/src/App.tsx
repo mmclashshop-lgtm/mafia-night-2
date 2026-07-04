@@ -4,6 +4,7 @@ import { Layout } from './components/layout/Layout';
 import { useGameStore } from './store/gameStore';
 import { useSocialSocket } from './hooks/useSocialSocket';
 import { useSocialSound } from './hooks/useSocialSound';
+import { useGlobalSound } from './hooks/useGlobalSound';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { connectSocket } from './lib/socket';
 import { sound } from './lib/sound';
@@ -13,6 +14,7 @@ function AppInit() {
 
   useSocialSocket();
   useSocialSound();
+  useGlobalSound();
 
   useEffect(() => {
     if (!connected) {

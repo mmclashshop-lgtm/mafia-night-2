@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLeaderboard, getTotalStats, type LeaderboardEntry, type TotalStats } from '../lib/api';
+import { PageTransition, FadeIn } from '../components/common/PageTransition';
 import { Trophy, ArrowLeft, TrendingUp, Users, Activity, Crown, Shield, Star, Swords, Search } from 'lucide-react';
 import { TiltCard } from '../components/common/TiltCard';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
@@ -54,7 +55,8 @@ export function Leaderboard() {
   ];
 
   return (
-    <div className="animate-fade-in space-y-6 max-w-4xl mx-auto">
+    <PageTransition>
+    <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
@@ -171,5 +173,6 @@ export function Leaderboard() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }

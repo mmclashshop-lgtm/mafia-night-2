@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "npx tsx packages/server/src/index.ts",
+    "start": "node packages/server/dist/index.js",
     "build:client": "turbo run build --filter=@mafia/client",
     "build:server": "turbo run build --filter=@mafia/server",
     "build:shared": "turbo run build --filter=@mafia/shared",
@@ -19,8 +19,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
   },
   "devDependencies": {
-    "@types/howler": "^2.2.13",
     "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
     "prettier": "^3.3.0",
     "turbo": "^2.0.0",
     "typescript": "^5.5.0"
@@ -30,7 +32,6 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "howler": "^2.2.4",
     "i18next": "^26.3.4",
     "i18next-browser-languagedetector": "^8.2.1",
     "react-i18next": "^17.0.8"

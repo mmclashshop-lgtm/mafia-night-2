@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { PageTransition } from '../components/common/PageTransition';
 import { ArrowLeft, Users, Skull, Shield, Search, Heart, Eye, Swords, FlaskRound as Flask, UserCheck, Ghost, Award, Target, Crosshair } from 'lucide-react';
 
 const roles = [
@@ -25,7 +26,8 @@ export function Tutorial() {
   const navigate = useNavigate();
 
   return (
-    <div className="animate-fade-in space-y-6 max-w-3xl mx-auto pb-12">
+    <PageTransition>
+    <div className="space-y-6 max-w-3xl mx-auto pb-12">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('tutorial.title')}</h1>
         <button onClick={() => navigate('/')} className="btn-secondary flex items-center gap-2">
@@ -101,5 +103,6 @@ export function Tutorial() {
         </ul>
       </div>
     </div>
+    </PageTransition>
   );
 }

@@ -5,6 +5,7 @@ import { useSocket } from '../hooks/useSocket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
+import { PageTransition, FadeIn, StaggerFadeIn } from '../components/common/PageTransition';
 import {
   Play, Users, Zap, ChevronDown, Sword, Bot, Trophy, Monitor, Mic,
 } from 'lucide-react';
@@ -89,6 +90,7 @@ export function Home() {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen">
       {/* ─── Cinematic Hero ─── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
@@ -258,5 +260,6 @@ export function Home() {
         </div>
       </footer>
     </div>
+    </PageTransition>
   );
 }

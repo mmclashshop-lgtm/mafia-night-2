@@ -36,11 +36,12 @@ export interface PlayerStatsData {
   }[];
 }
 
-const API_BASE = import.meta.env.VITE_SOCKET_URL
-  ? `${import.meta.env.VITE_SOCKET_URL}/api`
+const VITE_SOCKET_URL = import.meta.env['VITE_SOCKET_URL'] as string | undefined;
+const API_BASE = VITE_SOCKET_URL
+  ? `${VITE_SOCKET_URL}/api`
   : '/api';
 
-export const API_ORIGIN = import.meta.env.VITE_SOCKET_URL || '';
+export const API_ORIGIN = VITE_SOCKET_URL || '';
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`);

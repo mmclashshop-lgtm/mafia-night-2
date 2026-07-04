@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PageTransition } from '../components/common/PageTransition';
 import { useSocialStore } from '../store/socialStore';
 import { getSocket } from '../lib/socket';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
@@ -69,7 +70,8 @@ export function Friends() {
   const offlineFriends = friends.filter((f) => f.status === 'offline');
 
   return (
-    <div className="animate-fade-in space-y-6 max-w-3xl mx-auto">
+    <PageTransition>
+    <div className="space-y-6 max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -251,5 +253,6 @@ export function Friends() {
         </div>
       )}
     </div>
+    </PageTransition>
   );
 }

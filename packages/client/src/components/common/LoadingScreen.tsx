@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { sound } from '../../lib/sound';
 
 const tipKeys: string[] = [
   'loading.tip1', 'loading.tip2', 'loading.tip3', 'loading.tip4',
@@ -18,6 +19,15 @@ export function LoadingScreen() {
   const tipKey = tipKeys[Math.floor(Math.random() * tipKeys.length)]!;
   const [skulls, setSkulls] = useState<SkullTarget[]>([]);
   const [score, setScore] = useState(0);
+  const [loadProgress, setLoadProgress] = useState(sound.loaded ? 1 : sound.loadingProgress);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadProgress(sound.loadingProgress);
+      if (sound.loaded) return;
+    }, 200);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,6 +47,7 @@ export function LoadingScreen() {
   const handleCatch = (id: number) => {
     setSkulls((prev) => prev.filter((s) => s.id !== id));
     setScore((s) => s + 1);
+    sound.playTone(600 + Math.random() * 400, 0.08, 'sine', 0.05);
   };
 
   return (
@@ -88,6 +99,21 @@ export function LoadingScreen() {
           </svg>
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-[#8B0000] to-transparent rounded-full animate-pulse" />
         </div>
+
+        {/* Sound loading progress */}
+        {!sound.loaded && (
+          <div className="w-48 mb-4">
+            <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[#8B0000] to-[#B22222] rounded-full transition-all duration-300"
+                style={{ width: `${Math.round(loadProgress * 100)}%` }}
+              />
+            </div>
+            <p className="text-[10px] text-gray-600 text-center mt-1 tracking-widest">
+              {t('common.loading')} {Math.round(loadProgress * 100)}%
+            </p>
+          </div>
+        )}
 
         {/* Bouncing dots */}
         <div className="flex gap-1.5 mb-6">

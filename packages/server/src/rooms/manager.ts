@@ -175,7 +175,8 @@ export class RoomManager {
   private setPhaseTimer(durationMs: number, nextPhase: Phase) {
     this.clearTimer();
     this.phaseTimer = setTimeout(() => {
-      this.transitionTo(nextPhase);
+      try { this.transitionTo(nextPhase); }
+      catch (err) { console.error('Phase timer error:', err); }
     }, durationMs);
   }
 
