@@ -36,8 +36,6 @@ interface ProfileData {
   rank: string;
   rankIcon: string;
   bestWinStreak: number;
-  achievements: string[];
-  achievementDetails: Array<{ id: string; name: string; description: string; icon: string; category: string }>;
   roleStats: Record<string, { games: number; wins: number }>;
   recentGames: Array<{
     winner: string | null;
@@ -59,7 +57,7 @@ export function Profile() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'stats' | 'achievements' | 'games'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'games'>('stats');
 
   useEffect(() => {
     if (!name) return;
@@ -105,7 +103,6 @@ export function Profile() {
 
   const tabs = [
     { id: 'stats' as const, label: t('profile.statistics'), icon: Trophy },
-    { id: 'achievements' as const, label: t('profile.achievements', { count: profile.achievements.length }), icon: Star },
     { id: 'games' as const, label: t('profile.recentGames'), icon: Gamepad2 },
   ];
 
@@ -217,38 +214,6 @@ export function Profile() {
                       <p className="text-sm font-medium text-green-400">{stats.wins}W</p>
                       <p className="text-xs text-gray-500">{stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0}{t('profile.winPercent')}</p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'achievements' && (
-          <div>
-            <h3 className="font-semibold text-white mb-3">{t('profile.achievementsTitle')}</h3>
-            {profile.achievementDetails.length === 0 ? (
-              <EmptyState
-                icon={<Star className="w-8 h-8 text-gray-500" />}
-                title={t('profile.noAchievements')}
-                description={t('profile.playMore')}
-              />
-            ) : (
-              <div className="grid gap-2">
-                {profile.achievementDetails.map((achievement) => (
-                  <div key={achievement.id} className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
-                    <span className="text-2xl">{achievement.icon}</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-white">{achievement.name}</p>
-                      <p className="text-xs text-gray-500">{achievement.description}</p>
-                    </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      achievement.category === 'general' ? 'bg-blue-900/30 text-blue-400' :
-                      achievement.category === 'role' ? 'bg-purple-900/30 text-purple-400' :
-                      'bg-yellow-900/30 text-yellow-400'
-                    }`}>
-                      {achievement.category}
-                    </span>
                   </div>
                 ))}
               </div>

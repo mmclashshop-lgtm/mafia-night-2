@@ -29,8 +29,7 @@ import {
   botGetVoteDelay,
 } from '../game/botManager';
 import { saveGame, getOrCreatePlayerProfile, savePlayerProfile, getPlayerProfileByUserId } from '../db';
-import { checkNewAchievements, checkProgressiveAchievements } from '../game/achievements';
-import { calculateGameXP, calculateElo, calculateGameElo, getLevelProgress, calculateScore, getLevel, getRank, DEFAULT_ELO, type AchievementId, getAverageElo, pickDailyQuests, DAILY_QUESTS_POOL } from '@mafia/shared';
+import { calculateGameXP, calculateElo, calculateGameElo, getLevelProgress, calculateScore, getLevel, getRank, DEFAULT_ELO, getAverageElo, pickDailyQuests, DAILY_QUESTS_POOL } from '@mafia/shared';
 
 const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
@@ -610,10 +609,10 @@ export class RoomManager {
       }
     }
 
-    const witchSaved = this.state.history.some(
+    const _witchSaved = this.state.history.some(
       (e) => e.type === 'heal' && e.data && typeof e.data === 'object' && (e.data as Record<string, unknown>)['healer'] === 'witch'
     );
-    const witchKilled = this.state.history.some(
+    const _witchKilled = this.state.history.some(
       (e) => e.type === 'kill' && e.data && typeof e.data === 'object' && (e.data as Record<string, unknown>)['killer'] === 'witch'
     );
 
@@ -652,7 +651,7 @@ export class RoomManager {
         playerElos.set(player.id, profile.elo[mode] ?? DEFAULT_ELO);
       }
 
-      // Update profiles & check achievements
+      // Update profiles
       for (const player of this.state.players) {
         if (player.isBot) continue;
         const profile = getOrCreatePlayerProfile(player.name);
@@ -689,36 +688,6 @@ export class RoomManager {
         profile.recentGames.push(newGameEntry);
         if (profile.recentGames.length > 20) {
           profile.recentGames = profile.recentGames.slice(-20);
-        }
-
-        // Progressive achievements
-        const progressive = checkProgressiveAchievements(
-          profile.totalGames,
-          profile.totalWins,
-          profile.achievements as AchievementId[]
-        );
-
-        // Game-specific achievements
-        const gameAchievements = stored
-          ? checkNewAchievements(
-              {
-                player: stored,
-                allPlayers: storedPlayers,
-                winner,
-                dayCount: this.state.day,
-                playerTeamAliveCount: storedPlayers.filter(
-                  (sp) => sp.team === player.team && sp.alive
-                ).length,
-                witchSaved,
-                witchKilled,
-              },
-              profile.achievements as AchievementId[]
-            )
-          : [];
-
-        const allNew = [...progressive, ...gameAchievements];
-        if (allNew.length > 0) {
-          profile.achievements = [...new Set([...profile.achievements, ...allNew])];
         }
 
         // Score
@@ -784,7 +753,7 @@ export class RoomManager {
 
         savePlayerProfile(profile);
 
-        // Send achievements + rewards to player
+        // Send rewards to player
         const socketId = this.playerSockets.get(player.id);
         if (socketId) {
           const socket = this.io.sockets.sockets.get(socketId);
@@ -796,19 +765,6 @@ export class RoomManager {
             questBonusXP,
             totalXP: gameXP + questBonusXP,
           });
-        }
-
-        // Send achievements to player
-        if (allNew.length > 0) {
-          const socketId = this.playerSockets.get(player.id);
-          if (socketId) {
-            const socket = this.io.sockets.sockets.get(socketId);
-            socket?.emit('achievements:unlocked', {
-              achievements: allNew,
-              score: profile.score,
-              rank: getRank(profile.score).name,
-            });
-          }
         }
       }
     } catch (err) {

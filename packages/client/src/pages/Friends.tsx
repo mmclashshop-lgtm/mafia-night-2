@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSocialStore } from '../store/socialStore';
-import { useAuthStore } from '../store/authStore';
 import { getSocket } from '../lib/socket';
 import { PlayerAvatar } from '../components/common/PlayerAvatar';
 import { EmptyState } from '../components/common/EmptyState';
@@ -11,7 +10,6 @@ import { ArrowLeft, UserPlus, Users, MessageCircle, Search, X, Check, Loader2 } 
 export function Friends() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { userId } = useAuthStore();
   const { friends, friendRequests, setFriends, removeFriendRequest, addFriend } = useSocialStore();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,15 +17,14 @@ export function Friends() {
   const [searchResults, setSearchResults] = useState<Array<{ userId: string; name: string; avatar: string }> | null>(null);
 
   useEffect(() => {
-    if (!userId) return;
-    fetch(`/api/friends/${userId}`)
+    fetch(`/api/friends`)
       .then((res) => res.json())
       .then((data) => {
         setFriends(data.map((f: any) => ({ ...f, status: 'offline' as const, lastActiveAt: Date.now(), elo: 1000, level: 1 })));
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [userId, setFriends]);
+  }, [setFriends]);
 
   const handleAccept = (fromUserId: string) => {
     getSocket().emit('friend:accept', { userId: fromUserId });

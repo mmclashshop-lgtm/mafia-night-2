@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import { getSocket } from '../lib/socket';
 import { useSocialStore } from '../store/socialStore';
-import { useAuthStore } from '../store/authStore';
 import { useUIStore } from '../store/uiStore';
 
 export function useSocialSocket() {
-  const { userId } = useAuthStore();
   const { addToast } = useUIStore();
 
   const {
@@ -101,5 +99,5 @@ export function useSocialSocket() {
       socket.off('party:member-ready', onReady);
       socket.off('party:disbanded', onDisbanded);
     };
-  }, [userId]);
+  }, []);
 }

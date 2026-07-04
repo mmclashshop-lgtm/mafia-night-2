@@ -16,22 +16,12 @@ export function getSocket(): Socket {
   return socket;
 }
 
-export function connectSocket(userId?: string, token?: string): Socket {
+export function connectSocket(): Socket {
   const s = getSocket();
   if (!s.connected) {
-    s.auth = { userId, token };
     s.connect();
   }
   return s;
-}
-
-export function updateSocketAuth(userId: string, token: string): void {
-  const s = getSocket();
-  s.auth = { userId, token };
-  if (s.connected) {
-    s.disconnect();
-    s.connect();
-  }
 }
 
 export function disconnectSocket(): void {

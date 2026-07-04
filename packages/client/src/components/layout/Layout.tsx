@@ -5,7 +5,6 @@ import { MobileNav } from './MobileNav';
 import { Toasts } from '../common/Toasts';
 import { LoadingScreen } from '../common/LoadingScreen';
 import { BackgroundSystem } from '../backgrounds/BackgroundSystem';
-import { AuthGate } from '../auth/AuthGate';
 import { PartyBar } from '../party/PartyBar';
 
 interface LayoutProps {
@@ -43,15 +42,13 @@ export function Layout({ children }: LayoutProps) {
           }`}
           dir="rtl"
         >
-          <AuthGate>
-            <Header />
-            <main className={`flex-1 ${isHome ? '' : 'container mx-auto max-w-5xl px-4 py-6 pb-20 md:pb-6'}`}>
-              {children}
-            </main>
-            <MobileNav />
-            <PartyBar />
-            <Toasts />
-          </AuthGate>
+          <Header />
+          <main className={`flex-1 ${isHome ? '' : 'container mx-auto max-w-5xl px-4 py-6 pb-20 md:pb-6'}`}>
+            {children}
+          </main>
+          <MobileNav />
+          <PartyBar />
+          <Toasts />
         </div>
       </BackgroundSystem>
     </>

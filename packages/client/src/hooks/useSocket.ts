@@ -1,10 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connectSocket, getSocket, updateSocketAuth } from '../lib/socket';
+import { connectSocket, getSocket } from '../lib/socket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
-import { useAuthStore } from '../store/authStore';
-import { useSocialStore } from '../store/socialStore';
 import type { GameState, Token } from '@mafia/shared';
 
 export function useSocket() {
@@ -23,9 +21,7 @@ export function useSocket() {
   const { addToast } = useUIStore();
 
   useEffect(() => {
-    const userId = useAuthStore.getState().userId;
-    const token = useGameStore.getState().token;
-    const socket = connectSocket(userId ?? undefined, token ?? undefined);
+    const socket = connectSocket();
 
     socket.on('connect', () => {
       setConnected(true);
@@ -78,67 +74,6 @@ export function useSocket() {
 
     socket.on('matchmaking:update', (data: { queueSize: number }) => {
       // Handled by the MatchmakingOverlay component
-    });
-
-    socket.on('achievements:unlocked', (data: { achievements: string[]; score: number; rank: string }) => {
-      const count = data.achievements.length;
-      if (count > 0) {
-        const names = data.achievements.map((id) => {
-          const map: Record<string, string> = {
-            first_blood: '🏆 First Blood',
-            comeback_king: '🔄 Comeback King',
-            witchs_brew: '🧪 Witch\'s Brew',
-            sniper_elite: '🎯 Sniper Elite',
-            perfect_game: '💎 Perfect Game',
-            fast_win: '⚡ Fast Win',
-            last_standing: '💀 Last Standing',
-          };
-          return map[id] ?? id;
-        });
-        addToast('success', `Achievements unlocked: ${names.join(', ')}`);
-      }
-    });
-
-    socket.on('game:rewards', (data: { xp: number; eloDelta: number; newElo: number; newLevel: number; questBonusXP?: number; totalXP?: number }) => {
-      const profile = useAuthStore.getState().profile;
-      if (profile) {
-        useAuthStore.getState().updateElo('casual', data.newElo);
-        useAuthStore.getState().updateXP(data.xp + (data.questBonusXP ?? 0), data.newLevel);
-      }
-      const eloSign = data.eloDelta >= 0 ? '+' : '';
-      const questText = data.questBonusXP ? ` · 🎯 +${data.questBonusXP} quest XP` : '';
-      addToast('success', `⚡ +${data.xp} XP${questText} · ${eloSign}${data.eloDelta} ELO · Level ${data.newLevel}`);
-    });
-
-    // Friend events
-    socket.on('friend:request', (data: { fromUserId: string; fromName: string; fromAvatar: string }) => {
-      useSocialStore.getState().addFriendRequest(data);
-      addToast('info', `${data.fromName} sent you a friend request`);
-    });
-
-    socket.on('friend:request-accepted', (data: { userId: string; name: string; avatar: string }) => {
-      useSocialStore.getState().addFriend({
-        userId: data.userId,
-        name: data.name,
-        avatar: data.avatar,
-        status: 'online',
-        lastActiveAt: Date.now(),
-        elo: 1000,
-        level: 1,
-      });
-      addToast('success', `${data.name} accepted your friend request`);
-    });
-
-    socket.on('friend:request-rejected', (data: { userId: string }) => {
-      useSocialStore.getState().removeFriendRequest(data.userId);
-    });
-
-    socket.on('friend:removed', (data: { userId: string }) => {
-      useSocialStore.getState().removeFriend(data.userId);
-    });
-
-    socket.on('friend:status', (data: { userId: string; status: 'online' | 'in_game' | 'idle' | 'offline' }) => {
-      useSocialStore.getState().updateFriendStatus(data.userId, data.status);
     });
 
     socket.on('state:sync', (data: { state: GameState }) => {
@@ -251,13 +186,6 @@ export function useSocket() {
       socket.off('game:end');
       socket.off('matchmaking:found');
       socket.off('matchmaking:update');
-      socket.off('achievements:unlocked');
-      socket.off('game:rewards');
-      socket.off('friend:request');
-      socket.off('friend:request-accepted');
-      socket.off('friend:request-rejected');
-      socket.off('friend:removed');
-      socket.off('friend:status');
     };
   }, []);
 

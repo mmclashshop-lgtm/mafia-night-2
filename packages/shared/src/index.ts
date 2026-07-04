@@ -10,9 +10,7 @@ export { DEFAULT_GAME_SETTINGS } from './types/game';
 export { ROLES, ROLE_ORDER, TEAM_NAMES, TEAM_COLORS } from './constants/roles';
 export { PHASE_ORDER, PHASE_LABELS, PHASE_DURATIONS, MIN_PLAYERS, MAX_PLAYERS, ROOM_CODE_LENGTH } from './constants/phases';
 
-// Achievements
-export type { AchievementId, Achievement, RankTierId } from './types/achievements';
-export { ACHIEVEMENTS, RANK_TIERS, getRank, calculateScore } from './types/achievements';
+export { RANK_TIERS, getRank, calculateScore } from './types/achievements';
 
 // Schemas
 export { createRoomSchema, joinRoomSchema, reconnectSchema, nightActionSchema, voteSchema, chatMessageSchema, gameSettingsSchema, addBotsSchema, voiceSignalSchema, updateSettingsSchema, matchmakingJoinSchema } from './schemas/zod';

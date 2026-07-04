@@ -41,7 +41,7 @@ jobs:
         run: npx vite build --base=/mafia-night-2/
         working-directory: packages/client
         env:
-          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL || 'https://mafia-game-server.up.railway.app' }}
+          VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL || 'https://mafia-game-server-production-04a4.up.railway.app' }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

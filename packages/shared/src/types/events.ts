@@ -45,7 +45,6 @@ export interface ServerToClientEvents {
   'game:end': (data: { winner: string; stats: Record<string, unknown> }) => void;
   'matchmaking:update': (data: { queueSize: number }) => void;
   'matchmaking:found': (data: { roomCode: string; state: GameState }) => void;
-  'achievements:unlocked': (data: { achievements: string[]; score: number; rank: string }) => void;
   'game:rewards': (data: { xp: number; eloDelta: number; newElo: number; newLevel: number }) => void;
   'friend:request': (data: { requestId: string; fromName: string; fromAvatar: string }) => void;
   'friend:online': (data: { userId: string; status: string }) => void;
@@ -72,6 +71,5 @@ export interface ServerToClientEventsData {
   'game:end': { winner: string; stats: Record<string, unknown> };
   'matchmaking:update': { queueSize: number };
   'matchmaking:found': { roomCode: string; state: GameState };
-  'achievements:unlocked': { achievements: string[]; score: number; rank: string };
   'game:rewards': { xp: number; eloDelta: number; newElo: number; newLevel: number };
 }

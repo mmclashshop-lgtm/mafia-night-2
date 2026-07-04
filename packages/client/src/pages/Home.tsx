@@ -4,16 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useSocket } from '../hooks/useSocket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
-import { useAuth } from '../hooks/useAuth';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
 import { RoleAvatarWithFallback } from '../components/common/RoleAvatar';
-import { LoginDialog } from '../components/auth/LoginDialog';
 import { ROLE_ICON_MAP } from '../lib/roleConfig';
-import { API_ORIGIN } from '../lib/api';
 import type { RoleId } from '@mafia/shared';
 import {
   Sword, Users, Mic, Bot, Trophy, Monitor,
-  ArrowRight, Play, ChevronDown, Sparkles, Zap, LogIn
+  ArrowRight, Play, ChevronDown, Sparkles, Zap
 } from 'lucide-react';
 
 function MaskLogo({ className = '' }: { className?: string }) {
@@ -64,17 +61,15 @@ function RoleIcon({ role, className = '' }: { role: string; className?: string }
 }
 
 export function Home() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [joining, setJoining] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [matchmaking, setMatchmaking] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
   const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
   const { addToast } = useUIStore();
-  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const featuresRef = useRef<HTMLDivElement>(null);
@@ -95,27 +90,6 @@ export function Home() {
     document.querySelectorAll('[data-observe]').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
-
-  const handleGuestLogin = async (guestName: string) => {
-    try {
-      const resp = await fetch(`${API_ORIGIN}/api/auth/guest`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: guestName }),
-      });
-      const data = await resp.json();
-      if (resp.ok) {
-        login(data.userId, data.name, data.avatar, data.profile);
-        setName(guestName);
-        addToast('success', `Welcome, ${guestName}!`);
-        setShowLogin(false);
-      } else {
-        addToast('error', data.error || 'Failed to create guest account');
-      }
-    } catch {
-      addToast('error', 'Server error');
-    }
-  };
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -166,11 +140,6 @@ export function Home() {
 
   return (
     <div className="min-h-screen">
-      <LoginDialog
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        onGuestLogin={handleGuestLogin}
-      />
       {/* Hero */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-50" />
@@ -190,92 +159,79 @@ export function Home() {
             {t('home.hero.subtitle')}
           </p>
 
-          {!isAuthenticated ? (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
             <button
-              onClick={() => setShowLogin(true)}
-              className="btn-primary flex items-center gap-2 px-10 py-4 text-lg mx-auto relative overflow-hidden group"
+              onClick={handleQuickPlay}
+              disabled={!name.trim()}
+              className="btn-primary flex items-center gap-2 px-8 py-3.5 text-base relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              <LogIn className="w-5 h-5" />
-              {t('auth.signIn', 'Sign In to Play')}
+              <Zap className="w-5 h-5" />
+              {t('matchmaking.quickPlay')}
             </button>
-          ) : (
-            <>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
-                <button
-                  onClick={handleQuickPlay}
-                  disabled={!name.trim()}
-                  className="btn-primary flex items-center gap-2 px-8 py-3.5 text-base relative overflow-hidden group"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                  <Zap className="w-5 h-5" />
-                  {t('matchmaking.quickPlay')}
-                </button>
-                <button
-                  onClick={handleCreate}
-                  disabled={!name.trim() || creating}
-                  className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
-                >
-                  <Play className="w-5 h-5" />
-                  {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
-                </button>
-                <button
-                  onClick={() => setShowJoin(!showJoin)}
-                  className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
-                >
-                  <Users className="w-5 h-5" />
-                  {t('home.cta.joinRoom')}
-                </button>
-              </div>
+            <button
+              onClick={handleCreate}
+              disabled={!name.trim() || creating}
+              className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
+            >
+              <Play className="w-5 h-5" />
+              {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
+            </button>
+            <button
+              onClick={() => setShowJoin(!showJoin)}
+              className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
+            >
+              <Users className="w-5 h-5" />
+              {t('home.cta.joinRoom')}
+            </button>
+          </div>
 
-              {showJoin && (
-                <div className="animate-slide-down mb-8">
-                  <div className="card p-4 max-w-sm mx-auto space-y-3">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={roomCode}
-                        onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                        placeholder={t('home.cta.roomCode')}
-                        className="input-field font-mono uppercase tracking-widest text-center"
-                        maxLength={6}
-                        autoFocus
-                      />
-                      <button
-                        onClick={handleJoin}
-                        disabled={!name.trim() || !roomCode.trim()}
-                        className="btn-primary px-5"
-                      >
-                        <ArrowRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
+          {showJoin && (
+            <div className="animate-slide-down mb-8">
               <div className="card p-4 max-w-sm mx-auto space-y-3">
-                <div className="text-left">
-                  <label className="block text-xs text-gray-500 mb-1.5 font-medium">{t('home.cta.yourName')}</label>
+                <div className="flex gap-2">
                   <input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={t('home.cta.namePlaceholder')}
-                    className="input-field"
-                    maxLength={20}
+                    value={roomCode}
+                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    placeholder={t('home.cta.roomCode')}
+                    className="input-field font-mono uppercase tracking-widest text-center"
+                    maxLength={6}
+                    autoFocus
                   />
-                </div>
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Sword className="w-3 h-3" /> {t('home.cta.fourToTwelve')}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3 h-3" /> {t('home.cta.classicRoles')}
-                  </span>
+                  <button
+                    onClick={handleJoin}
+                    disabled={!name.trim() || !roomCode.trim()}
+                    className="btn-primary px-5"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
-            </>
+            </div>
           )}
+
+          <div className="card p-4 max-w-sm mx-auto space-y-3">
+            <div className="text-left">
+              <label className="block text-xs text-gray-500 mb-1.5 font-medium">{t('home.cta.yourName')}</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t('home.cta.namePlaceholder')}
+                className="input-field"
+                maxLength={20}
+              />
+            </div>
+            <div className="flex items-center justify-between text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <Sword className="w-3 h-3" /> {t('home.cta.fourToTwelve')}
+              </span>
+              <span className="flex items-center gap-1">
+                <Users className="w-3 h-3" /> {t('home.cta.classicRoles')}
+              </span>
+            </div>
+          </div>
         </div>
 
         <button
@@ -401,35 +357,23 @@ export function Home() {
             <h2 className="text-2xl font-bold mb-2">{t('home.cta.title')}</h2>
             <p className="text-gray-400 text-sm mb-6">{t('home.cta.subtitle')}</p>
 
-            <div className="space-y-3">
-              {!isAuthenticated ? (
-                <button
-                  onClick={() => setShowLogin(true)}
-                  className="btn-primary w-full flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-4 h-4" />
-                  {t('auth.signIn', 'Sign In to Play')}
-                </button>
-              ) : (
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={handleCreate}
-                    disabled={!name.trim() || creating}
-                    className="btn-primary flex items-center justify-center gap-2"
-                  >
-                    <Play className="w-4 h-4" />
-                    {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
-                  </button>
-                  <button
-                    onClick={() => setShowJoin(true)}
-                    disabled={!name.trim()}
-                    className="btn-secondary flex items-center justify-center gap-2"
-                  >
-                    <Users className="w-4 h-4" />
-                    {t('home.cta.joinRoom')}
-                  </button>
-                </div>
-              )}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleCreate}
+                disabled={!name.trim() || creating}
+                className="btn-primary flex items-center justify-center gap-2"
+              >
+                <Play className="w-4 h-4" />
+                {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
+              </button>
+              <button
+                onClick={() => setShowJoin(true)}
+                disabled={!name.trim()}
+                className="btn-secondary flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                {t('home.cta.joinRoom')}
+              </button>
             </div>
 
             <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500">

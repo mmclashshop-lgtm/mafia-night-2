@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useGameStore } from '../../store/gameStore';
-import { useAuthStore } from '../../store/authStore';
 import { useLanguage } from '../../hooks/useLanguage';
 import { Home, Trophy, User, GraduationCap, Globe, Users } from 'lucide-react';
 
@@ -10,13 +8,11 @@ export function MobileNav() {
   const { language, toggleLanguage } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
-  const connected = useGameStore((s) => s.connected);
-  const { name } = useAuthStore();
 
   const NAV_ITEMS = [
     { path: '/', icon: Home, labelKey: 'nav.home' },
     { path: '/leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
-    { path: name ? `/profile/${encodeURIComponent(name)}` : '/', icon: User, labelKey: 'nav.profile' },
+    { path: '/profile/me', icon: User, labelKey: 'nav.profile' },
     { path: '/friends', icon: Users, labelKey: 'nav.friends' },
     { path: '/tutorial', icon: GraduationCap, labelKey: 'nav.tutorial' },
   ];
@@ -52,12 +48,7 @@ export function MobileNav() {
             onClick={toggleLanguage}
             className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-300 transition-all duration-200"
           >
-            <div className="relative">
-              <Globe className="w-5 h-5" />
-              <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${
-                connected ? 'bg-green-500' : 'bg-red-500'
-              }`} />
-            </div>
+            <Globe className="w-5 h-5" />
             <span className="text-[10px] font-medium">{language === 'en' ? 'EN' : 'AR'}</span>
           </button>
         </div>

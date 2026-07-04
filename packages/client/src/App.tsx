@@ -2,23 +2,17 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { useGameStore } from './store/gameStore';
-import { useAuthStore } from './store/authStore';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
-import { useSocialSocket } from './hooks/useSocialSocket';
 import { connectSocket } from './lib/socket';
 
 function AppInit() {
-  const { userId } = useAuthStore();
-  const token = useGameStore((s) => s.token);
+  const connected = useGameStore((s) => s.connected);
 
-  // Connect socket when user is authenticated
   useEffect(() => {
-    if (userId) {
-      connectSocket(userId, token ?? undefined);
+    if (!connected) {
+      connectSocket();
     }
-  }, [userId, token]);
-
-  useSocialSocket();
+  }, [connected]);
 
   return null;
 }

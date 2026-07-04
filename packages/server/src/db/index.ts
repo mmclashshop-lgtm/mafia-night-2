@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import type { AchievementId } from '@mafia/shared';
 import { DEFAULT_ELO } from '@mafia/shared';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,7 +72,6 @@ export interface PlayerProfile {
   totalKills: number;
   totalSurvived: number;
   score: number;
-  achievements: AchievementId[];
   consecutiveWins: number;
   bestWinStreak: number;
   roleStats: Record<string, { games: number; wins: number; saves?: number; investigations?: number; kills?: number }>;
@@ -239,7 +237,7 @@ function normalizePlayerProfile(profile: Partial<PlayerProfile>, userId: string,
     totalKills: profile.totalKills ?? 0,
     totalSurvived: profile.totalSurvived ?? 0,
     score: profile.score ?? 0,
-    achievements: Array.isArray(profile.achievements) ? profile.achievements : [],
+
     consecutiveWins: profile.consecutiveWins ?? 0,
     bestWinStreak: profile.bestWinStreak ?? 0,
     roleStats: profile.roleStats ?? {},
@@ -282,7 +280,7 @@ export function getOrCreatePlayerProfile(first: string, second?: string): Player
     totalKills: 0,
     totalSurvived: 0,
     score: 0,
-    achievements: [],
+
     consecutiveWins: 0,
     bestWinStreak: 0,
     roleStats: {},

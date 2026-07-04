@@ -9,8 +9,7 @@ import {
   getPlayerProfileByUserId,
   getFriendProfiles,
 } from '../db';
-import { getRank, ACHIEVEMENTS } from '@mafia/shared';
-import { authRoutes } from './auth.js';
+import { getRank } from '@mafia/shared';
 
 const router = Router();
 
@@ -56,12 +55,10 @@ router.get('/stats/player/:name', (req, res) => {
   const profile = getPlayerProfile(req.params.name);
   res.json({
     ...stats,
-    achievements: profile?.achievements ?? [],
     score: profile?.score ?? 0,
     rank: profile ? getRank(profile.score).name : 'Bronze',
     rankIcon: profile ? getRank(profile.score).icon : '🥉',
     bestWinStreak: profile?.bestWinStreak ?? 0,
-    achievementDetails: (profile?.achievements ?? []).map((id) => ACHIEVEMENTS[id]).filter(Boolean),
     elo: profile?.elo ?? { casual: 1000, competitive: 1000 },
     xp: profile?.xp ?? 0,
     level: profile?.level ?? 1,
@@ -90,7 +87,5 @@ router.get('/profile/:userId', (req, res) => {
   }
   res.json(profile);
 });
-
-router.use(authRoutes);
 
 export { router as apiRoutes };

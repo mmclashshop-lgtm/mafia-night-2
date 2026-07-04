@@ -2,8 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useGameStore } from '../../store/gameStore';
 import { useLanguage } from '../../hooks/useLanguage';
-import { useAuth } from '../../hooks/useAuth';
-import { UserMenu } from './UserMenu';
 import { Trophy, Globe } from 'lucide-react';
 
 function MaskIcon() {
@@ -17,7 +15,6 @@ export function Header() {
   const { language, toggleLanguage } = useLanguage();
   const connected = useGameStore((s) => s.connected);
   const roomCode = useGameStore((s) => s.roomCode);
-  const { isAuthenticated } = useAuth();
 
   return (
     <header className="glass sticky top-0 z-50">
@@ -34,8 +31,6 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3 text-sm">
-          {isAuthenticated && <UserMenu />}
-
           <button
             onClick={toggleLanguage}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"

@@ -8,13 +8,13 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "NODE_OPTIONS=\"--import tsx/esm\" node packages/server/dist/index.js",
-    "build:client": "turbo run build --filter=client",
-    "build:server": "turbo run build --filter=server",
+    "start": "npx tsx packages/server/src/index.ts",
+    "build:client": "turbo run build --filter=@mafia/client",
+    "build:server": "turbo run build --filter=@mafia/server",
     "build:shared": "turbo run build --filter=@mafia/shared",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "db:init": "turbo run db:init --filter=server",
+    "db:init": "turbo run db:init --filter=@mafia/server",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
   },
