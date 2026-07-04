@@ -1,0 +1,21 @@
+app = "mafia-night-2-server"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[mounts]]
+  source = "server_data"
+  destination = "/app/packages/server/data"
+
+[env]
+  NODE_ENV = "production"
+  CLIENT_URL = "https://mmclashshop-lgtm.github.io"
+  CORS_ORIGINS = "https://mmclashshop-lgtm.github.io"

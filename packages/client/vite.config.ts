@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig(({ command, mode }) => ({
-  base: '/MAFIA_NIGHT/',
+  base: command === 'build' && mode !== 'development' ? '/MAFIA_NIGHT/' : '/',
   plugins: [
     react(),
     VitePWA({
