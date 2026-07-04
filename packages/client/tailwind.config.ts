@@ -8,6 +8,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'Cairo', 'system-ui', '-apple-system', 'sans-serif'],
         arabic: ['Cairo', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
         mafia: {
@@ -15,18 +16,28 @@ export default {
           'red-light': '#B22222',
           'red-dark': '#4A0000',
           accent: '#FF4444',
+          'accent-soft': '#FF6B6B',
           bg: '#0A0A0A',
-          'bg-secondary': '#1A1A1A',
+          'bg-secondary': '#0D0D0D',
+          'bg-card': '#121212',
+          'bg-elevated': '#1A1A1A',
         },
         town: {
-          blue: '#2563eb',
-          dark: '#1e3a5f',
-          light: '#93c5fd',
+          blue: '#2563EB',
+          'blue-light': '#60A5FA',
+          'blue-dark': '#1E40AF',
+          'blue-soft': '#93C5FD',
         },
         neutral: {
-          purple: '#9333ea',
-          dark: '#4c1d95',
-          light: '#c4b5fd',
+          purple: '#9333EA',
+          'purple-light': '#A855F7',
+          'purple-dark': '#6B21A8',
+          'purple-soft': '#C4B5FD',
+        },
+        gold: {
+          primary: '#FFD700',
+          secondary: '#DAA520',
+          dark: '#B8860B',
         },
       },
       animation: {
@@ -48,6 +59,10 @@ export default {
         'glow-spin': 'glowSpin 3s linear infinite',
         'mask-float': 'maskFloat 6s ease-in-out infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'shimmer-loading': 'shimmerLoading 1.5s linear infinite',
+        'countdown': 'countdownPulse 1s ease-in-out infinite',
+        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        'scale-in': 'scaleIn 0.3s ease-out',
       },
       keyframes: {
         fadeIn: {
@@ -117,6 +132,18 @@ export default {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        shimmerLoading: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        countdownPulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.3' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.6' },
+          '50%': { opacity: '1' },
         },
       },
       backgroundImage: {

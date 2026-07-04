@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../store/gameStore';
@@ -18,6 +18,8 @@ import { CinematicDeathOverlay } from '../components/cinematic/CinematicDeathOve
 import { WinCelebration } from '../components/cinematic/WinCelebration';
 import { SkeletonGame } from '../components/common/Skeleton';
 import { useSound } from '../hooks/useSound';
+import { TEAM_COLORS } from '@mafia/shared';
+import { Users, Skull, LogOut } from 'lucide-react';
 
 export function Game() {
   const { t } = useTranslation();
@@ -39,7 +41,6 @@ export function Game() {
   const deadPlayers = players.filter((p) => !p.alive);
   const isDead = currentPlayer ? !currentPlayer.alive : false;
   const isNight = phase === 'night';
-  const isDay = phase === 'day';
   const isVoting = phase === 'voting';
 
   useEffect(() => {
@@ -51,28 +52,25 @@ export function Game() {
     prevAliveRef.current = currentPlayer?.alive ?? true;
   }, [currentPlayer?.alive]);
 
-  if (!gameState) {
-    return <SkeletonGame />;
-  }
+  if (!gameState) return <SkeletonGame />;
 
   if (!connected) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-16 h-16 border-4 border-[#8B0000] border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-400 animate-pulse">{t('game.reconnecting')}</p>
+        <div className="w-12 h-12 border-[3px] border-[#8B0000] border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-400 animate-pulse text-sm">{t('game.reconnecting')}</p>
         <button onClick={() => { leaveRoom(); navigate('/'); }} className="btn-secondary text-sm">
-          {t('game.leaveGame')}
+          <LogOut className="w-4 h-4" /> {t('game.leaveGame')}
         </button>
       </div>
     );
   }
 
   if (phase === 'ended') {
-    const winnerTeam = gameState.winner;
     return (
-      <>
+      <div className="animate-fade-in">
         <WinCelebration
-          winner={winnerTeam}
+          winner={gameState.winner}
           onPlayAgain={async () => {
             setPlayAgainLoading(true);
             try {
@@ -86,116 +84,137 @@ export function Game() {
           onLeave={() => leaveRoom()}
           playAgainLoading={playAgainLoading}
         />
-        <div className="card p-6 mt-4">
-          <h3 className="text-lg font-bold mb-4">{t('game.allRoles')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="card-glass p-5 mt-4">
+          <h3 className="text-base font-bold mb-4">{t('game.allRoles')}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {players.map((p) => (
-              <div key={p.id} className={`card p-3 flex items-center gap-3 ${!p.alive ? 'opacity-50' : ''}`}>
-                <div className={`w-3 h-3 rounded-full ${p.alive ? 'bg-green-500' : 'bg-red-500'}`} />
+              <div key={p.id} className={`flex items-center gap-3 p-2.5 rounded-lg ${!p.alive ? 'opacity-50' : 'bg-white/[0.02]'}`}>
+                <div className={`w-2.5 h-2.5 rounded-full ${p.alive ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{p.name}</p>
-                  <p className="text-xs text-gray-400">{p.role?.name ?? t('game.unknown')} ({p.team})</p>
+                  <p className="text-xs text-gray-500">
+                    {p.role?.name ?? t('game.unknown')}
+                    <span className="mr-1" style={{ color: TEAM_COLORS[p.team] }}>({p.team})</span>
+                  </p>
                 </div>
-                <span className={`text-xs ${p.alive ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`text-[11px] font-medium ${p.alive ? 'text-green-400' : 'text-red-400'}`}>
                   {p.alive ? t('game.alive') : t('game.dead')}
                 </span>
               </div>
             ))}
           </div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
     <>
       {showDeathEffect && <CinematicDeathOverlay onComplete={() => setShowDeathEffect(false)} />}
-      <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in ${isNight ? 'relative' : ''}`}>
-        <div className="md:col-span-1 lg:col-span-2 space-y-4">
-          <PhaseIndicator phase={phase} day={gameState.day} endsAt={gameState.phaseEndsAt} />
+      <div className={`animate-fade-in space-y-4 ${isNight ? 'relative' : ''}`}>
+        {/* Phase Indicator + Stats bar */}
+        <PhaseIndicator phase={phase} day={gameState.day} endsAt={gameState.phaseEndsAt} />
 
-          {currentPlayer?.role && !isDead && <RoleCard role={currentPlayer.role} />}
-
-          {isDead && currentPlayer?.role && <DeathReveal role={currentPlayer.role} />}
-
-          {isNight && (
-            <div className="card p-4 border-indigo-800/30 bg-indigo-950/20">
-              <p className="text-sm text-indigo-300 text-center">
-                {t('game.nightFalls')}
-              </p>
-            </div>
-          )}
-
-          {isDay && (
-            <div className="card p-4 bg-amber-950/30 border-amber-800/30">
-              <p className="text-sm text-amber-300 text-center">
-                {t('game.dayHasCome')}
-              </p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {alivePlayers.map((player) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                isCurrentPlayer={player.id === playerId}
-                phase={phase}
-                isDead={isDead}
-              />
-            ))}
+        {/* Player counts */}
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <span className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-green-400" />
+              <span className="text-green-400 font-medium">{alivePlayers.length}</span>
+              <span>حي</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Skull className="w-3.5 h-3.5 text-red-400" />
+              <span className="text-red-400 font-medium">{deadPlayers.length}</span>
+              <span>ميت</span>
+            </span>
           </div>
-
-          {deadPlayers.length > 0 && (
-            <div className="card p-4">
-              <h3 className="text-sm text-gray-400 mb-2">{t('game.deadCount', { count: deadPlayers.length })}</h3>
-              <div className="flex flex-wrap gap-2">
-                {deadPlayers.map((p) => (
-                  <span key={p.id} className="text-sm text-gray-500 flex items-center gap-1">
-                    {p.name}
-                    {p.role && <span className="text-xs text-gray-600">({p.role.name})</span>}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {isNight && currentPlayer?.role?.nightAction && !isDead && (
-            <NightActions
-              players={alivePlayers.filter((p) => p.id !== playerId)}
-              role={currentPlayer.role}
-              onSubmit={async (targetId, actionType) => {
-                try {
-                  await submitNightAction(targetId, actionType ?? currentPlayer.role!.id);
-                  addToast('info', t('game.nightActionSubmitted'));
-                } catch (err) {
-                  addToast('error', err instanceof Error ? err.message : t('game.failed'));
-                }
-              }}
-            />
-          )}
-
-          {isVoting && !isDead && (
-            <VotingPanel
-              players={alivePlayers.filter((p) => p.id !== playerId)}
-              hasVoted={gameState.votes?.some((v) => v.from === playerId) ?? false}
-              onSubmit={async (targetId) => {
-                try {
-                  await submitVote(targetId);
-                  addToast('info', t('game.voteSubmitted'));
-                } catch (err) {
-                  addToast('error', err instanceof Error ? err.message : t('game.failed'));
-                }
-              }}
-            />
-          )}
         </div>
 
-        <div className="space-y-4">
-          <VoiceChat />
-          {isDead && <SpectatorOverlay />}
-          <ChatPanel isNight={isNight} isDead={isDead} />
-          <GameLog events={gameState.history ?? []} />
+        {/* Role info */}
+        {currentPlayer?.role && !isDead && <RoleCard role={currentPlayer.role} />}
+        {isDead && currentPlayer?.role && <DeathReveal role={currentPlayer.role} />}
+
+        {/* Phase banner */}
+        {isNight && (
+          <div className="card p-3 border-indigo-800/30 bg-indigo-950/20 text-center">
+            <p className="text-sm text-indigo-300">{t('game.nightFalls')}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Left: Main game area */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Player grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {alivePlayers.map((player) => (
+                <PlayerCard
+                  key={player.id}
+                  player={player}
+                  isCurrentPlayer={player.id === playerId}
+                  phase={phase}
+                  isDead={isDead}
+                />
+              ))}
+            </div>
+
+            {/* Dead players */}
+            {deadPlayers.length > 0 && (
+              <div className="card p-3">
+                <h3 className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+                  <Skull className="w-3 h-3" />
+                  {t('game.deadCount', { count: deadPlayers.length })}
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {deadPlayers.map((p) => (
+                    <span key={p.id} className="text-xs text-gray-600 flex items-center gap-1 bg-[#1A1A1A]/50 px-2 py-1 rounded-md">
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Night actions */}
+            {isNight && currentPlayer?.role?.nightAction && !isDead && (
+              <NightActions
+                players={alivePlayers.filter((p) => p.id !== playerId)}
+                role={currentPlayer.role}
+                onSubmit={async (targetId, actionType) => {
+                  try {
+                    await submitNightAction(targetId, actionType ?? currentPlayer.role!.id);
+                    addToast('info', t('game.nightActionSubmitted'));
+                  } catch (err) {
+                    addToast('error', err instanceof Error ? err.message : t('game.failed'));
+                  }
+                }}
+              />
+            )}
+
+            {/* Voting panel */}
+            {isVoting && !isDead && (
+              <VotingPanel
+                players={alivePlayers.filter((p) => p.id !== playerId)}
+                hasVoted={gameState.votes?.some((v) => v.from === playerId) ?? false}
+                onSubmit={async (targetId) => {
+                  try {
+                    await submitVote(targetId);
+                    addToast('info', t('game.voteSubmitted'));
+                  } catch (err) {
+                    addToast('error', err instanceof Error ? err.message : t('game.failed'));
+                  }
+                }}
+              />
+            )}
+          </div>
+
+          {/* Right: Chat + Log */}
+          <div className="space-y-4">
+            <VoiceChat />
+            {isDead && <SpectatorOverlay />}
+            <ChatPanel isNight={isNight} isDead={isDead} />
+            <GameLog events={gameState.history ?? []} />
+          </div>
         </div>
       </div>
     </>

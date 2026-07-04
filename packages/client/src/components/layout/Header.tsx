@@ -1,54 +1,56 @@
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../../store/gameStore';
-import { useLanguage } from '../../hooks/useLanguage';
-import { Trophy, Globe } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
-function MaskIcon() {
-  return (
-    <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Mafia Night" className="w-7 h-7 shrink-0" />
-  );
+interface HeaderProps {
+  onMenuClick: () => void;
 }
 
-export function Header() {
+export function Header({ onMenuClick }: HeaderProps) {
   const { t } = useTranslation();
-  const { language, toggleLanguage } = useLanguage();
   const connected = useGameStore((s) => s.connected);
   const roomCode = useGameStore((s) => s.roomCode);
 
   return (
-    <header className="glass sticky top-0 z-50">
-      <div className="container mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+    <header
+      className="sticky top-0 z-30"
+      style={{
+        background: 'rgba(10, 10, 10, 0.8)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(139, 0, 0, 0.08)',
+      }}
+    >
+      <div className="flex items-center justify-between h-14 px-4 lg:px-6">
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tight">
-            <MaskIcon />
-            <span className="text-[#F5F5F5]">{t('brand.name')}</span>
-          </Link>
-          <Link to="/leaderboard" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
-            <Trophy className="w-3.5 h-3.5" />
-            {t('nav.leaderboard')}
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-3 text-sm">
-          <button
-            onClick={toggleLanguage}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
-            title={t('nav.language')}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span className="font-medium">{language === 'en' ? 'EN' : 'AR'}</span>
+          <button className="btn-icon md:hidden" onClick={onMenuClick}>
+            <Menu className="w-5 h-5" />
           </button>
-
+          <Link to="/" className="flex items-center gap-2.5">
+            <img
+              src={`${import.meta.env.BASE_URL}logo.svg`}
+              alt="Mafia Night"
+              className="w-7 h-7 shrink-0"
+            />
+            <span className="text-base font-bold tracking-tight hidden sm:inline">
+              {t('brand.name')}
+            </span>
+          </Link>
           {roomCode && (
-            <span className="text-gray-400">
-              {t('common.room')}: <code className="text-[#B22222] font-mono">{roomCode}</code>
+            <span className="hidden sm:flex items-center gap-1.5 text-xs text-gray-500 mr-3 pr-3 border-r border-[#8B0000]/10">
+              <span>{t('common.room')}:</span>
+              <code className="text-[#B22222] font-mono font-bold">{roomCode}</code>
             </span>
           )}
+        </div>
 
+        <div className="flex items-center gap-2">
           <span
             className={`w-2 h-2 rounded-full ${
-              connected ? 'bg-green-500 shadow-lg shadow-green-500/30' : 'bg-red-500 shadow-lg shadow-red-500/30'
+              connected
+                ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]'
+                : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
             }`}
             title={connected ? t('common.connected') : t('common.disconnected')}
           />

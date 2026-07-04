@@ -5,23 +5,9 @@ import { useSocket } from '../hooks/useSocket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
-import { RoleAvatarWithFallback } from '../components/common/RoleAvatar';
-import { ROLE_ICON_MAP } from '../lib/roleConfig';
-import type { RoleId } from '@mafia/shared';
 import {
-  Sword, Users, Mic, Bot, Trophy, Monitor,
-  ArrowRight, Play, ChevronDown, Sparkles, Zap
+  Play, Users, Zap, ChevronDown, Sword, Bot, Trophy, Monitor, Mic,
 } from 'lucide-react';
-
-function MaskLogo({ className = '' }: { className?: string }) {
-  return (
-    <img
-      src={`${import.meta.env.BASE_URL}logo.svg`}
-      alt="Mafia Night"
-      className={`${className} animate-mask-float drop-shadow-[0_0_30px_rgba(139,0,0,0.3)]`}
-    />
-  );
-}
 
 function FeatureCard({ icon: Icon, title, desc, delay }: { icon: any; title: string; desc: string; delay: string }) {
   return (
@@ -35,31 +21,6 @@ function FeatureCard({ icon: Icon, title, desc, delay }: { icon: any; title: str
   );
 }
 
-function HowToPlayStep({ number, title, desc }: { number: string; title: string; desc: string }) {
-  return (
-    <div className="flex gap-4 items-start animate-fade-in-up">
-      <div className="shrink-0 w-10 h-10 rounded-full bg-[#8B0000]/20 border border-[#8B0000]/30 flex items-center justify-center">
-        <span className="text-[#8B0000] font-bold">{number}</span>
-      </div>
-      <div>
-        <h3 className="text-white font-semibold mb-1">{title}</h3>
-        <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
-      </div>
-    </div>
-  );
-}
-
-function RoleIcon({ role, className = '' }: { role: string; className?: string }) {
-  return (
-    <RoleAvatarWithFallback
-      roleId={role}
-      emoji={ROLE_ICON_MAP[role] ?? '?'}
-      size="sm"
-      className={className}
-    />
-  );
-}
-
 export function Home() {
   const { t } = useTranslation();
   const [name, setName] = useState('');
@@ -68,27 +29,16 @@ export function Home() {
   const [creating, setCreating] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [matchmaking, setMatchmaking] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
   const { addToast } = useUIStore();
   const navigate = useNavigate();
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const featuresRef = useRef<HTMLDivElement>(null);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set(prev).add(entry.target.id));
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    document.querySelectorAll('[data-observe]').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    const timer = setTimeout(() => setShowContent(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCreate = async () => {
@@ -140,55 +90,100 @@ export function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero */}
+      {/* ─── Cinematic Hero ─── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-grid opacity-50" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#8B0000]/5 rounded-full blur-3xl animate-pulse-slow" />
-        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-[#FF4444]/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-[#B22222]/5 rounded-full blur-3xl" />
+        {/* Animated background orbs */}
+        <div className="absolute inset-0 bg-grid opacity-30" />
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#8B0000]/8 rounded-full blur-3xl animate-pulse-slow" style={{ animationDuration: '6s' }} />
+        <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-[#B22222]/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-[#8B0000]/4 to-transparent rounded-full" />
+        <div className="absolute inset-0 bg-noise" />
 
-        <div className="relative z-10 animate-fade-in">
-          <div className="flex justify-center mb-8">
-            <MaskLogo className="w-32 h-32 md:w-40 md:h-40 animate-mask-float drop-shadow-[0_0_40px_rgba(139,0,0,0.4)]" />
+        {/* Floating particles effect */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-[#8B0000]/20 rounded-full animate-float"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${3 + Math.random() * 4}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Main content */}
+        <div className={`relative z-10 transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#8B0000]/20 rounded-full blur-3xl scale-150" />
+              <img
+                src={`${import.meta.env.BASE_URL}logo.svg`}
+                alt="Mafia Night"
+                className="w-28 h-28 md:w-36 md:h-36 animate-mask-float drop-shadow-[0_0_60px_rgba(139,0,0,0.5)]"
+              />
+            </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-4">
-            {t('home.hero.title')}{' '}
-            <span className="text-gradient">{t('home.hero.titleAccent')}</span>
+
+          {/* Title */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-3">
+            <span className="text-gradient">{t('home.hero.title')}</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 mb-8 max-w-lg mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
             {t('home.hero.subtitle')}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+          {/* Name input */}
+          <div className="max-w-xs mx-auto mb-6">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t('home.cta.namePlaceholder')}
+              className="input-field text-center"
+              maxLength={20}
+            />
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
             <button
               onClick={handleQuickPlay}
               disabled={!name.trim()}
-              className="btn-primary flex items-center gap-2 px-8 py-3.5 text-base relative overflow-hidden group"
+              className="btn-primary flex items-center gap-2.5 px-10 py-4 text-base relative overflow-hidden group animate-glow-pulse"
+              style={{ minWidth: 200 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               <Zap className="w-5 h-5" />
-              {t('matchmaking.quickPlay')}
+              <span className="text-base">{t('matchmaking.quickPlay')}</span>
             </button>
+          </div>
+
+          <div className="flex items-center justify-center gap-3">
             <button
               onClick={handleCreate}
               disabled={!name.trim() || creating}
-              className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
+              className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm"
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-4 h-4" />
               {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
             </button>
             <button
               onClick={() => setShowJoin(!showJoin)}
-              className="btn-secondary flex items-center gap-2 px-8 py-3.5 text-base"
+              className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm"
             >
-              <Users className="w-5 h-5" />
+              <Users className="w-4 h-4" />
               {t('home.cta.joinRoom')}
             </button>
           </div>
 
+          {/* Join room card */}
           {showJoin && (
-            <div className="animate-slide-down mb-8">
-              <div className="card p-4 max-w-sm mx-auto space-y-3">
+            <div className="animate-slide-down mt-4" style={{ animationDelay: '0ms' }}>
+              <div className="glass-card p-4 max-w-sm mx-auto">
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -201,42 +196,27 @@ export function Home() {
                   />
                   <button
                     onClick={handleJoin}
-                    disabled={!name.trim() || !roomCode.trim()}
+                    disabled={!name.trim() || !roomCode.trim() || joining}
                     className="btn-primary px-5"
                   >
-                    <ArrowRight className="w-5 h-5" />
+                    {joining ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Play className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
             </div>
           )}
 
-          <div className="card p-4 max-w-sm mx-auto space-y-3">
-            <div className="text-left">
-              <label className="block text-xs text-gray-500 mb-1.5 font-medium">{t('home.cta.yourName')}</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t('home.cta.namePlaceholder')}
-                className="input-field"
-                maxLength={20}
-              />
-            </div>
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <span className="flex items-center gap-1">
-                <Sword className="w-3 h-3" /> {t('home.cta.fourToTwelve')}
-              </span>
-              <span className="flex items-center gap-1">
-                <Users className="w-3 h-3" /> {t('home.cta.classicRoles')}
-              </span>
-            </div>
+          {/* Meta info */}
+          <div className="flex items-center justify-center gap-4 mt-6 text-xs text-gray-600">
+            <span className="flex items-center gap-1.5"><Sword className="w-3 h-3" /> {t('home.cta.fourToTwelve')}</span>
+            <span className="flex items-center gap-1.5"><Users className="w-3 h-3" /> {t('home.cta.classicRoles')}</span>
           </div>
         </div>
 
+        {/* Scroll indicator */}
         <button
           onClick={scrollToFeatures}
-          className="absolute bottom-8 text-gray-500 hover:text-white transition-colors animate-float"
+          className="absolute bottom-8 text-gray-600 hover:text-white transition-colors animate-float"
         >
           <ChevronDown className="w-6 h-6" />
         </button>
@@ -244,15 +224,8 @@ export function Home() {
 
       {matchmaking && <MatchmakingOverlay onCancel={handleCancelMatchmaking} />}
 
-      {/* Features */}
-      <section
-        id="features"
-        ref={featuresRef}
-        data-observe
-        className={`py-20 px-4 transition-all duration-700 ${
-          visibleSections.has('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
+      {/* ─── Features Section ─── */}
+      <section ref={featuresRef} className="py-20 px-4" id="features">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.features.title')}</h2>
@@ -260,139 +233,25 @@ export function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <FeatureCard icon={Users} title={t('home.features.multiplayer.title')} desc={t('home.features.multiplayer.desc')} delay="animate-delay-100" />
-            <FeatureCard icon={Sword} title={t('home.features.roles.title')} desc={t('home.features.roles.desc')} delay="animate-delay-200" />
-            <FeatureCard icon={Mic} title={t('home.features.voice.title')} desc={t('home.features.voice.desc')} delay="animate-delay-300" />
-            <FeatureCard icon={Bot} title={t('home.features.ai.title')} desc={t('home.features.ai.desc')} delay="animate-delay-400" />
-            <FeatureCard icon={Trophy} title={t('home.features.stats.title')} desc={t('home.features.stats.desc')} delay="animate-delay-500" />
-            <FeatureCard icon={Monitor} title={t('home.features.crossplay.title')} desc={t('home.features.crossplay.desc')} delay="animate-delay-700" />
-          </div>
-        </div>
-      </section>
-
-      {/* How to Play */}
-      <section
-        id="how-to-play"
-        data-observe
-        className={`py-20 px-4 transition-all duration-700 ${
-          visibleSections.has('how-to-play') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.howToPlay.title')}</h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#8B0000] to-transparent mx-auto" />
-          </div>
-
-          <div className="space-y-6">
-            <HowToPlayStep number="1" title={t('home.howToPlay.step1.title')} desc={t('home.howToPlay.step1.desc')} />
-            <HowToPlayStep number="2" title={t('home.howToPlay.step2.title')} desc={t('home.howToPlay.step2.desc')} />
-            <HowToPlayStep number="3" title={t('home.howToPlay.step3.title')} desc={t('home.howToPlay.step3.desc')} />
-            <HowToPlayStep number="4" title={t('home.howToPlay.step4.title')} desc={t('home.howToPlay.step4.desc')} />
-          </div>
-        </div>
-      </section>
-
-      {/* Role Preview */}
-      <section
-        id="roles"
-        data-observe
-        className={`py-20 px-4 transition-all duration-700 ${
-          visibleSections.has('roles') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">14 {t('home.rolesSection.title')}</h2>
-            <p className="text-gray-400">{t('home.rolesSection.subtitle')}</p>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#8B0000] to-transparent mx-auto mt-4" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {[
-              { id: 'mafia', team: 'mafia' }, { id: 'godfather', team: 'mafia' },
-              { id: 'doctor', team: 'town' }, { id: 'cop', team: 'town' },
-              { id: 'detective', team: 'town' }, { id: 'vigilante', team: 'town' },
-              { id: 'sniper', team: 'town' }, { id: 'mayor', team: 'town' },
-              { id: 'villager', team: 'town' }, { id: 'medic', team: 'town' },
-              { id: 'serial_killer', team: 'neutral' }, { id: 'jester', team: 'neutral' },
-              { id: 'witch', team: 'neutral' }, { id: 'spy', team: 'neutral' },
-            ].map((role, i) => (
-              <div
-                key={role.id}
-                className={`card-hover p-3 text-center animate-fade-in-up cursor-pointer group ${
-                  role.team === 'mafia' ? 'hover:border-red-800/50' :
-                  role.team === 'town' ? 'hover:border-blue-800/50' :
-                  'hover:border-purple-800/50'
-                }`}
-                style={{ animationDelay: `${i * 50}ms` }}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2 ${
-                  role.team === 'mafia' ? 'bg-red-900/30 text-red-400' :
-                  role.team === 'town' ? 'bg-blue-900/30 text-blue-400' :
-                  'bg-purple-900/30 text-purple-400'
-                }`}>
-                  <RoleIcon role={role.id} />
-                </div>
-                <p className="text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
-                  {t(`roles.${role.id}.name`)}
-                </p>
-              </div>
+              { icon: Users, titleKey: 'home.features.multiplayer.title', descKey: 'home.features.multiplayer.desc', delay: 'animate-delay-100' },
+              { icon: Sword, titleKey: 'home.features.roles.title', descKey: 'home.features.roles.desc', delay: 'animate-delay-200' },
+              { icon: Mic, titleKey: 'home.features.voice.title', descKey: 'home.features.voice.desc', delay: 'animate-delay-300' },
+              { icon: Bot, titleKey: 'home.features.ai.title', descKey: 'home.features.ai.desc', delay: 'animate-delay-400' },
+              { icon: Trophy, titleKey: 'home.features.stats.title', descKey: 'home.features.stats.desc', delay: 'animate-delay-500' },
+              { icon: Monitor, titleKey: 'home.features.crossplay.title', descKey: 'home.features.crossplay.desc', delay: 'animate-delay-700' },
+            ].map(({ icon, titleKey, descKey, delay }) => (
+              <FeatureCard key={titleKey} icon={icon} title={t(titleKey)} desc={t(descKey)} delay={delay} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section
-        id="cta"
-        data-observe
-        className={`py-20 px-4 transition-all duration-700 ${
-          visibleSections.has('cta') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="max-w-md mx-auto text-center">
-          <div className="card-glow p-8">
-            <Sparkles className="w-8 h-8 text-[#8B0000] mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">{t('home.cta.title')}</h2>
-            <p className="text-gray-400 text-sm mb-6">{t('home.cta.subtitle')}</p>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={handleCreate}
-                disabled={!name.trim() || creating}
-                className="btn-primary flex items-center justify-center gap-2"
-              >
-                <Play className="w-4 h-4" />
-                {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
-              </button>
-              <button
-                onClick={() => setShowJoin(true)}
-                disabled={!name.trim()}
-                className="btn-secondary flex items-center justify-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                {t('home.cta.joinRoom')}
-              </button>
-            </div>
-
-            <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-500">
-              <Link to="/leaderboard" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
-                {t('nav.leaderboard')} →
-              </Link>
-              <Link to="/tutorial" className="text-[#B22222] hover:text-[#FF4444] transition-colors">
-                {t('nav.tutorial')} →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-800/50 py-8 px-4">
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-[#8B0000]/10 py-8 px-4">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
           <div className="flex items-center gap-2">
-            <MaskLogo className="w-6 h-6" />
+            <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" className="w-6 h-6" />
             <span className="font-semibold text-gray-400">{t('brand.name')}</span>
           </div>
           <p>&copy; {new Date().getFullYear()} {t('brand.name')}. {t('home.footer.rights')}</p>

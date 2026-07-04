@@ -24,34 +24,39 @@ export function MobileNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden" dir="rtl">
-      <div className="glass border-t border-gray-800/50">
-        <div className="flex items-center justify-around h-16 px-2">
-          {NAV_ITEMS.map(({ path, icon: Icon, labelKey }) => (
-            <button
-              key={path}
-              onClick={() => navigate(path)}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all duration-200 relative ${
-                isActive(path)
-                  ? 'text-[#B22222]'
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              {isActive(path) && (
-                <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#B22222] rounded-full" />
-              )}
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium">{t(labelKey)}</span>
-            </button>
-          ))}
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      style={{
+        background: 'rgba(10, 10, 10, 0.9)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderTop: '1px solid rgba(139, 0, 0, 0.1)',
+      }}
+      dir="rtl"
+    >
+      <div className="flex items-center justify-around h-16 px-2">
+        {NAV_ITEMS.map(({ path, icon: Icon, labelKey }) => (
           <button
-            onClick={toggleLanguage}
-            className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-300 transition-all duration-200"
+            key={path}
+            onClick={() => navigate(path)}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all duration-200 relative ${
+              isActive(path) ? 'text-[#FF4444]' : 'text-gray-500 hover:text-gray-300'
+            }`}
           >
-            <Globe className="w-5 h-5" />
-            <span className="text-[10px] font-medium">{language === 'en' ? 'EN' : 'AR'}</span>
+            {isActive(path) && (
+              <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-[#8B0000] to-[#FF4444] rounded-full" />
+            )}
+            <Icon className="w-5 h-5" />
+            <span className="text-[10px] font-semibold">{t(labelKey)}</span>
           </button>
-        </div>
+        ))}
+        <button
+          onClick={toggleLanguage}
+          className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-300 transition-all duration-200"
+        >
+          <Globe className="w-5 h-5" />
+          <span className="text-[10px] font-semibold">{language === 'en' ? 'EN' : 'AR'}</span>
+        </button>
       </div>
     </nav>
   );
