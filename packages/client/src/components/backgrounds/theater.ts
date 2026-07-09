@@ -3,10 +3,10 @@ import type { BgRenderer } from './canvas';
 
 export const renderTheater: BgRenderer = (ctx, w, h, time, _mx, _my, alpha) => {
   drawGradient(ctx, w, h, [
-    { offset: 0, color: 'rgba(30,5,5,1)' },
-    { offset: 0.3, color: 'rgba(80,10,10,1)' },
-    { offset: 0.7, color: 'rgba(139,0,0,0.8)' },
-    { offset: 1, color: 'rgba(10,3,3,1)' },
+    { offset: 0, color: 'rgba(40,8,8,1)' },
+    { offset: 0.3, color: 'rgba(100,15,15,1)' },
+    { offset: 0.7, color: 'rgba(160,10,10,0.9)' },
+    { offset: 1, color: 'rgba(15,5,5,1)' },
   ], alpha);
 
   const spotX = w * 0.5 + Math.sin(time * 0.1) * 80;
@@ -19,7 +19,7 @@ export const renderTheater: BgRenderer = (ctx, w, h, time, _mx, _my, alpha) => {
       spotX + Math.sin(angle) * w * 0.3, spotY + h * 0.1,
       w * 0.2
     );
-    g.addColorStop(0, `rgba(255,255,200,${0.15 - i * 0.025})`);
+    g.addColorStop(0, `rgba(255,255,200,${0.25 - i * 0.04})`);
     g.addColorStop(1, 'transparent');
     ctx.globalAlpha = alpha;
     ctx.fillStyle = g;
@@ -29,18 +29,17 @@ export const renderTheater: BgRenderer = (ctx, w, h, time, _mx, _my, alpha) => {
   }
   ctx.globalAlpha = 1;
 
-  drawGlow(ctx, spotX, spotY, 200, 'rgba(255,255,200,0.25)', alpha);
-  drawGlow(ctx, spotX, spotY, 100, 'rgba(255,255,200,0.35)', alpha);
+  drawGlow(ctx, spotX, spotY, 200, 'rgba(255,255,200,0.35)', alpha);
+  drawGlow(ctx, spotX, spotY, 100, 'rgba(255,255,200,0.5)', alpha);
 
-  const glitterCount = 40;
-  for (let i = 0; i < glitterCount; i++) {
+  for (let i = 0; i < 60; i++) {
     const gx = ((i * 137 + Math.sin(time * 2 + i) * 50) % w);
     const gy = ((i * 251 + Math.cos(time * 1.5 + i) * 30) % h);
     const bright = 0.3 + Math.sin(time * 3 + i * 1.7) * 0.3;
-    ctx.globalAlpha = bright * alpha * 0.3;
+    ctx.globalAlpha = bright * alpha * 0.4;
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(gx, gy, 1 + Math.sin(time * 2 + i) * 0.5, 0, Math.PI * 2);
+    ctx.arc(gx, gy, 1.2 + Math.sin(time * 2 + i) * 0.5, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
@@ -48,8 +47,8 @@ export const renderTheater: BgRenderer = (ctx, w, h, time, _mx, _my, alpha) => {
   for (let side = 0; side < 2; side++) {
     const sx = side === 0 ? 0 : w;
     const g = ctx.createRadialGradient(sx, h * 0.3, 0, sx, h * 0.3, w * 0.25);
-    g.addColorStop(0, `rgba(139,0,0,${0.3 * alpha})`);
-    g.addColorStop(0.5, `rgba(100,0,0,${0.15 * alpha})`);
+    g.addColorStop(0, `rgba(139,0,0,${0.4 * alpha})`);
+    g.addColorStop(0.5, `rgba(100,0,0,${0.2 * alpha})`);
     g.addColorStop(1, 'transparent');
     ctx.fillStyle = g;
     ctx.beginPath();
@@ -64,13 +63,13 @@ export const renderTheater: BgRenderer = (ctx, w, h, time, _mx, _my, alpha) => {
     ctx.fill();
   }
 
-  ctx.globalAlpha = 0.08 * alpha;
+  ctx.globalAlpha = 0.12 * alpha;
   ctx.fillStyle = '#ffd700';
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 40; i++) {
     const sx = (i * 67) % w;
     const sy = (i * 43) % h;
     ctx.beginPath();
-    ctx.arc(sx, sy, 0.5, 0, Math.PI * 2);
+    ctx.arc(sx, sy, 0.8, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.globalAlpha = 1;

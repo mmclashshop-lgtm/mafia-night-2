@@ -869,5 +869,85 @@
     "dailyQuestDate": "2026-07-09",
     "friendUserIds": [],
     "pendingFriendRequests": []
+  },
+  "نامنانم": {
+    "userId": "legacy_",
+    "name": "نامنانم",
+    "totalGames": 3,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 1,
+    "score": 82,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "mafia": {
+        "games": 1,
+        "wins": 0
+      },
+      "villager": {
+        "games": 1,
+        "wins": 0
+      },
+      "cop": {
+        "games": 1,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783617666877
+      },
+      {
+        "winner": "mafia",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 2,
+        "startedAt": 1783617780073
+      },
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783617763758
+      }
+    ],
+    "achievements": [],
+    "coins": 33,
+    "inventory": [],
+    "elo": {
+      "casual": 943,
+      "competitive": 1000
+    },
+    "xp": 160,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "kill_3",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "win_1",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "mafia_win",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-09",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
   }
 }
