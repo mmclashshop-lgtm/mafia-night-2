@@ -59,18 +59,18 @@ export function Lobby() {
   return (
     <PageTransition>
     <div className="space-y-5">
-      <div className="card-glass p-5">
+      <div className="card-glass p-5 card-shine">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h2 className="text-xl font-bold">{t('lobby.title')}</h2>
+            <h2 className="section-title">{t('lobby.title')}</h2>
             <p className="text-gray-400 text-xs mt-0.5">{t('lobby.shareCode')}</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handleCopyCode} className="btn-secondary flex items-center gap-2 px-3 py-2 text-xs">
+            <button onClick={handleCopyCode} className="btn-ghost flex items-center gap-2 px-3 py-2 text-xs border border-[#8B0000]/20 hover:border-[#8B0000]/40">
               <Copy className="w-3.5 h-3.5" />
               <code className="text-base font-mono tracking-widest">{roomCode}</code>
             </button>
-            <button onClick={() => leaveRoom()} className="btn-ghost text-xs">
+            <button onClick={() => leaveRoom()} className="btn-ghost text-xs" title={t('lobby.leave')}>
               <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -125,7 +125,7 @@ export function Lobby() {
         })}
 
         {Array.from({ length: Math.max(0, (gameState?.settings?.maxPlayers ?? 12) - players.length) }).slice(0, 4).map((_, i) => (
-          <div key={`empty-${i}`} className="card border border-dashed border-gray-800/50 p-4 flex items-center justify-center h-full">
+          <div key={`empty-${i}`} className="card-hover border border-dashed border-gray-800/30 p-4 flex items-center justify-center h-full rounded-xl bg-white/[0.01]">
             <div className="text-center">
               <Users className="w-6 h-6 text-gray-700 mx-auto mb-1" />
               <p className="text-xs text-gray-700 font-medium">{t('lobby.emptySlot')}</p>

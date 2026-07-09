@@ -82,20 +82,20 @@ export function Game() {
           onLeave={() => leaveRoom()}
           playAgainLoading={playAgainLoading}
         />
-        <div className="card-glass p-5 mt-4">
-          <h3 className="text-base font-bold mb-4">{t('game.allRoles')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="card-glass p-5 mt-4 card-shine">
+          <h3 className="section-title mb-4">{t('game.allRoles')}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5">
             {players.map((p) => (
-              <div key={p.id} className={`flex items-center gap-3 p-2.5 rounded-lg ${!p.alive ? 'opacity-50' : 'bg-white/[0.02]'}`}>
+              <div key={p.id} className={`card-hover flex items-center gap-3 p-2.5 rounded-lg ${!p.alive ? 'opacity-50' : ''}`}>
                 <div className={`w-2.5 h-2.5 rounded-full ${p.alive ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{p.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[11px] text-gray-500">
                     {p.role?.name ?? t('game.unknown')}
-                    <span className="mr-1" style={{ color: TEAM_COLORS[p.team] }}>({p.team})</span>
+                    <span className="mr-1" style={{ color: TEAM_COLORS[p.team] }}> ({p.team})</span>
                   </p>
                 </div>
-                <span className={`text-[11px] font-medium ${p.alive ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`text-[11px] font-semibold ${p.alive ? 'text-green-400' : 'text-red-400'}`}>
                   {p.alive ? t('game.alive') : t('game.dead')}
                 </span>
               </div>
@@ -135,8 +135,8 @@ export function Game() {
         {isDead && currentPlayer?.role && <DeathReveal role={currentPlayer.role} />}
 
         {isNight && (
-          <div className="card p-3 border-indigo-800/30 bg-indigo-950/20 text-center">
-            <p className="text-sm text-indigo-300">{t('game.nightFalls')}</p>
+          <div className="card-glass p-3 border-indigo-800/30 text-center">
+            <p className="text-sm text-indigo-300 font-medium">{t('game.nightFalls')}</p>
           </div>
         )}
 
@@ -149,14 +149,14 @@ export function Game() {
             </div>
 
             {deadPlayers.length > 0 && (
-              <div className="card p-3">
-                <h3 className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+              <div className="card-glass p-3">
+                <h3 className="section-title text-xs mb-2">
                   <Skull className="w-3 h-3" />
                   {t('game.deadCount', { count: deadPlayers.length })}
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
                   {deadPlayers.map((p) => (
-                    <span key={p.id} className="text-xs text-gray-600 flex items-center gap-1 bg-[#1A1A1A]/50 px-2 py-1 rounded-md">{p.name}</span>
+                    <span key={p.id} className="text-xs text-gray-500 flex items-center gap-1 bg-white/[0.03] px-2 py-1 rounded-md border border-gray-800/30">{p.name}</span>
                   ))}
                 </div>
               </div>
