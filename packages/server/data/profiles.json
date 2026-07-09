@@ -38,17 +38,21 @@
     ]
   },
   "محمد": {
+    "userId": "legacy_",
     "name": "محمد",
-    "totalGames": 1,
+    "totalGames": 2,
     "totalWins": 0,
-    "totalKills": 0,
+    "totalKills": 1,
     "totalSurvived": 1,
-    "score": 205,
-    "achievements": [],
+    "score": 120,
     "consecutiveWins": 0,
     "bestWinStreak": 0,
     "roleStats": {
       "cop": {
+        "games": 1,
+        "wins": 0
+      },
+      "mafia": {
         "games": 1,
         "wins": 0
       }
@@ -61,8 +65,45 @@
         "survived": true,
         "dayCount": 4,
         "startedAt": 1783016602723
+      },
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783618905779
       }
-    ]
+    ],
+    "achievements": [],
+    "coins": 12,
+    "inventory": [],
+    "elo": {
+      "casual": 980,
+      "competitive": 1000
+    },
+    "xp": 75,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "town_win",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "mafia_win",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "win_1",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-09",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
   },
   "طكمنةن": {
     "name": "طكمنةن",

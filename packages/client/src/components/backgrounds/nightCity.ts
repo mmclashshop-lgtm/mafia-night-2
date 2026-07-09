@@ -39,8 +39,6 @@ export const renderNightCity: BgRenderer = (ctx, w, h, time, mx, my, alpha) => {
     ctx.stroke();
   }
 
-  drawFog(ctx, w, h, time, 0.04 * alpha, '#8B0000');
-
   ctx.globalAlpha = 0.5 * alpha;
   ctx.fillStyle = '#050510';
   ctx.fillRect(0, h * 0.7, w, h * 0.3);

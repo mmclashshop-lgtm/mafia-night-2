@@ -2396,5 +2396,59 @@
         "daysSurvived": 1
       }
     ]
+  },
+  {
+    "id": "game_mrdslq0yo25h4ju",
+    "roomCode": "ECT4VB",
+    "startedAt": 1783619048742,
+    "endedAt": 1783619078814,
+    "winner": "town",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 30072,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "محمد",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 1,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Mona",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Bob",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Alice",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
   }
 ]
