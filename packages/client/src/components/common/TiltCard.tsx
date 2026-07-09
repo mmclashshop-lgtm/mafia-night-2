@@ -8,7 +8,7 @@ interface TiltCardProps {
   scale?: number;
 }
 
-export function TiltCard({ children, className = '', maxTilt = 8, glare = true, scale = 1.02 }: TiltCardProps) {
+export function TiltCard({ children, className = '', maxTilt = 10, glare = true, scale = 1.04 }: TiltCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -43,7 +43,7 @@ export function TiltCard({ children, className = '', maxTilt = 8, glare = true, 
   return (
     <div
       ref={cardRef}
-      className={`relative will-change-transform transition-transform duration-200 ease-out ${className}`}
+      className={`relative will-change-transform transition-all duration-300 ease-out ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ transformStyle: 'preserve-3d' }}
@@ -52,7 +52,7 @@ export function TiltCard({ children, className = '', maxTilt = 8, glare = true, 
         <div
           className="pointer-events-none absolute inset-0 rounded-[inherit] z-10"
           style={{
-            background: `radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.08) 0%, transparent 60%)`,
+            background: `radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,0.12) 0%, rgba(255,215,0,0.04) 30%, transparent 60%)`,
           }}
         />
       )}

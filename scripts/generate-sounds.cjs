@@ -146,24 +146,24 @@ function lowpass(samples, cutoff) {
 
 /* ── Specific sound generators ── */
 
-function genImpact(vol = 0.5, dur = 0.8) {
+function genImpact(vol = 0.8, dur = 0.8) {
   const n = noise('brown', dur);
   const nLow = lowpass(n, 300);
-  const sub = tone(50, dur, 'sine', 0.6);
-  const click = tone(300, 0.03, 'sine', 0.4);
-  let s = mix(nLow.map(v => v * vol), sub.map(v => v * 0.3), click);
+  const sub = tone(50, dur, 'sine', 0.8);
+  const click = tone(300, 0.03, 'sine', 0.6);
+  let s = mix(nLow.map(v => v * vol), sub.map(v => v * 0.4), click);
   s = adsrEnvelope(s, 0.002, 0.1, 0.3, 0.15);
   return s.map(clamp);
 }
 
-function genChord(notes, dur = 0.8, type = 'sine', vol = 0.25) {
+function genChord(notes, dur = 0.8, type = 'sine', vol = 0.4) {
   const parts = notes.map(f => tone(f, dur, type, vol / notes.length));
   let s = mix(...parts);
   s = adsrEnvelope(s, 0.02, 0.15, 0.5, 0.2);
   return s.map(clamp);
 }
 
-function genSweep(from, to, dur = 0.4, vol = 0.2) {
+function genSweep(from, to, dur = 0.4, vol = 0.4) {
   const len = Math.floor(SAMPLE_RATE * dur);
   const samples = new Float64Array(len);
   for (let i = 0; i < len; i++) {
@@ -174,7 +174,7 @@ function genSweep(from, to, dur = 0.4, vol = 0.2) {
   return adsrEnvelope(samples, 0.02, 0.1, 0.5, 0.2);
 }
 
-function genClick(vol = 0.15) {
+function genClick(vol = 0.4) {
   const len = Math.floor(SAMPLE_RATE * 0.03);
   const samples = new Float64Array(len);
   for (let i = 0; i < len; i++) {
@@ -184,7 +184,7 @@ function genClick(vol = 0.15) {
   return samples;
 }
 
-function genHover(vol = 0.08) {
+function genHover(vol = 0.25) {
   const len = Math.floor(SAMPLE_RATE * 0.02);
   const samples = new Float64Array(len);
   for (let i = 0; i < len; i++) {
@@ -195,8 +195,8 @@ function genHover(vol = 0.08) {
 }
 
 function genNotification() {
-  const t1 = tone(880, 0.08, 'sine', 0.25);
-  const t2 = tone(1100, 0.1, 'sine', 0.2);
+  const t1 = tone(880, 0.08, 'sine', 0.5);
+  const t2 = tone(1100, 0.1, 'sine', 0.4);
   const t2padded = new Float64Array(t1.length + t2.length);
   t2padded.set(t1);
   for (let i = 0; i < t2.length; i++) t2padded[i + t1.length] += t2[i];
@@ -204,8 +204,8 @@ function genNotification() {
 }
 
 function genError() {
-  const t1 = tone(220, 0.15, 'sawtooth', 0.2);
-  const t2 = tone(180, 0.25, 'sawtooth', 0.15);
+  const t1 = tone(220, 0.15, 'sawtooth', 0.4);
+  const t2 = tone(180, 0.25, 'sawtooth', 0.3);
   const gap = Math.floor(SAMPLE_RATE * 0.08);
   const result = new Float64Array(t1.length + gap + t2.length);
   result.set(t1);
@@ -214,10 +214,10 @@ function genError() {
 }
 
 function genSuccess() {
-  return genChord([523, 784, 1047], 0.35, 'sine', 0.25);
+  return genChord([523, 784, 1047], 0.35, 'sine', 0.4);
 }
 
-function genAmbientDrone(freq, dur = 8, vol = 0.12) {
+function genAmbientDrone(freq, dur = 8, vol = 0.25) {
   const o1 = tone(freq, dur, 'sawtooth', vol);
   const o2 = tone(freq * 1.5, dur, 'sawtooth', vol * 0.5);
   const o3 = tone(freq * 0.5, dur, 'sine', vol * 0.8);
@@ -228,11 +228,11 @@ function genAmbientDrone(freq, dur = 8, vol = 0.12) {
 }
 
 function genNightAmbient() {
-  return genAmbientDrone(55, 10, 0.12);
+  return genAmbientDrone(55, 10, 0.25);
 }
 
 function genDayChime() {
-  return genChord([262, 330, 392, 523], 0.8, 'sine', 0.15);
+  return genChord([262, 330, 392, 523], 0.8, 'sine', 0.3);
 }
 
 function genVotePulse() {
@@ -245,15 +245,15 @@ function genVotePulse() {
     const beatPhase = (t % interval) / interval;
     if (beatPhase < 0.05) {
       const env = Math.exp(-beatPhase * 200);
-      samples[i] = Math.sin(2 * Math.PI * 50 * t) * 0.08 * env;
+      samples[i] = Math.sin(2 * Math.PI * 50 * t) * 0.15 * env;
     }
   }
   return adsrEnvelope(samples, 0.5, 0, 1, 0.5);
 }
 
 function genCoinEarn() {
-  const t1 = tone(1200, 0.05, 'sine', 0.2);
-  const t2 = tone(1500, 0.06, 'sine', 0.15);
+  const t1 = tone(1200, 0.05, 'sine', 0.4);
+  const t2 = tone(1500, 0.06, 'sine', 0.3);
   const result = new Float64Array(t1.length + t2.length);
   result.set(t1);
   for (let i = 0; i < t2.length; i++) result[i + t1.length] += t2[i];
@@ -261,8 +261,8 @@ function genCoinEarn() {
 }
 
 function genCoinSpend() {
-  const t1 = tone(600, 0.06, 'sine', 0.15);
-  const t2 = tone(400, 0.08, 'sine', 0.12);
+  const t1 = tone(600, 0.06, 'sine', 0.3);
+  const t2 = tone(400, 0.08, 'sine', 0.25);
   const result = new Float64Array(t1.length + t2.length);
   result.set(t1);
   for (let i = 0; i < t2.length; i++) result[i + t1.length] += t2[i];
@@ -270,18 +270,18 @@ function genCoinSpend() {
 }
 
 function genChatMessage() {
-  return adsrEnvelope(tone(600, 0.04, 'sine', 0.1), 0.003, 0.02, 0.3, 0.05);
+  return adsrEnvelope(tone(600, 0.04, 'sine', 0.25), 0.003, 0.02, 0.3, 0.05);
 }
 
 function genMafiaChat() {
-  return adsrEnvelope(tone(200, 0.04, 'sine', 0.08), 0.005, 0.02, 0.3, 0.05);
+  return adsrEnvelope(tone(200, 0.04, 'sine', 0.2), 0.005, 0.02, 0.3, 0.05);
 }
 
 function genGameStart() {
-  const c1 = genChord([330, 440, 550], 0.25, 'square', 0.12);
-  const c2 = genChord([440, 550, 660], 0.25, 'square', 0.12);
-  const c3 = genChord([550, 660, 880], 0.5, 'square', 0.15);
-  const imp = genImpact(0.15, 0.4);
+  const c1 = genChord([330, 440, 550], 0.25, 'square', 0.2);
+  const c2 = genChord([440, 550, 660], 0.25, 'square', 0.2);
+  const c3 = genChord([550, 660, 880], 0.5, 'square', 0.25);
+  const imp = genImpact(0.25, 0.4);
   const gap1 = Math.floor(SAMPLE_RATE * 0.2);
   const gap2 = Math.floor(SAMPLE_RATE * 0.2);
   const result = new Float64Array(c1.length + gap1 + c2.length + gap2 + c3.length + Math.floor(SAMPLE_RATE * 0.5));
@@ -293,16 +293,16 @@ function genGameStart() {
 }
 
 function genLoversDeath() {
-  return genChord([349, 440, 523], 0.7, 'sine', 0.1);
+  return genChord([349, 440, 523], 0.7, 'sine', 0.2);
 }
 
 function genHeal() {
-  return genChord([523, 659, 784], 0.4, 'sine', 0.12);
+  return genChord([523, 659, 784], 0.4, 'sine', 0.25);
 }
 
 function genInvestigate() {
-  const s1 = genSweep(600, 1200, 0.3, 0.1);
-  const s2 = genSweep(1200, 600, 0.3, 0.08);
+  const s1 = genSweep(600, 1200, 0.3, 0.2);
+  const s2 = genSweep(1200, 600, 0.3, 0.15);
   const gap = Math.floor(SAMPLE_RATE * 0.15);
   const result = new Float64Array(s1.length + gap + s2.length);
   result.set(s1);
@@ -311,36 +311,36 @@ function genInvestigate() {
 }
 
 function genPageTransition() {
-  return genSweep(400, 800, 0.18, 0.1);
+  return genSweep(400, 800, 0.18, 0.25);
 }
 
 function genAchievement() {
-  return genChord([659, 784, 1047, 1319], 0.5, 'sine', 0.2);
+  return genChord([659, 784, 1047, 1319], 0.5, 'sine', 0.35);
 }
 
 function genLevelUp() {
-  return genChord([523, 659, 784, 1047, 1319], 0.65, 'triangle', 0.18);
+  return genChord([523, 659, 784, 1047, 1319], 0.65, 'triangle', 0.3);
 }
 
 function genMatchFound() {
-  return genChord([523, 659, 784, 1047], 0.45, 'sine', 0.25);
+  return genChord([523, 659, 784, 1047], 0.45, 'sine', 0.4);
 }
 
 function genFriendOnline() {
-  return adsrEnvelope(tone(700, 0.06, 'sine', 0.15), 0.005, 0.02, 0.5, 0.1);
+  return adsrEnvelope(tone(700, 0.06, 'sine', 0.3), 0.005, 0.02, 0.5, 0.1);
 }
 
 function genFriendRequest() {
-  return genChord([500, 700], 0.18, 'sine', 0.15);
+  return genChord([500, 700], 0.18, 'sine', 0.3);
 }
 
 function genPartyInvite() {
-  return genChord([400, 600, 800], 0.25, 'triangle', 0.15);
+  return genChord([400, 600, 800], 0.25, 'triangle', 0.3);
 }
 
 function genRoleReveal() {
-  const s = genSweep(200, 800, 0.4, 0.15);
-  const c = genChord([523, 784], 0.3, 'sine', 0.1);
+  const s = genSweep(200, 800, 0.4, 0.3);
+  const c = genChord([523, 784], 0.3, 'sine', 0.2);
   const result = new Float64Array(s.length + Math.floor(SAMPLE_RATE * 0.2) + c.length);
   result.set(s);
   result.set(c, s.length + Math.floor(SAMPLE_RATE * 0.2));

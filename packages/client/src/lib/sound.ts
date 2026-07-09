@@ -25,9 +25,25 @@ class SoundEngine {
   private _loaded = false;
   private _loadingProgress = 0;
 
-  private vol: VolumeState = { master: 0.7, bgm: 0.5, sfx: 0.6, ui: 0.4 };
+  private vol: VolumeState = { master: 1.0, bgm: 0.7, sfx: 0.9, ui: 0.8 };
   private sounds: Map<string, Howl> = new Map();
   private proceduralNodes: Map<string, { stop: () => void }> = new Map();
+  private realBgmMap: Map<string, Howl> = new Map();
+  private realBgmErrored: Set<string> = new Set();
+  private currentRealBgmKey: string | null = null;
+  private currentRealBgmId: number | null = null;
+
+  /* ── BGM file manifest ── */
+  private bgmFiles: Array<{ key: string; filename: string }> = [
+    { key: 'bgm-main', filename: 'main-theme' },
+    { key: 'bgm-lobby', filename: 'lobby-music' },
+    { key: 'bgm-night', filename: 'night-ambient' },
+    { key: 'bgm-day', filename: 'day-theme' },
+    { key: 'bgm-voting', filename: 'voting-tension' },
+    { key: 'bgm-mafia-win', filename: 'mafia-win' },
+    { key: 'bgm-town-win', filename: 'town-win' },
+    { key: 'bgm-death', filename: 'death-theme' },
+  ];
 
   /* ── Reverb cache ── */
   private hallReverb: ConvolverNode | null = null;
@@ -572,6 +588,7 @@ class SoundEngine {
 
   async loadSoundPack(): Promise<boolean> {
     this._loaded = true;
+    this.loadAllBgm().catch(() => {});
     return true;
   }
 
@@ -609,6 +626,7 @@ class SoundEngine {
     this.bgmHowl = null;
     this.bgmId = null;
     this.currentBgm = null;
+    this.stopRealBgm();
     this.stopProcedural('bgm');
   }
 
@@ -620,24 +638,99 @@ class SoundEngine {
     }
   }
 
+  /* ── Real BGM (MP3) system ── */
+
+  loadBgmFile(key: string, url: string): Promise<void> {
+    if (this.realBgmMap.has(key) || this.realBgmErrored.has(key)) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      try {
+        const howl = new Howl({
+          src: [url],
+          volume: 0.7,
+          preload: true,
+          onload: () => {
+            this.realBgmMap.set(key, howl);
+            resolve();
+          },
+          onloaderror: () => {
+            this.realBgmErrored.add(key);
+            resolve();
+          },
+        });
+      } catch {
+        this.realBgmErrored.add(key);
+        resolve();
+      }
+    });
+  }
+
+  playRealBgm(key: string): boolean {
+    if (this._muted) return false;
+    if (this.currentRealBgmKey === key) return true;
+    this.stopRealBgm();
+    this.stopBgmNodes();
+    const howl = this.realBgmMap.get(key);
+    if (howl && howl.state() === 'loaded') {
+      const id = howl.play();
+      howl.volume(0.7);
+      howl.loop(true);
+      this.currentRealBgmKey = key;
+      this.currentRealBgmId = id;
+      return true;
+    }
+    return false;
+  }
+
+  private stopRealBgm() {
+    if (this.currentRealBgmKey && this.currentRealBgmId !== null) {
+      const howl = this.realBgmMap.get(this.currentRealBgmKey);
+      if (howl) {
+        howl.stop(this.currentRealBgmId);
+      }
+    }
+    this.currentRealBgmKey = null;
+    this.currentRealBgmId = null;
+  }
+
+  async loadAllBgm(): Promise<void> {
+    const prefix = import.meta.env.BASE_URL || '/';
+    const total = this.bgmFiles.length;
+    for (let i = 0; i < total; i++) {
+      const entry = this.bgmFiles[i]!;
+      const url = `${prefix}sounds/bgm/${entry.filename}.mp3`;
+      try {
+        await this.loadBgmFile(entry.key, url);
+      } catch {
+        // silent
+      }
+      this._loadingProgress = (i + 1) / total;
+    }
+    this._loadingProgress = 1;
+  }
+
+  getLoadedBgmFiles(): string[] {
+    return Array.from(this.realBgmMap.keys()).filter(
+      (k) => !this.realBgmErrored.has(k)
+    );
+  }
+
   /* ══════════════════════════════════════════════
      PUBLIC API
      ══════════════════════════════════════════════ */
 
   phaseChange() {
-    if (this.playSound('click', 0.3, 1.5) === null) {
-      this.playTone(660, 0.06, 'sine', 0.05);
-      setTimeout(() => this.playTone(880, 0.08, 'sine', 0.04), 50);
+    if (this.playSound('click', 0.6, 1.5) === null) {
+      this.playTone(660, 0.08, 'sine', 0.12);
+      setTimeout(() => this.playTone(880, 0.1, 'sine', 0.1), 50);
     }
   }
 
   nightStart() {
     this.stopBgm();
-    if (!this.playBgm('bgm-night', 0.3)) {
-      const node = this.genAmbientDrone(55, 'sawtooth', 0.08, 80);
-      if (node) this.proceduralNodes.set('bgm', node);
-      setTimeout(() => this.genImpact(40, 120, 1.2, 0.12, 0.4), 100);
-    }
+    this.startNightMusic();
+    setTimeout(() => this.genImpact(40, 120, 1.2, 0.2, 0.4), 100);
   }
 
   nightEnd() {
@@ -646,217 +739,496 @@ class SoundEngine {
 
   dayStart() {
     this.stopBgm();
-    if (!this.playBgm('bgm-day', 0.3)) {
-      this.genChord([262, 330, 392, 523], 0.8, 'sine', 0.1, 0, 0.5);
-    }
+    this.startDayMusic();
+    this.genChord([262, 330, 392, 523], 0.8, 'sine', 0.18, 0, 0.5);
   }
 
   voteStart() {
-    if (!this.playBgm('bgm-voting', 0.3)) {
-      this.genPulse(90, 0.06);
-      this.playTone(440, 0.12, 'square', 0.03);
-    }
+    this.stopBgm();
+    this.startVotingMusic();
+    this.genPulse(90, 0.12);
+    this.playTone(440, 0.15, 'square', 0.08);
   }
 
   playerDied() {
-    if (this.playSound('player-killed', 0.5) === null) {
-      this.genImpact(50, 250, 1.0, 0.25, 0.3);
+    if (this.playSound('player-killed', 0.7) === null) {
+      this.genImpact(50, 250, 1.0, 0.35, 0.3);
     }
   }
 
   voteCast() {
-    if (this.playSound('vote-cast', 0.4) === null) {
-      this.genChord([600, 800], 0.12, 'sine', 0.04, 0, 0.15);
+    if (this.playSound('vote-cast', 0.6) === null) {
+      this.genChord([600, 800], 0.15, 'sine', 0.1, 0, 0.15);
     }
   }
 
   voteResult() {
-    if (this.playSound('vote-result', 0.5) === null) {
-      this.genChord([500, 700, 900], 0.35, 'triangle', 0.06, 0, 0.3);
-      setTimeout(() => this.genImpact(40, 100, 0.3, 0.18, 0.2), 280);
+    if (this.playSound('vote-result', 0.7) === null) {
+      this.genChord([500, 700, 900], 0.4, 'triangle', 0.12, 0, 0.3);
+      setTimeout(() => this.genImpact(40, 100, 0.3, 0.25, 0.2), 280);
     }
   }
 
   lynch() {
-    if (this.playSound('player-lynched', 0.5) === null) {
-      this.genImpact(30, 300, 1.2, 0.35, 0.35);
+    if (this.playSound('player-lynched', 0.7) === null) {
+      this.genImpact(30, 300, 1.2, 0.45, 0.35);
     }
   }
 
   gameEnd() {
     this.stopBgm();
-    this.playBgm('bgm-death', 0.2);
+    this.playBgm('bgm-death', 0.3);
   }
 
   mafiaWin() {
     this.stopBgm();
-    if (!this.playBgm('bgm-mafia-win', 0.4)) {
-      this.genChord([196, 233, 277, 330], 1.0, 'sawtooth', 0.08, 0, 0.5);
-      setTimeout(() => this.genChord([165, 196, 233, 277], 1.2, 'sawtooth', 0.06, 0, 0.5), 600);
-      setTimeout(() => this.genImpact(40, 80, 0.7, 0.25, 0.3), 1500);
+    if (!this.playBgm('bgm-mafia-win', 0.5)) {
+      this.genChord([196, 233, 277, 330], 1.0, 'sawtooth', 0.12, 0, 0.5);
+      setTimeout(() => this.genChord([165, 196, 233, 277], 1.2, 'sawtooth', 0.1, 0, 0.5), 600);
+      setTimeout(() => this.genImpact(40, 80, 0.7, 0.35, 0.3), 1500);
     }
   }
 
   townWin() {
     this.stopBgm();
-    if (!this.playBgm('bgm-town-win', 0.4)) {
-      this.genChord([523, 659, 784, 1047], 0.6, 'sine', 0.12, 0, 0.4);
-      setTimeout(() => this.genChord([659, 784, 1047, 1319], 1.0, 'sine', 0.1, 0, 0.4), 450);
+    if (!this.playBgm('bgm-town-win', 0.5)) {
+      this.genChord([523, 659, 784, 1047], 0.6, 'sine', 0.2, 0, 0.4);
+      setTimeout(() => this.genChord([659, 784, 1047, 1319], 1.0, 'sine', 0.18, 0, 0.4), 450);
     }
   }
 
   jesterWin() {
     this.stopBgm();
-    if (this.playSound('click', 0.5, 2.0) === null) {
-      this.genChord([400, 500, 600, 800], 0.25, 'triangle', 0.06, 0, 0.3);
+    if (this.playSound('click', 0.7, 2.0) === null) {
+      this.genChord([400, 500, 600, 800], 0.3, 'triangle', 0.12, 0, 0.3);
     } else {
-      setTimeout(() => this.playSound('click', 0.4, 1.8), 200);
-      setTimeout(() => this.playSound('click', 0.3, 1.6), 400);
-      setTimeout(() => this.playSound('success', 0.4), 600);
+      setTimeout(() => this.playSound('click', 0.6, 1.8), 200);
+      setTimeout(() => this.playSound('click', 0.5, 1.6), 400);
+      setTimeout(() => this.playSound('success', 0.6), 600);
     }
   }
 
   click() {
-    if (this.playSound('click', 0.2) === null) {
-      this.playTone(800, 0.025, 'sine', 0.035);
+    if (this.playSound('click', 0.8) === null) {
+      this.playTone(800, 0.03, 'sine', 0.15);
     }
   }
 
   roleReveal() {
-    if (this.playSound('role-reveal', 0.5) === null) {
-      this.genSweep(200, 800, 0.4, 'sine', 0.08);
-      setTimeout(() => this.genChord([523, 784], 0.3, 'sine', 0.04), 300);
+    if (this.playSound('role-reveal', 0.7) === null) {
+      this.genSweep(200, 800, 0.4, 'sine', 0.15);
+      setTimeout(() => this.genChord([523, 784], 0.3, 'sine', 0.1), 300);
     }
   }
 
   loversDeath() {
-    if (this.playSound('player-killed', 0.3, 0.7) === null) {
-      this.genChord([349, 440, 523], 0.7, 'sine', 0.05, 0, 0.4);
+    if (this.playSound('player-killed', 0.5, 0.7) === null) {
+      this.genChord([349, 440, 523], 0.7, 'sine', 0.1, 0, 0.4);
     }
   }
 
   heal() {
-    if (this.playSound('heal', 0.4) === null) {
-      this.genChord([523, 659, 784], 0.4, 'sine', 0.06, 0, 0.2);
+    if (this.playSound('heal', 0.6) === null) {
+      this.genChord([523, 659, 784], 0.4, 'sine', 0.12, 0, 0.2);
     }
   }
 
   investigate() {
-    if (this.playSound('investigate', 0.4) === null) {
-      this.genSweep(600, 1200, 0.3, 'sine', 0.04);
-      setTimeout(() => this.genSweep(1200, 600, 0.3, 'sine', 0.03), 200);
+    if (this.playSound('investigate', 0.6) === null) {
+      this.genSweep(600, 1200, 0.3, 'sine', 0.1);
+      setTimeout(() => this.genSweep(1200, 600, 0.3, 'sine', 0.08), 200);
     }
   }
 
   notification() {
-    if (this.playSound('notification', 0.3) === null) {
-      this.playTone(880, 0.08, 'sine', 0.05);
-      setTimeout(() => this.playTone(1100, 0.1, 'sine', 0.04), 80);
+    if (this.playSound('notification', 0.6) === null) {
+      this.playTone(880, 0.1, 'sine', 0.12);
+      setTimeout(() => this.playTone(1100, 0.12, 'sine', 0.1), 80);
     }
   }
 
   error() {
-    if (this.playSound('error', 0.4) === null) {
-      this.playTone(220, 0.15, 'sawtooth', 0.05);
-      setTimeout(() => this.playTone(180, 0.25, 'sawtooth', 0.04), 120);
+    if (this.playSound('error', 0.7) === null) {
+      this.playTone(220, 0.2, 'sawtooth', 0.12);
+      setTimeout(() => this.playTone(180, 0.3, 'sawtooth', 0.1), 120);
     }
   }
 
   success() {
-    if (this.playSound('success', 0.3) === null) {
-      this.genChord([523, 784, 1047], 0.35, 'sine', 0.06, 0, 0.3);
+    if (this.playSound('success', 0.7) === null) {
+      this.genChord([523, 784, 1047], 0.4, 'sine', 0.15, 0, 0.3);
     }
   }
 
   chatMessage(isMafia = false) {
     if (isMafia) {
-      if (this.playSound('mafia-chat', 0.2) === null) {
-        this.playTone(200, 0.035, 'sine', 0.025);
+      if (this.playSound('mafia-chat', 0.5) === null) {
+        this.playTone(200, 0.04, 'sine', 0.06);
       }
-    } else if (this.playSound('chat-message', 0.2) === null) {
-      this.playTone(600, 0.035, 'sine', 0.025);
+    } else if (this.playSound('chat-message', 0.5) === null) {
+      this.playTone(600, 0.04, 'sine', 0.06);
     }
   }
 
   friendOnline() {
-    if (this.playSound('friend-online', 0.3) === null) {
-      this.playTone(700, 0.06, 'sine', 0.04);
+    if (this.playSound('friend-online', 0.5) === null) {
+      this.playTone(700, 0.08, 'sine', 0.08);
     }
   }
 
   friendRequest() {
-    if (this.playSound('friend-request', 0.3) === null) {
-      this.genChord([500, 700], 0.18, 'sine', 0.05, 0, 0.15);
+    if (this.playSound('friend-request', 0.5) === null) {
+      this.genChord([500, 700], 0.2, 'sine', 0.1, 0, 0.15);
     }
   }
 
   partyInvite() {
-    if (this.playSound('party-invite', 0.3) === null) {
-      this.genChord([400, 600, 800], 0.25, 'triangle', 0.05, 0, 0.2);
+    if (this.playSound('party-invite', 0.5) === null) {
+      this.genChord([400, 600, 800], 0.3, 'triangle', 0.1, 0, 0.2);
     }
   }
 
   matchFound() {
-    if (this.playSound('match-found', 0.5) === null) {
-      this.genChord([523, 659, 784, 1047], 0.45, 'sine', 0.1, 0, 0.35);
+    if (this.playSound('match-found', 0.7) === null) {
+      this.genChord([523, 659, 784, 1047], 0.5, 'sine', 0.2, 0, 0.35);
     }
   }
 
   gameStart() {
-    if (this.playSound('game-start', 0.5) === null) {
-      this.genChord([330, 440, 550], 0.25, 'square', 0.04, 0, 0.15);
-      setTimeout(() => this.genChord([440, 550, 660], 0.25, 'square', 0.04, 0, 0.15), 250);
-      setTimeout(() => this.genChord([550, 660, 880], 0.5, 'square', 0.06, 0, 0.25), 500);
-      setTimeout(() => this.genImpact(60, 120, 0.4, 0.15, 0.2), 850);
+    if (this.playSound('game-start', 0.7) === null) {
+      this.genChord([330, 440, 550], 0.3, 'square', 0.1, 0, 0.15);
+      setTimeout(() => this.genChord([440, 550, 660], 0.3, 'square', 0.1, 0, 0.15), 250);
+      setTimeout(() => this.genChord([550, 660, 880], 0.5, 'square', 0.12, 0, 0.25), 500);
+      setTimeout(() => this.genImpact(60, 120, 0.4, 0.25, 0.2), 850);
     }
   }
 
   coinEarn() {
-    if (this.playSound('coin-earn', 0.3) === null) {
-      this.playTone(1200, 0.05, 'sine', 0.04);
-      setTimeout(() => this.playTone(1500, 0.06, 'sine', 0.035), 50);
+    if (this.playSound('coin-earn', 0.5) === null) {
+      this.playTone(1200, 0.06, 'sine', 0.1);
+      setTimeout(() => this.playTone(1500, 0.07, 'sine', 0.08), 50);
     }
   }
 
   coinSpend() {
-    if (this.playSound('coin-spend', 0.3) === null) {
-      this.playTone(600, 0.06, 'sine', 0.04);
-      setTimeout(() => this.playTone(400, 0.08, 'sine', 0.035), 70);
+    if (this.playSound('coin-spend', 0.5) === null) {
+      this.playTone(600, 0.07, 'sine', 0.1);
+      setTimeout(() => this.playTone(400, 0.09, 'sine', 0.08), 70);
     }
   }
 
   achievement() {
-    if (this.playSound('achievement', 0.4) === null) {
-      this.genChord([659, 784, 1047, 1319], 0.5, 'sine', 0.08, 0, 0.35);
+    if (this.playSound('achievement', 0.6) === null) {
+      this.genChord([659, 784, 1047, 1319], 0.5, 'sine', 0.18, 0, 0.35);
     }
   }
 
   levelUp() {
-    if (this.playSound('level-up', 0.4) === null) {
-      this.genChord([523, 659, 784, 1047, 1319], 0.65, 'triangle', 0.08, 0, 0.4);
+    if (this.playSound('level-up', 0.6) === null) {
+      this.genChord([523, 659, 784, 1047, 1319], 0.7, 'triangle', 0.18, 0, 0.4);
     }
   }
 
   hover() {
-    if (this.playSound('hover', 0.1) === null) {
-      this.playTone(1000, 0.015, 'sine', 0.015);
+    if (this.playSound('hover', 0.3) === null) {
+      this.playTone(1000, 0.02, 'sine', 0.06);
     }
   }
 
   pageTransition() {
-    if (this.playSound('page-transition', 0.2) === null) {
-      this.genSweep(400, 800, 0.18, 'sine', 0.03);
+    if (this.playSound('page-transition', 0.5) === null) {
+      this.genSweep(400, 800, 0.2, 'sine', 0.08);
     }
   }
 
   lobbyMusic() {
-    if (!this.playBgm('bgm-lobby', 0.2)) {
-      this.genChord([262, 330, 392], 0.8, 'sine', 0.025, 0, 0.5);
-    }
+    this.startLobbyMusic();
   }
 
   stopAmbient() {
     this.stopBgm();
+  }
+
+  /* ══════════════════════════════════════════════
+     PROCEDURAL BACKGROUND MUSIC SYSTEM
+     ══════════════════════════════════════════════ */
+
+  private bgmNodes: Array<{ stop: () => void }> = [];
+  private currentPageMusic: string | null = null;
+
+  private stopBgmNodes() {
+    this.stopRealBgm();
+    for (const n of this.bgmNodes) n.stop();
+    this.bgmNodes = [];
+  }
+
+  /* ── Cinematic Pad (soft string-like ambience) ── */
+  private genPad(freq: number, vol = 0.06, filterFreq = 400): { stop: () => void } | null {
+    const ctx = this.ensureCtx();
+    if (!ctx) return null;
+    const now = ctx.currentTime;
+    const dest = this.bgmDest;
+
+    const oscs: OscillatorNode[] = [];
+    const harmonics = [1, 2.01, 3.02, 4.01, 5.03];
+    const pans = [-0.3, -0.15, 0, 0.15, 0.3];
+    const vols = [1, 0.5, 0.35, 0.2, 0.1];
+
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(vol, now + 2);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = filterFreq;
+    filter.Q.value = 1.2;
+
+    const lfo = ctx.createOscillator();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.08;
+    const lfoGain = ctx.createGain();
+    lfoGain.gain.value = filterFreq * 0.15;
+    lfo.connect(lfoGain);
+    lfoGain.connect(filter.frequency);
+    lfo.start();
+
+    const reverb = this.getOrCreateReverb('hall');
+    const reverbSend = ctx.createGain();
+    reverbSend.gain.value = 0.7;
+
+    harmonics.forEach((h, i) => {
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq * h;
+      osc.detune.value = (Math.random() - 0.5) * 2;
+      const gain = ctx.createGain();
+      gain.gain.value = vols[i] * vol;
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = pans[i];
+      osc.connect(gain);
+      gain.connect(panner);
+      panner.connect(filter);
+      osc.start(now);
+      oscs.push(osc);
+    });
+
+    filter.connect(masterGain);
+    masterGain.connect(reverbSend);
+    masterGain.connect(dest);
+    if (reverb) { reverbSend.connect(reverb); reverb.connect(dest); }
+
+    return {
+      stop: () => {
+        try {
+          masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+          setTimeout(() => oscs.forEach(o => { try { o.stop(); lfo.stop(); } catch {} }), 1100);
+        } catch {}
+      }
+    };
+  }
+
+  /* ── Rhythmic Pulse (heartbeat-like low pulse) ── */
+  private genPulse2(bpm = 60, vol = 0.08, filterSweep = true): { stop: () => void } | null {
+    const ctx = this.ensureCtx();
+    if (!ctx) return null;
+    const dest = this.bgmDest;
+    const interval = 60 / bpm;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = 55;
+
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    osc.connect(gain);
+    gain.connect(dest);
+    osc.start();
+
+    let count = 0;
+    const maxBeats = 999;
+    let stopped = false;
+
+    const schedule = () => {
+      if (stopped || count >= maxBeats) return;
+      const now = ctx.currentTime;
+      // Double pulse (like heartbeat)
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.03);
+      gain.gain.setValueAtTime(vol, now + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      if (filterSweep) {
+        osc.frequency.setValueAtTime(55, now);
+        osc.frequency.linearRampToValueAtTime(75, now + 0.08);
+      }
+      count++;
+      setTimeout(schedule, interval * 800);
+    };
+    schedule();
+
+    return {
+      stop: () => {
+        stopped = true;
+        try { osc.stop(); } catch {}
+      }
+    };
+  }
+
+  /* ── Soft Melody (simple repeating pattern) ── */
+  private genMelody(notes: number[], interval = 2, vol = 0.04): { stop: () => void } | null {
+    const ctx = this.ensureCtx();
+    if (!ctx) return null;
+    const dest = this.bgmDest;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    osc.connect(gain);
+    gain.connect(dest);
+    osc.start();
+
+    const reverb = this.getOrCreateReverb('hall');
+    const reverbSend = ctx.createGain();
+    reverbSend.gain.value = 0.5;
+    gain.connect(reverbSend);
+    if (reverb) { reverbSend.connect(reverb); reverb.connect(dest); }
+
+    let index = 0;
+    let stopped = false;
+
+    const playNote = () => {
+      if (stopped) return;
+      const now = ctx.currentTime;
+      const freq = notes[index % notes.length];
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.02);
+      gain.gain.setValueAtTime(vol, now + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+      index++;
+      setTimeout(playNote, interval * 500);
+    };
+    playNote();
+
+    return {
+      stop: () => {
+        stopped = true;
+        try { osc.stop(); } catch {}
+      }
+    };
+  }
+
+  /* ── Page-specific music ── */
+
+  startHomeMusic() {
+    if (this.currentPageMusic === 'home') return;
+    this.stopBgmNodes();
+    if (this.playRealBgm('bgm-main')) {
+      this.currentPageMusic = 'home';
+      return;
+    }
+    this.currentPageMusic = 'home';
+
+    const pad = this.genPad(110, 0.05, 300);
+    if (pad) this.bgmNodes.push(pad);
+
+    const pedal = this.genPad(55, 0.03, 150);
+    if (pedal) this.bgmNodes.push(pedal);
+
+    const pulse = this.genPulse2(65, 0.06, true);
+    if (pulse) this.bgmNodes.push(pulse);
+  }
+
+  startLobbyMusic() {
+    if (this.currentPageMusic === 'lobby') return;
+    this.stopBgmNodes();
+    if (this.playRealBgm('bgm-lobby')) {
+      this.currentPageMusic = 'lobby';
+      return;
+    }
+    this.currentPageMusic = 'lobby';
+
+    const pad = this.genPad(130, 0.04, 350);
+    if (pad) this.bgmNodes.push(pad);
+
+    const pulse = this.genPulse2(80, 0.07, true);
+    if (pulse) this.bgmNodes.push(pulse);
+
+    const melody = this.genMelody([262, 330, 392, 523, 392, 330], 1.5, 0.03);
+    if (melody) this.bgmNodes.push(melody);
+  }
+
+  startNightMusic() {
+    if (this.currentPageMusic === 'night') return;
+    this.stopBgmNodes();
+    if (this.playRealBgm('bgm-night')) {
+      this.currentPageMusic = 'night';
+      return;
+    }
+    this.currentPageMusic = 'night';
+
+    const drone = this.genAmbientDrone(45, 'sawtooth', 0.08, 80);
+    if (drone) this.bgmNodes.push(drone);
+
+    const pad = this.genPad(90, 0.03, 200);
+    if (pad) this.bgmNodes.push(pad);
+
+    const melody = this.genMelody([220, 196, 165, 146], 3, 0.02);
+    if (melody) this.bgmNodes.push(melody);
+  }
+
+  startDayMusic() {
+    if (this.currentPageMusic === 'day') return;
+    this.stopBgmNodes();
+    if (this.playRealBgm('bgm-day')) {
+      this.currentPageMusic = 'day';
+      return;
+    }
+    this.currentPageMusic = 'day';
+
+    const pad = this.genPad(220, 0.05, 600);
+    if (pad) this.bgmNodes.push(pad);
+
+    const pulse = this.genPulse2(70, 0.04, false);
+    if (pulse) this.bgmNodes.push(pulse);
+
+    const melody = this.genMelody([523, 659, 784, 1047, 784, 659], 1.2, 0.04);
+    if (melody) this.bgmNodes.push(melody);
+  }
+
+  startVotingMusic() {
+    if (this.currentPageMusic === 'voting') return;
+    this.stopBgmNodes();
+    if (this.playRealBgm('bgm-voting')) {
+      this.currentPageMusic = 'voting';
+      return;
+    }
+    this.currentPageMusic = 'voting';
+
+    const drone = this.genAmbientDrone(60, 'square', 0.06, 100);
+    if (drone) this.bgmNodes.push(drone);
+
+    const pulse = this.genPulse2(90, 0.1, true);
+    if (pulse) this.bgmNodes.push(pulse);
+  }
+
+  stopPageMusic() {
+    this.stopBgmNodes();
+    this.currentPageMusic = null;
+  }
+
+  stopCurrentPageMusic() {
+    this.stopPageMusic();
+  }
+
+  /* ── Phase music overrides ── */
+
+  startPhaseMusic(phase: string) {
+    if (phase === 'night') this.startNightMusic();
+    else if (phase === 'day') this.startDayMusic();
+    else if (phase === 'voting') this.startVotingMusic();
+    else if (phase === 'ended') this.stopPageMusic();
+    else if (phase === 'lobby') this.startLobbyMusic();
   }
 }
 

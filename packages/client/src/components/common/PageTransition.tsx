@@ -11,24 +11,24 @@ const pageVariants = {
   initial: {
     opacity: 0,
     y: 24,
-    scale: 0.99,
+    scale: 0.98,
   },
   enter: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.45,
+      duration: 0.5,
       ease: [0.25, 0.1, 0.25, 1],
       staggerChildren: 0.05,
     },
   },
   exit: {
     opacity: 0,
-    y: -12,
-    scale: 0.99,
+    y: -16,
+    scale: 0.98,
     transition: {
-      duration: 0.2,
+      duration: 0.25,
       ease: 'easeIn',
     },
   },
@@ -77,6 +77,19 @@ export function StaggerFadeIn({ children, className = '' }: { children: ReactNod
       {React.Children.map(children, (child) => (
         <motion.div variants={item}>{child}</motion.div>
       ))}
+    </motion.div>
+  );
+}
+
+export function ScaleIn({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      className={className}
+    >
+      {children}
     </motion.div>
   );
 }

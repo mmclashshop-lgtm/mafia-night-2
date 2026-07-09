@@ -7,6 +7,8 @@ import { Toasts } from '../common/Toasts';
 import { LoadingScreen } from '../common/LoadingScreen';
 import { BackgroundSystem } from '../backgrounds/BackgroundSystem';
 import { PartyBar } from '../party/PartyBar';
+import { useBackgroundMusic } from '../../hooks/useBackgroundMusic';
+import { Footer } from './Footer';
 
 interface LayoutProps {
   children: ReactNode;
@@ -36,6 +38,8 @@ export function Layout({ children }: LayoutProps) {
     }
   }, []);
 
+  useBackgroundMusic();
+
   const getContainerClass = () => {
     if (isHome) return '';
     if (isGame || isLobby) return 'max-w-7xl';
@@ -57,12 +61,12 @@ export function Layout({ children }: LayoutProps) {
           <main
             className={
               isHome
-                ? ''
+                ? 'w-full'
                 : `mx-auto px-4 py-6 pb-20 md:pb-6 w-full ${getContainerClass()}`
             }
           >
-            <div className="flex gap-4">
-              <div className="flex-1 min-w-0">{children}</div>
+            <div className={isHome ? '' : 'flex gap-4'}>
+              <div className={isHome ? '' : 'flex-1 min-w-0'}>{children}</div>
               {!isHome && !isGame && !isLobby && (
                 <aside className="hidden md:block w-64 shrink-0 space-y-4">
                   <PartyBar />
@@ -70,6 +74,7 @@ export function Layout({ children }: LayoutProps) {
               )}
             </div>
           </main>
+          {!isHome && <Footer />}
           <MobileNav />
           <Toasts />
         </div>

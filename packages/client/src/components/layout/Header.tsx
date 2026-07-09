@@ -13,15 +13,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const roomCode = useGameStore((s) => s.roomCode);
 
   return (
-    <header
-      className="sticky top-0 z-30"
-      style={{
-        background: 'rgba(10, 10, 10, 0.8)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(139, 0, 0, 0.08)',
-      }}
-    >
+    <header className="glass-header sticky top-0 z-30">
       <div className="flex items-center justify-between h-14 px-4 lg:px-6">
         <div className="flex items-center gap-3">
           <button className="btn-icon md:hidden" onClick={onMenuClick}>
@@ -34,7 +26,7 @@ export function Header({ onMenuClick }: HeaderProps) {
               className="w-7 h-7 shrink-0"
             />
             <span className="text-base font-bold tracking-tight hidden sm:inline">
-              {t('brand.name')}
+              مافيا <span className="text-[#C62828]">نايت</span>
             </span>
           </Link>
           {roomCode && (

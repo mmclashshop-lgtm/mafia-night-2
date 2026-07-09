@@ -85,9 +85,9 @@ export function Profile() {
       </button>
 
       {/* Profile Card */}
-      <div className={`card-glass p-6 text-center relative overflow-hidden ${tier.bg} ${tier.border}`}>
+      <div className={`card-glass p-6 text-center relative overflow-hidden card-shine ${tier.bg} ${tier.border}`}>
         {/* Background decoration */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-gradient-radial from-[#8B0000]/10 to-transparent rounded-full blur-2xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-60 h-60 bg-gradient-radial from-[#8B0000]/10 to-transparent rounded-full blur-3xl" />
 
         <div className="relative z-10">
           {/* Avatar */}
@@ -113,18 +113,18 @@ export function Profile() {
 
           {/* ELO + Level + Coins */}
           <div className="flex items-center justify-center gap-4 mt-4 text-sm">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/40">
               <Shield className="w-4 h-4 text-yellow-400" />
               <span className="text-yellow-400 font-bold">{profile.elo?.casual ?? 1000}</span>
               <span className="text-gray-500">ELO</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/40">
               <Star className="w-4 h-4 text-blue-400" />
               <span className="text-blue-400 font-bold">{profile.level ?? 1}</span>
               <span className="text-gray-500">{t('profile.level')}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/30">
-              <span className="text-lg">🪙</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/40">
+              <Coins className="w-4 h-4 text-yellow-400" />
               <span className="text-yellow-400 font-bold">{profile.coins?.toLocaleString() ?? 0}</span>
               <span className="text-gray-500">{t('store.coins')}</span>
             </div>
@@ -137,8 +137,8 @@ export function Profile() {
                 <span>Level {profile.level}</span>
                 <span>{profile.xp ?? 0} / {getLevelProgress(profile.xp ?? 0).nextLevelXP} XP</span>
               </div>
-              <div className="w-full h-1.5 rounded-full bg-gray-700/50 overflow-hidden">
-                <div className="h-full rounded-full bg-gradient-to-r from-[#8B0000] via-[#B22222] to-[#FF4444] transition-all duration-700"
+              <div className="progress">
+                <div className="progress-fill progress-high"
                   style={{ width: `${Math.min(100, ((profile.xp ?? 0) / getLevelProgress(profile.xp ?? 0).nextLevelXP) * 100)}%` }}
                 />
               </div>
@@ -182,7 +182,7 @@ export function Profile() {
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-2 ${
               activeTab === tab.id
-                ? 'bg-[#8B0000]/20 text-[#FF4444] border border-[#8B0000]/30'
+                ? 'btn-primary text-xs px-4 py-2'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -195,7 +195,7 @@ export function Profile() {
       <div className="card-glass p-5 min-h-[250px]">
         {activeTab === 'achievements' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold">{t('profile.achievementsTitle')}</h3>
+            <h3 className="text-sm font-bold text-gray-200">{t('profile.achievementsTitle')}</h3>
             {!profile.achievements || profile.achievements.length === 0 ? (
               <EmptyState icon={<Award className="w-8 h-8 text-gray-500" />} title={t('profile.noAchievements')} description={t('profile.playMore')} />
             ) : (
@@ -217,7 +217,7 @@ export function Profile() {
         )}
         {activeTab === 'stats' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold">{t('profile.roleStatistics')}</h3>
+            <h3 className="text-sm font-bold text-gray-200">{t('profile.roleStatistics')}</h3>
             {Object.entries(profile.roleStats).length === 0 ? (
               <EmptyState icon={<Swords className="w-8 h-8 text-gray-500" />} title={t('profile.noRoleData')} />
             ) : (
@@ -225,11 +225,11 @@ export function Profile() {
                 {Object.entries(profile.roleStats).sort(([, a], [, b]) => b.games - a.games).map(([roleId, stats]) => {
                   const winPct = stats.games > 0 ? Math.round((stats.wins / stats.games) * 100) : 0;
                   return (
-                    <div key={roleId} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+                    <div key={roleId} className="card-hover flex items-center gap-3 p-2.5 rounded-lg">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-white capitalize">{roleId.replace(/_/g, ' ')}</p>
-                        <div className="w-full h-1.5 rounded-full bg-gray-700/50 mt-1.5 overflow-hidden">
-                          <div className="h-full rounded-full bg-gradient-to-r from-[#8B0000] to-[#FF4444] transition-all duration-500"
+                        <div className="progress mt-1.5">
+                          <div className={`progress-fill ${winPct >= 60 ? 'progress-high' : winPct >= 35 ? 'progress-mid' : 'progress-low'}`}
                             style={{ width: `${winPct}%` }}
                           />
                         </div>
@@ -248,7 +248,7 @@ export function Profile() {
 
         {activeTab === 'games' && (
           <div>
-            <h3 className="text-sm font-bold mb-3">{t('profile.recentGames')}</h3>
+            <h3 className="text-sm font-bold text-gray-200 mb-3">{t('profile.recentGames')}</h3>
             {profile.recentGames.length === 0 ? (
               <EmptyState icon={<Gamepad2 className="w-8 h-8 text-gray-500" />} title={t('profile.noGamesPlayed')} />
             ) : (
@@ -256,11 +256,11 @@ export function Profile() {
                 {[...profile.recentGames].reverse().slice(-10).reverse().map((game, i) => {
                   const won = game.team === game.winner;
                   return (
-                    <div key={i} className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                      won ? 'bg-green-900/10 border border-green-900/20' : 'bg-red-900/10 border border-red-900/20'
+                    <div key={i} className={`card-hover flex items-center justify-between p-3 rounded-lg border ${
+                      won ? 'border-green-900/20 bg-green-900/10' : 'border-red-900/20 bg-red-900/10'
                     }`}>
                       <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${won ? 'bg-green-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`} />
+                        <div className={`w-2 h-2 rounded-full ${won ? 'status-dot-online' : 'bg-red-500'}`} />
                         <div>
                           <p className={`text-sm font-medium capitalize ${won ? 'text-green-300' : 'text-red-300'}`}>
                             {game.role.replace(/_/g, ' ')}
@@ -270,8 +270,8 @@ export function Profile() {
                           </p>
                         </div>
                       </div>
-                      <span className={`text-[11px] font-bold px-2.5 py-1 rounded-md ${
-                        won ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'
+                      <span className={`badge text-[11px] font-bold px-2.5 py-1 ${
+                        won ? 'badge badge-green bg-green-900/30 text-green-400 border-green-800/30' : 'badge bg-red-900/30 text-red-400 border-red-800/30'
                       }`}>
                         {won ? t('profile.won') : t('profile.lost')}
                       </span>

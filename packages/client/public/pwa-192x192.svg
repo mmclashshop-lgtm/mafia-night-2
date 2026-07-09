@@ -1,20 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0A0A0A"/>
-      <stop offset="100%" style="stop-color:#1A1A1A"/>
+    <linearGradient id="r" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B0000"/>
+      <stop offset="100%" stop-color="#C62828"/>
     </linearGradient>
-    <linearGradient id="mask" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#8B0000"/>
-      <stop offset="100%" style="stop-color:#B22222"/>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#DAA520"/>
     </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="38" fill="url(#bg)" stroke="#8B0000" stroke-width="3"/>
-  <g transform="translate(96,96)">
-    <path d="M-54,-38 C-54,-38 -34,-54 0,-54 C34,-54 54,-38 54,-38 C54,-16 62,20 54,34 C46,48 28,58 0,58 C-28,58 -46,48 -54,34 C-62,20 -54,-16 -54,-38Z" fill="url(#mask)" opacity="0.9"/>
-    <ellipse cx="-22" cy="-16" rx="10" ry="12" fill="#0A0A0A"/>
-    <ellipse cx="22" cy="-16" rx="10" ry="12" fill="#0A0A0A"/>
-    <path d="M-14,20 Q0,34 14,20" stroke="#0A0A0A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <path d="M-38,-34 Q-28,-46 0,-46 Q28,-46 38,-34" stroke="#0A0A0A" stroke-width="2.5" fill="none" opacity="0.5"/>
+  <rect width="192" height="192" fill="#0A0A0A" rx="32"/>
+  <circle cx="96" cy="96" r="80" fill="none" stroke="url(#g)" stroke-width="3"/>
+  <circle cx="96" cy="96" r="64" fill="none" stroke="url(#r)" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.3"/>
+  <g>
+    <path d="M60,56 Q96,44 132,56 Q96,64 60,56Z" fill="url(#r)" opacity="0.95"/>
+    <path d="M68,56 L68,32 Q68,20 96,20 Q124,20 124,32 L124,56Z" fill="url(#r)" opacity="0.95"/>
+    <rect x="68" y="44" width="56" height="6" rx="3" fill="url(#g)"/>
+    <path d="M72,56 L72,164 Q96,148 120,164 L120,56Z" fill="url(#r)" opacity="0.95"/>
   </g>
 </svg>

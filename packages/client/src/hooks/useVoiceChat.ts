@@ -24,14 +24,8 @@ export function useVoiceChat() {
   const speakTimer = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
 
   function getPlayerName(userId: string): string {
-    if (!gameState) return userId.slice(0, 6);
-    for (const [, socketId] of Object.entries((getSocket() as any).data ?? {})) {
-      // Simplified: use socket ID as fallback, try to find by player
-    }
-    const assignedPlayer = gameState.players.find(
-      (p) => p.id === userId || p.name === userId
-    );
-    return assignedPlayer?.name ?? userId.slice(0, 6);
+    const player = gameState?.players.find(p => p.id === userId || p.name === userId);
+    return player?.name ?? userId.slice(0, 6);
   }
 
   const initAudio = useCallback(async () => {

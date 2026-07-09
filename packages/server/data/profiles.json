@@ -528,5 +528,282 @@
     "dailyQuestDate": "2026-07-04",
     "friendUserIds": [],
     "pendingFriendRequests": []
+  },
+  "Mohamed": {
+    "userId": "legacy_",
+    "name": "Mohamed",
+    "totalGames": 3,
+    "totalWins": 3,
+    "totalKills": 0,
+    "totalSurvived": 3,
+    "score": 365,
+    "consecutiveWins": 3,
+    "bestWinStreak": 3,
+    "roleStats": {
+      "villager": {
+        "games": 3,
+        "wins": 3
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      },
+      {
+        "winner": "town",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      },
+      {
+        "winner": "town",
+        "role": "villager",
+        "team": "town",
+        "survived": true,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      }
+    ],
+    "achievements": [
+      "first_blood",
+      "fast_win",
+      "perfect_game",
+      "unstoppable"
+    ],
+    "coins": 54,
+    "inventory": [],
+    "elo": {
+      "casual": 1054,
+      "competitive": 1000
+    },
+    "xp": 555,
+    "level": 3,
+    "dailyQuests": [
+      {
+        "id": "survive_2",
+        "current": 2,
+        "completed": true
+      },
+      {
+        "id": "play_5",
+        "current": 3,
+        "completed": false
+      },
+      {
+        "id": "vote_5",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-04",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
+  },
+  "STSAGA": {
+    "userId": "legacy_",
+    "name": "STSAGA",
+    "totalGames": 3,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 15,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "mafia": {
+        "games": 3,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      },
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      },
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 1,
+        "startedAt": 1783168444720
+      }
+    ],
+    "achievements": [],
+    "coins": 30,
+    "inventory": [],
+    "elo": {
+      "casual": 946,
+      "competitive": 1000
+    },
+    "xp": 225,
+    "level": 2,
+    "dailyQuests": [
+      {
+        "id": "vote_5",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "town_win",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "play_3",
+        "current": 3,
+        "completed": true
+      }
+    ],
+    "dailyQuestDate": "2026-07-04",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
+  },
+  "غغا": {
+    "userId": "legacy_",
+    "name": "غغا",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "mafia": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783176386399
+      },
+      {
+        "winner": "town",
+        "role": "mafia",
+        "team": "mafia",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783176386399
+      }
+    ],
+    "achievements": [],
+    "coins": 20,
+    "inventory": [],
+    "elo": {
+      "casual": 961,
+      "competitive": 1000
+    },
+    "xp": 100,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "win_2",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "survive_2",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "win_1",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-04",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
+  },
+  "كىمى": {
+    "userId": "legacy_",
+    "name": "كىمى",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 2,
+    "score": 210,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "doctor": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": true,
+        "dayCount": 1,
+        "startedAt": 1783195472806
+      },
+      {
+        "winner": "mafia",
+        "role": "doctor",
+        "team": "town",
+        "survived": true,
+        "dayCount": 1,
+        "startedAt": 1783195472806
+      }
+    ],
+    "achievements": [],
+    "coins": 26,
+    "inventory": [],
+    "elo": {
+      "casual": 961,
+      "competitive": 1000
+    },
+    "xp": 195,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "survive_2",
+        "current": 2,
+        "completed": true
+      },
+      {
+        "id": "town_win",
+        "current": 0,
+        "completed": false
+      },
+      {
+        "id": "win_1",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-04",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
   }
 }

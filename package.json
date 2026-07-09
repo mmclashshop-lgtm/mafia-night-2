@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "node packages/server/dist/index.js",
+    "start": "npx tsx packages/server/src/index.ts",
     "build:client": "turbo run build --filter=@mafia/client",
     "build:server": "turbo run build --filter=@mafia/server",
     "build:shared": "turbo run build --filter=@mafia/shared",

@@ -1664,5 +1664,467 @@
         "daysSurvived": 1
       }
     ]
+  },
+  {
+    "id": "game_mr6cev25ovyfy4k",
+    "roomCode": "STSAGA",
+    "startedAt": 1783168534764,
+    "endedAt": 1783168556440,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 21676,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "Mohamed",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "STSAGA",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Luca",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr6cev25ovyfy4k",
+    "roomCode": "STSAGA",
+    "startedAt": 1783168534764,
+    "endedAt": 1783168565841,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 31077,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "Mohamed",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "STSAGA",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Luca",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr6cev25ovyfy4k",
+    "roomCode": "STSAGA",
+    "startedAt": 1783168534764,
+    "endedAt": 1783168588801,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 54037,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "Mohamed",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "STSAGA",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Luca",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Kara",
+        "role": "cop",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr6gc1qjfobkmsi",
+    "roomCode": "N7W5G6",
+    "startedAt": 1783175545959,
+    "endedAt": 1783175545973,
+    "winner": "mafia",
+    "dayCount": 6,
+    "playerCount": 4,
+    "duration": 14,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "لانمنلانملا (bot)",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 5
+      },
+      {
+        "name": "Diana",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 5
+      },
+      {
+        "name": "Frank",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 5
+      },
+      {
+        "name": "Vince",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 5
+      }
+    ]
+  },
+  {
+    "id": "game_mr6h6alp31m22qg",
+    "roomCode": "ERE5MB",
+    "startedAt": 1783176585468,
+    "endedAt": 1783176591009,
+    "winner": "town",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 5541,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "غغا",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Olive",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Leo",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Wendy",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr6h6alp31m22qg",
+    "roomCode": "ERE5MB",
+    "startedAt": 1783176585468,
+    "endedAt": 1783176598744,
+    "winner": "town",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 13276,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "غغا",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Olive",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Leo",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Wendy",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mr6sjgts4pyaon1",
+    "roomCode": "RPLJ5Y",
+    "startedAt": 1783195548250,
+    "endedAt": 1783195571625,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 23375,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "كىمى",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Tony",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mr6sjgts4pyaon1",
+    "roomCode": "RPLJ5Y",
+    "startedAt": 1783195548250,
+    "endedAt": 1783195581270,
+    "winner": "mafia",
+    "dayCount": 1,
+    "playerCount": 4,
+    "duration": 33020,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "كىمى",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Tony",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vince",
+        "role": "villager",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
   }
 ]

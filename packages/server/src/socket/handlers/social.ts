@@ -19,9 +19,26 @@ interface Party {
 }
 
 const parties = new Map<string, Party>();
+const PARTY_CLEANUP_INTERVAL = 120_000;
 
 function generatePartyId(): string {
   return `p_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+}
+
+function cleanupParties(): void {
+  const now = Date.now();
+  for (const [id, party] of parties) {
+    if (now - party.createdAt > PARTY_CLEANUP_INTERVAL && party.members.length === 0) {
+      parties.delete(id);
+    }
+  }
+}
+
+let partyCleanupTimer: ReturnType<typeof setInterval> | null = null;
+export function startPartyCleanup(): void {
+  if (partyCleanupTimer) return;
+  partyCleanupTimer = setInterval(cleanupParties, PARTY_CLEANUP_INTERVAL);
+  partyCleanupTimer.unref();
 }
 
 function getUserSocket(io: Server, userId: string): Socket | undefined {
@@ -238,5 +255,15 @@ export function registerSocialHandlers(io: Server, socket: Socket): void {
       const ms = getUserSocket(io, m.userId);
       if (ms) ms.emit('party:member-ready', { userId: m.userId, ready: false });
     });
+  });
+
+  // Cleanup party on disconnect
+  socket.on('disconnect', () => {
+    const userId = socket.data.userId;
+    if (!userId) return;
+    const party = getPartyByUserId(userId);
+    if (!party) return;
+    party.members = party.members.filter(m => m.userId !== userId);
+    if (party.members.length === 0) parties.delete(party.id);
   });
 }

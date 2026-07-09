@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../store/gameStore';
@@ -16,6 +16,7 @@ import { SpectatorOverlay } from '../components/game/SpectatorOverlay';
 import { VoiceChat } from '../components/game/VoiceChat';
 import { CinematicDeathOverlay } from '../components/cinematic/CinematicDeathOverlay';
 import { WinCelebration } from '../components/cinematic/WinCelebration';
+import { PhaseTransitionOverlay } from '../components/game/PhaseTransitionOverlay';
 import { SkeletonGame } from '../components/common/Skeleton';
 import { useSound } from '../hooks/useSound';
 import { useSoundStore } from '../store/soundStore';
@@ -75,13 +76,8 @@ export function Game() {
           winner={gameState.winner}
           onPlayAgain={async () => {
             setPlayAgainLoading(true);
-            try {
-              await playAgain();
-              navigate('/lobby');
-            } catch {
-              addToast('error', t('game.failedToRestart'));
-              setPlayAgainLoading(false);
-            }
+            try { await playAgain(); navigate('/lobby'); }
+            catch { addToast('error', t('game.failedToRestart')); setPlayAgainLoading(false); }
           }}
           onLeave={() => leaveRoom()}
           playAgainLoading={playAgainLoading}
@@ -112,12 +108,11 @@ export function Game() {
 
   return (
     <>
-      {showDeathEffect && <CinematicDeathOverlay onComplete={() => setShowDeathEffect(false)} />}
-      <div className={`animate-fade-in space-y-4 ${isNight ? 'relative' : ''}`}>
-        {/* Phase Indicator + Stats bar */}
+      <PhaseTransitionOverlay>
+        {showDeathEffect && <CinematicDeathOverlay onComplete={() => setShowDeathEffect(false)} />}
+        <div className={`animate-fade-in space-y-4 ${isNight ? 'relative' : ''}`}>
         <PhaseIndicator phase={phase} day={gameState.day} endsAt={gameState.phaseEndsAt} />
 
-        {/* Player counts */}
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-3 text-xs text-gray-500">
             <button onClick={toggleMuted} className="p-1.5 rounded-lg hover:bg-white/5 transition-colors" title={muted ? t('game.unmute') : t('game.mute')}>
@@ -136,11 +131,9 @@ export function Game() {
           </div>
         </div>
 
-        {/* Role info */}
         {currentPlayer?.role && !isDead && <RoleCard role={currentPlayer.role} />}
         {isDead && currentPlayer?.role && <DeathReveal role={currentPlayer.role} />}
 
-        {/* Phase banner */}
         {isNight && (
           <div className="card p-3 border-indigo-800/30 bg-indigo-950/20 text-center">
             <p className="text-sm text-indigo-300">{t('game.nightFalls')}</p>
@@ -148,22 +141,13 @@ export function Game() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Left: Main game area */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Player grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {alivePlayers.map((player) => (
-                <PlayerCard
-                  key={player.id}
-                  player={player}
-                  isCurrentPlayer={player.id === playerId}
-                  phase={phase}
-                  isDead={isDead}
-                />
+                <PlayerCard key={player.id} player={player} isCurrentPlayer={player.id === playerId} phase={phase} isDead={isDead} />
               ))}
             </div>
 
-            {/* Dead players */}
             {deadPlayers.length > 0 && (
               <div className="card p-3">
                 <h3 className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
@@ -172,48 +156,35 @@ export function Game() {
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
                   {deadPlayers.map((p) => (
-                    <span key={p.id} className="text-xs text-gray-600 flex items-center gap-1 bg-[#1A1A1A]/50 px-2 py-1 rounded-md">
-                      {p.name}
-                    </span>
+                    <span key={p.id} className="text-xs text-gray-600 flex items-center gap-1 bg-[#1A1A1A]/50 px-2 py-1 rounded-md">{p.name}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Night actions */}
             {isNight && currentPlayer?.role?.nightAction && !isDead && (
               <NightActions
                 players={alivePlayers.filter((p) => p.id !== playerId)}
                 role={currentPlayer.role}
                 onSubmit={async (targetId, actionType) => {
-                  try {
-                    await submitNightAction(targetId, actionType ?? currentPlayer.role!.id);
-                    addToast('info', t('game.nightActionSubmitted'));
-                  } catch (err) {
-                    addToast('error', err instanceof Error ? err.message : t('game.failed'));
-                  }
+                  try { await submitNightAction(targetId, actionType ?? currentPlayer.role!.id); addToast('info', t('game.nightActionSubmitted')); }
+                  catch (err) { addToast('error', err instanceof Error ? err.message : t('game.failed')); }
                 }}
               />
             )}
 
-            {/* Voting panel */}
             {isVoting && !isDead && (
               <VotingPanel
                 players={alivePlayers.filter((p) => p.id !== playerId)}
                 hasVoted={gameState.votes?.some((v) => v.from === playerId) ?? false}
                 onSubmit={async (targetId) => {
-                  try {
-                    await submitVote(targetId);
-                    addToast('info', t('game.voteSubmitted'));
-                  } catch (err) {
-                    addToast('error', err instanceof Error ? err.message : t('game.failed'));
-                  }
+                  try { await submitVote(targetId); addToast('info', t('game.voteSubmitted')); }
+                  catch (err) { addToast('error', err instanceof Error ? err.message : t('game.failed')); }
                 }}
               />
             )}
           </div>
 
-          {/* Right: Chat + Log */}
           <div className="space-y-4">
             <VoiceChat />
             {isDead && <SpectatorOverlay />}
@@ -222,6 +193,7 @@ export function Game() {
           </div>
         </div>
       </div>
+      </PhaseTransitionOverlay>
     </>
   );
 }

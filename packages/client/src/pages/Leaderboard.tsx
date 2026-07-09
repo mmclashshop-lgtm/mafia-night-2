@@ -70,7 +70,7 @@ export function Leaderboard() {
             </p>
           )}
         </div>
-        <button onClick={() => navigate('/')} className="btn-secondary flex items-center gap-2 text-xs px-3 py-2">
+        <button onClick={() => navigate('/')} className="btn-ghost flex items-center gap-2 text-xs px-3 py-2">
           <ArrowLeft className="w-4 h-4" /> {t('leaderboard.back')}
         </button>
       </div>
@@ -81,8 +81,8 @@ export function Leaderboard() {
           <button key={key} onClick={() => setSortBy(key)}
             className={`text-xs px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5 whitespace-nowrap ${
               sortBy === key
-                ? 'bg-[#8B0000] text-white shadow-[0_0_12px_rgba(139,0,0,0.3)]'
-                : 'bg-[#1A1A1A] text-gray-400 hover:bg-[#222] hover:text-white'
+                ? 'btn-primary text-xs px-3 py-1.5'
+                : 'bg-[#1A1A1A] text-gray-400 hover:bg-[#222] hover:text-white border border-transparent'
             }`}
           >
             {Icon && <Icon className="w-3 h-3" />}
@@ -96,18 +96,23 @@ export function Leaderboard() {
         <div className="grid grid-cols-3 gap-3 items-end">
           {[1, 0, 2].map((idx) => {
             const entry = top3[idx]!;
-            const heights = ['h-24', 'h-32', 'h-20'];
+            const heights = ['justify-end', 'h-32 justify-end', 'h-24 justify-end'];
             const medals = ['🥈', '🥇', '🥉'];
-            const podiumClasses = ['podium-2', 'podium-1', 'podium-3'];
+            const podiumBorders = [
+              'border-gray-500/30 bg-gray-800/40',
+              'border-yellow-500/30 bg-yellow-900/10',
+              'border-amber-700/30 bg-amber-900/10',
+            ];
+            const medalClasses = ['text-2xl', 'text-3xl', 'text-2xl'];
             return (
-              <div key={entry.name} className={`flex flex-col items-center gap-2 cursor-pointer ${heights[idx]} justify-end`}
+              <div key={entry.name} className={`flex flex-col items-center gap-2 cursor-pointer ${heights[idx]}`}
                 onClick={() => navigate(`/profile/${encodeURIComponent(entry.name)}`)}>
-                <div className="text-lg">{medals[idx]}</div>
-                <div className={`w-full rounded-xl p-3 text-center border ${podiumClasses[idx]}`}>
+                <span className={medalClasses[idx]}>{medals[idx]}</span>
+                <div className={`w-full rounded-xl p-3 text-center border ${podiumBorders[idx]} backdrop-blur-sm`}>
                   <div className="flex justify-center mb-1">
                     <PlayerAvatar avatar={entry.avatar ?? 'dicebear'} name={entry.name} size="sm" />
                   </div>
-                  <p className="text-xs font-semibold truncate">{entry.name}</p>
+                  <p className="text-xs font-semibold truncate text-white">{entry.name}</p>
                   <p className="text-[10px] text-gray-400">{entry.score.toLocaleString()}</p>
                 </div>
               </div>

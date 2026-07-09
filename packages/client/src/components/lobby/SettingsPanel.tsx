@@ -35,7 +35,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
             type="number" min={10} max={120}
             value={settings.nightDuration}
             onChange={e => handleChange('nightDuration', parseInt(e.target.value) || 30)}
-            className="input-field w-full text-sm text-center"
+            className="input w-full text-sm text-center"
           />
         </div>
 
@@ -48,7 +48,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
             type="number" min={15} max={300}
             value={settings.dayDuration}
             onChange={e => handleChange('dayDuration', parseInt(e.target.value) || 60)}
-            className="input-field w-full text-sm text-center"
+            className="input w-full text-sm text-center"
           />
         </div>
 
@@ -61,7 +61,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
             type="number" min={10} max={120}
             value={settings.votingDuration}
             onChange={e => handleChange('votingDuration', parseInt(e.target.value) || 30)}
-            className="input-field w-full text-sm text-center"
+            className="input w-full text-sm text-center"
           />
         </div>
 
@@ -73,7 +73,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
           <select
             value={settings.rolePreset}
             onChange={e => handleChange('rolePreset', e.target.value)}
-            className="input-field w-full text-sm"
+            className="input w-full text-sm"
           >
             <option value="classic">{t('settingsPanel.classic')}</option>
             <option value="advanced">{t('settingsPanel.advanced')}</option>
@@ -90,7 +90,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
             type="number" min={4} max={12}
             value={settings.maxPlayers}
             onChange={e => handleChange('maxPlayers', parseInt(e.target.value) || 12)}
-            className="input-field w-full text-sm text-center"
+            className="input w-full text-sm text-center"
           />
         </div>
       </div>

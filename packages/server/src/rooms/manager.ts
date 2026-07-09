@@ -610,13 +610,6 @@ export class RoomManager {
       }
     }
 
-    const _witchSaved = this.state.history.some(
-      (e) => e.type === 'heal' && e.data && typeof e.data === 'object' && (e.data as Record<string, unknown>)['healer'] === 'witch'
-    );
-    const _witchKilled = this.state.history.some(
-      (e) => e.type === 'kill' && e.data && typeof e.data === 'object' && (e.data as Record<string, unknown>)['killer'] === 'witch'
-    );
-
     const storedPlayers = this.state.players.map(p => ({
       name: p.name,
       role: p.role?.id ?? 'unknown',

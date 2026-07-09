@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../../store/gameStore';
 import { useSocket as useSocketHook } from '../../hooks/useSocket';
 import { getSocket } from '../../lib/socket';
-import { Send, MessageSquare, Skull } from 'lucide-react';
+import { MessageSquare, Skull, ChevronDown, MessageCircle } from 'lucide-react';
+import { ChatMessage } from './ChatMessage';
+import { ChatInput } from './ChatInput';
 
-interface ChatMessage {
+interface ChatMsg {
   from: string;
   name: string;
   text: string;
@@ -19,40 +21,53 @@ interface ChatPanelProps {
 
 export const ChatPanel = memo(function ChatPanel({ isNight = false, isDead = false }: ChatPanelProps) {
   const { t } = useTranslation();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [mafiaMessages, setMafiaMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [mafiaMessages, setMafiaMessages] = useState<ChatMsg[]>([]);
   const [collapsed, setCollapsed] = useState(false);
   const [tab, setTab] = useState<'all' | 'mafia'>('all');
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const playerId = useGameStore((s) => s.playerId);
   const gameState = useGameStore((s) => s.gameState);
   const { sendChat, sendMafiaChat } = useSocketHook();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef(true);
 
   const currentPlayer = gameState?.players.find(p => p.id === playerId);
   const isMafia = currentPlayer?.team === 'mafia' || currentPlayer?.role?.id === 'godfather';
   const canChat = (!isNight || isDead);
-
   const activeMessages = tab === 'mafia' ? mafiaMessages : messages;
+
+  const scrollToBottom = useCallback((smooth = true) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
+    isAtBottomRef.current = true;
+    setShowScrollBtn(false);
+  }, []);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    isAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
-  }, []);
+    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+    isAtBottomRef.current = atBottom;
+    setShowScrollBtn(!atBottom && activeMessages.length > 10);
+  }, [activeMessages.length]);
 
   useEffect(() => {
     if (isAtBottomRef.current) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      scrollToBottom(true);
     }
-  }, [activeMessages]);
+  }, [activeMessages, scrollToBottom]);
 
   useEffect(() => {
     const socket = getSocket();
-    const handler = (data: ChatMessage) => setMessages((prev) => [...prev, data]);
-    const mafiaHandler = (data: ChatMessage) => setMafiaMessages((prev) => [...prev, data]);
+    const handler = (data: ChatMsg) => {
+      setMessages((prev) => [...prev, data]);
+      if (data.from === 'system') {
+        setMafiaMessages((prev) => [...prev, data]);
+      }
+    };
+    const mafiaHandler = (data: ChatMsg) => setMafiaMessages((prev) => [...prev, data]);
     socket.on('chat:message', handler);
     socket.on('chat:mafia', mafiaHandler);
     return () => {
@@ -61,84 +76,98 @@ export const ChatPanel = memo(function ChatPanel({ isNight = false, isDead = fal
     };
   }, []);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    if (tab === 'mafia') {
-      sendMafiaChat(input.trim());
-    } else if (canChat) {
-      sendChat(input.trim());
-    }
-    setInput('');
-  };
+  const handleSend = useCallback((text: string) => {
+    if (tab === 'mafia') sendMafiaChat(text);
+    else if (canChat) sendChat(text);
+  }, [tab, canChat, sendChat, sendMafiaChat]);
+
+  const unreadMafia = mafiaMessages.length;
 
   return (
-    <div className="card flex flex-col h-64 md:h-[400px]">
+    <div className="flex flex-col h-64 md:h-[400px] bg-[#0F0F1A]/80 border border-[#8B0000]/15 rounded-xl overflow-hidden backdrop-blur-sm">
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="flex items-center gap-2 p-3 border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+        className="flex items-center gap-2 px-4 py-3 border-b border-[#8B0000]/20 hover:bg-[#8B0000]/5 transition-colors"
       >
-        <MessageSquare className="w-4 h-4" />
-        <span className="text-sm font-medium">{t('chatPanel.chat')}</span>
-        {mafiaMessages.length > 0 && tab !== 'mafia' && (
-          <span className="text-xs bg-red-600 text-white px-1.5 py-0.5 rounded-full">{mafiaMessages.length}</span>
+        <MessageCircle className="w-4 h-4 text-[#8B0000]" />
+        <span className="text-sm font-semibold text-gray-200">{t('chatPanel.chat')}</span>
+        {unreadMafia > 0 && tab !== 'mafia' && (
+          <span className="text-[10px] bg-[#8B0000] text-white px-1.5 py-0.5 rounded-full font-bold">{unreadMafia}</span>
         )}
-        {!canChat && tab !== 'mafia' && <span className="text-xs text-gray-500 mr-auto">({t('chatPanel.night')})</span>}
-        {isDead && <span className="text-xs text-purple-400 mr-auto">({t('chatPanel.spectating')})</span>}
+        {!canChat && tab !== 'mafia' && <span className="text-[10px] text-gray-600 ml-auto">({t('chatPanel.night')})</span>}
+        {isDead && <span className="text-[10px] text-purple-400 ml-auto">({t('chatPanel.spectating')})</span>}
       </button>
 
       <div className={`flex-1 flex flex-col ${collapsed ? 'hidden' : ''}`}>
         {isMafia && isNight && (
-          <div className="flex border-b border-gray-800">
+          <div className="flex border-b border-[#8B0000]/10">
             <button
               onClick={() => setTab('all')}
-              className={`flex-1 text-xs py-2 transition-colors ${tab === 'all' ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 text-xs py-2 transition-all ${tab === 'all' ? 'bg-[#1A1A2E] text-white border-b-2 border-[#2563EB]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.02]'}`}
             >
               <MessageSquare className="w-3 h-3 inline ml-1" />
               {t('chatPanel.general')}
             </button>
             <button
               onClick={() => setTab('mafia')}
-              className={`flex-1 text-xs py-2 transition-colors ${tab === 'mafia' ? 'bg-red-900/50 text-red-300' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 text-xs py-2 transition-all ${tab === 'mafia' ? 'bg-[#1A1A2E] text-[#FF6B6B] border-b-2 border-[#8B0000]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.02]'}`}
             >
               <Skull className="w-3 h-3 inline ml-1" />
-              {t('chatPanel.mafia')} {mafiaMessages.length > 0 && `(${mafiaMessages.length})`}
+              {t('chatPanel.mafia')} {unreadMafia > 0 && `(${unreadMafia})`}
             </button>
           </div>
         )}
 
-        <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto p-3 space-y-2">
-          {activeMessages.length === 0 && (
-            <p className="text-sm text-gray-500 text-center mt-4">
-              {tab === 'mafia' ? t('chatPanel.mafiaChat') : canChat ? t('chatPanel.noMessages') : t('chatPanel.chatDayOnly')}
-            </p>
+        <div className="flex-1 relative">
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="absolute inset-0 overflow-y-auto scroll-smooth"
+          >
+            {activeMessages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-sm text-gray-600 text-center px-4">
+                  {tab === 'mafia' ? t('chatPanel.mafiaChat') : canChat ? t('chatPanel.noMessages') : t('chatPanel.chatDayOnly')}
+                </p>
+              </div>
+            ) : (
+              <div className="py-1">
+                {activeMessages.map((msg, idx) => {
+                  const prev = idx > 0 ? activeMessages[idx - 1] : null;
+                  const showHeader = !prev || prev.from !== msg.from || (msg.timestamp - prev.timestamp) > 120000;
+                  return (
+                    <div key={idx} className={showHeader ? '' : '-mt-1'}>
+                      {showHeader && idx > 0 && (
+                        <div className="h-2" />
+                      )}
+                      <ChatMessage
+                        msg={msg}
+                        isOwn={msg.from === playerId}
+                        isMafia={tab === 'mafia' || (msg.from !== 'system' && currentPlayer?.team === 'mafia')}
+                        isSystem={msg.from === 'system'}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {showScrollBtn && (
+            <button
+              onClick={() => scrollToBottom(true)}
+              className="absolute bottom-3 right-3 w-8 h-8 bg-[#8B0000] hover:bg-[#B22222] rounded-full flex items-center justify-center shadow-lg shadow-[#8B0000]/30 transition-all animate-bounce"
+            >
+              <ChevronDown className="w-4 h-4 text-white" />
+            </button>
           )}
-          {activeMessages.map((msg, idx) => (
-            <div key={idx} className={`text-sm ${msg.from === playerId ? 'text-left' : ''}`}>
-              {msg.from !== playerId && (
-                <span className="text-xs text-gray-500 ml-1">{msg.name}:</span>
-              )}
-              <span className="text-gray-200">{msg.text}</span>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
         </div>
 
-        {(canChat || tab === 'mafia') && (
-          <div className="p-3 border-t border-gray-800 flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder={tab === 'mafia' ? t('chatPanel.mafiaWhisper') : t('chatPanel.typeMessage')}
-              className="input-field flex-1"
-              maxLength={500}
-            />
-            <button onClick={handleSend} disabled={!input.trim()} className="btn-primary px-3">
-              <Send className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+        <ChatInput
+          onSend={handleSend}
+          placeholder={tab === 'mafia' ? t('chatPanel.mafiaWhisper') : t('chatPanel.typeMessage')}
+          disabled={!(canChat || tab === 'mafia')}
+        />
       </div>
     </div>
   );

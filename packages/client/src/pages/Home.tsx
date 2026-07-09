@@ -1,265 +1,187 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSocket } from '../hooks/useSocket';
+import { useAuthStore } from '../store/authStore';
 import { useGameStore } from '../store/gameStore';
-import { useUIStore } from '../store/uiStore';
+import { PageTransition } from '../components/common/PageTransition';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
-import { PageTransition, FadeIn, StaggerFadeIn } from '../components/common/PageTransition';
-import {
-  Play, Users, Zap, ChevronDown, Sword, Bot, Trophy, Monitor, Mic,
-} from 'lucide-react';
-
-function FeatureCard({ icon: Icon, title, desc, delay }: { icon: any; title: string; desc: string; delay: string }) {
-  return (
-    <div className={`card-hover p-6 animate-fade-in-up ${delay}`}>
-      <div className="w-10 h-10 rounded-lg bg-[#8B0000]/20 flex items-center justify-center mb-4">
-        <Icon className="w-5 h-5 text-[#8B0000]" />
-      </div>
-      <h3 className="text-white font-semibold mb-2">{title}</h3>
-      <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
-    </div>
-  );
-}
+import { HomeParticles } from '../components/home/HomeParticles';
+import { Zap, Swords, LogIn, Users, Shield, Key } from 'lucide-react';
 
 export function Home() {
   const { t } = useTranslation();
-  const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
+  const setName = useAuthStore((s) => s.setName);
+  const connected = useGameStore((s) => s.connected);
+
+  const [name, setNameLocal] = useState(() => localStorage.getItem('mafia_player_name') ?? '');
   const [roomCode, setRoomCode] = useState('');
   const [joining, setJoining] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [matchmaking, setMatchmaking] = useState(false);
   const [showContent, setShowContent] = useState(false);
-  const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
-  const { addToast } = useUIStore();
-  const navigate = useNavigate();
-  const setPlayerName = useGameStore((s) => s.setPlayerName);
-  const featuresRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowContent(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => { const t = setTimeout(() => setShowContent(true), 100); return () => clearTimeout(t); }, []);
 
   const handleCreate = async () => {
     if (!name.trim()) return;
     setCreating(true);
+    setName(name.trim());
     try {
-      setPlayerName(name.trim());
+      localStorage.setItem('mafia_player_name', name.trim());
       const code = await createRoom();
       await joinRoom(code, name.trim());
       navigate('/lobby');
-    } catch (err) {
-      addToast('error', err instanceof Error ? err.message : t('errors.createRoom'));
-      setCreating(false);
-    }
+    } catch { setCreating(false); }
   };
 
   const handleJoin = async () => {
     if (!name.trim() || !roomCode.trim()) return;
     setJoining(true);
+    setName(name.trim());
     try {
-      setPlayerName(name.trim());
-      await joinRoom(roomCode.toUpperCase(), name.trim());
+      localStorage.setItem('mafia_player_name', name.trim());
+      await joinRoom(roomCode.trim().toUpperCase(), name.trim());
       navigate('/lobby');
-    } catch (err) {
-      addToast('error', err instanceof Error ? err.message : t('errors.joinRoom'));
-      setJoining(false);
-    }
+    } catch { setJoining(false); }
   };
 
   const handleQuickPlay = async () => {
     if (!name.trim()) return;
-    try {
-      setPlayerName(name.trim());
-      await joinMatchmaking(name.trim());
-      setMatchmaking(true);
-    } catch (err) {
-      addToast('error', err instanceof Error ? err.message : t('errors.matchmaking'));
-    }
+    setName(name.trim());
+    localStorage.setItem('mafia_player_name', name.trim());
+    setMatchmaking(true);
+    try { await joinMatchmaking(name.trim()); }
+    catch { setMatchmaking(false); }
   };
 
-  const handleCancelMatchmaking = () => {
-    leaveMatchmaking();
+  const handleCancelMatchmaking = async () => {
     setMatchmaking(false);
-  };
-
-  const scrollToFeatures = () => {
-    featuresRef.current?.scrollIntoView({ behavior: 'smooth' });
+    try { await leaveMatchmaking(); } catch {}
   };
 
   return (
     <PageTransition>
-    <div className="min-h-screen">
-      {/* ─── Cinematic Hero ─── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        {/* Animated background orbs */}
-        <div className="absolute inset-0 bg-grid opacity-30" />
-        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[#8B0000]/8 rounded-full blur-3xl animate-pulse-slow" style={{ animationDuration: '6s' }} />
-        <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-[#B22222]/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDuration: '8s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-[#8B0000]/4 to-transparent rounded-full" />
-        <div className="absolute inset-0 bg-noise" />
+      <div className="relative min-h-screen flex flex-col">
+        {/* Particles background */}
+        <HomeParticles />
 
-        {/* Floating particles effect */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-[#8B0000]/20 rounded-full animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${3 + Math.random() * 4}s`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Main content */}
-        <div className={`relative z-10 transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        {/* Hero section */}
+        <div className={`flex-1 flex flex-col items-center justify-center px-4 sm:px-8 relative z-10 transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           {/* Logo */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-[#8B0000]/20 rounded-full blur-3xl scale-150" />
-              <img
-                src={`${import.meta.env.BASE_URL}logo.svg`}
-                alt="Mafia Night"
-                className="w-28 h-28 md:w-36 md:h-36 animate-mask-float drop-shadow-[0_0_60px_rgba(139,0,0,0.5)]"
-              />
-            </div>
+          <div className="relative mb-6 md:mb-8">
+            <div className="absolute inset-0 bg-[#8B0000]/20 rounded-full blur-[60px] scale-[2] animate-pulse-glow" />
+            <img
+              src={`${import.meta.env.BASE_URL}logo.svg`}
+              alt="Mafia Night"
+              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 animate-mask-float drop-shadow-[0_0_40px_rgba(139,0,0,0.5)]"
+            />
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-3">
-            <span className="text-gradient">{t('home.hero.title')}</span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-center mb-2">
+            <span className="text-gray-100">مافيا</span>{' '}
+            <span className="text-[#C62828]">نايت</span>
           </h1>
-          <p className="text-base md:text-lg text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
-            {t('home.hero.subtitle')}
+          <p className="text-sm md:text-base lg:text-lg text-gray-500 tracking-wide mb-8 md:mb-10 text-center">
+            {t('brand.tagline')}
           </p>
 
           {/* Name input */}
-          <div className="max-w-xs mx-auto mb-6">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t('home.cta.namePlaceholder')}
-              className="input-field text-center"
-              maxLength={20}
-            />
+          <div className="w-full max-w-xs sm:max-w-sm md:max-w-md mb-6">
+            <div className="relative">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setNameLocal(e.target.value)}
+                maxLength={20}
+                placeholder={t('home.cta.namePlaceholder')}
+                className="input text-center pr-10"
+                dir="rtl"
+              />
+              <Users className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+            </div>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
-            <button
-              onClick={handleQuickPlay}
-              disabled={!name.trim()}
-              className="btn-primary flex items-center gap-2.5 px-10 py-4 text-base relative overflow-hidden group animate-glow-pulse"
-              style={{ minWidth: 200 }}
-            >
-              <Zap className="w-5 h-5" />
-              <span className="text-base">{t('matchmaking.quickPlay')}</span>
-            </button>
-          </div>
+          {/* Quick Play — primary CTA */}
+          <button
+            onClick={handleQuickPlay}
+            disabled={!name.trim()}
+            className="btn-primary text-base px-10 py-3.5 rounded-2xl gap-2.5 mb-4 md:mb-6 animate-pulse-glow"
+          >
+            <Zap className="w-5 h-5" />
+            {t('home.hero.cta')}
+          </button>
 
-          <div className="flex items-center justify-center gap-3">
+          {/* Secondary CTAs */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm md:max-w-md">
             <button
               onClick={handleCreate}
               disabled={!name.trim() || creating}
-              className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm"
+              className="btn-secondary flex-1 gap-2"
             >
-              <Play className="w-4 h-4" />
+              <Swords className="w-4 h-4" />
               {creating ? t('home.cta.creating') : t('home.cta.createRoom')}
             </button>
             <button
               onClick={() => setShowJoin(!showJoin)}
-              className="btn-secondary flex items-center gap-2 px-5 py-2.5 text-sm"
+              className="btn-secondary flex-1 gap-2"
             >
-              <Users className="w-4 h-4" />
+              <LogIn className="w-4 h-4" />
               {t('home.cta.joinRoom')}
             </button>
           </div>
 
-          {/* Join room card */}
+          {/* Join panel */}
           {showJoin && (
-            <div className="animate-slide-down mt-4" style={{ animationDelay: '0ms' }}>
-              <div className="glass-card p-4 max-w-sm mx-auto">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={roomCode}
-                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                    placeholder={t('home.cta.roomCode')}
-                    className="input-field font-mono uppercase tracking-widest text-center"
-                    maxLength={6}
-                    autoFocus
-                  />
-                  <button
-                    onClick={handleJoin}
-                    disabled={!name.trim() || !roomCode.trim() || joining}
-                    className="btn-primary px-5"
-                  >
-                    {joining ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Play className="w-5 h-5" />}
-                  </button>
-                </div>
+            <div className="mt-4 glass-panel p-4 w-full max-w-xs sm:max-w-sm animate-slide-up flex flex-col gap-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={roomCode}
+                  onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                  maxLength={6}
+                  placeholder={t('home.cta.roomCode')}
+                  className="input text-center tracking-[0.3em] font-mono pr-10"
+                  dir="rtl"
+                />
+                <Key className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
               </div>
+              <button
+                onClick={handleJoin}
+                disabled={!name.trim() || !roomCode.trim() || joining}
+                className="btn-primary w-full gap-2"
+              >
+                {joining ? t('home.cta.joining') : t('home.cta.joinRoom')}
+              </button>
             </div>
           )}
+        </div>
 
-          {/* Meta info */}
-          <div className="flex items-center justify-center gap-4 mt-6 text-xs text-gray-600">
-            <span className="flex items-center gap-1.5"><Sword className="w-3 h-3" /> {t('home.cta.fourToTwelve')}</span>
-            <span className="flex items-center gap-1.5"><Users className="w-3 h-3" /> {t('home.cta.classicRoles')}</span>
+        {/* Footer stats */}
+        <div className="relative z-10 pb-8">
+          <div className="flex items-center justify-center gap-8 md:gap-12 text-xs md:text-sm text-gray-600">
+            <span className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              4-12 {t('home.cta.fourToTwelve')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              {t('home.cta.classicRoles')}
+            </span>
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <button
-          onClick={scrollToFeatures}
-          className="absolute bottom-8 text-gray-600 hover:text-white transition-colors animate-float"
-        >
-          <ChevronDown className="w-6 h-6" />
-        </button>
-      </section>
-
-      {matchmaking && <MatchmakingOverlay onCancel={handleCancelMatchmaking} />}
-
-      {/* ─── Features Section ─── */}
-      <section ref={featuresRef} className="py-20 px-4" id="features">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.features.title')}</h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#8B0000] to-transparent mx-auto" />
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { icon: Users, titleKey: 'home.features.multiplayer.title', descKey: 'home.features.multiplayer.desc', delay: 'animate-delay-100' },
-              { icon: Sword, titleKey: 'home.features.roles.title', descKey: 'home.features.roles.desc', delay: 'animate-delay-200' },
-              { icon: Mic, titleKey: 'home.features.voice.title', descKey: 'home.features.voice.desc', delay: 'animate-delay-300' },
-              { icon: Bot, titleKey: 'home.features.ai.title', descKey: 'home.features.ai.desc', delay: 'animate-delay-400' },
-              { icon: Trophy, titleKey: 'home.features.stats.title', descKey: 'home.features.stats.desc', delay: 'animate-delay-500' },
-              { icon: Monitor, titleKey: 'home.features.crossplay.title', descKey: 'home.features.crossplay.desc', delay: 'animate-delay-700' },
-            ].map(({ icon, titleKey, descKey, delay }) => (
-              <FeatureCard key={titleKey} icon={icon} title={t(titleKey)} desc={t(descKey)} delay={delay} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-[#8B0000]/10 py-8 px-4">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" className="w-6 h-6" />
-            <span className="font-semibold text-gray-400">{t('brand.name')}</span>
-          </div>
-          <p>&copy; {new Date().getFullYear()} {t('brand.name')}. {t('home.footer.rights')}</p>
-        </div>
-      </footer>
-    </div>
+        {/* Matchmaking overlay */}
+        {matchmaking && (
+          <MatchmakingOverlay onCancel={handleCancelMatchmaking} />
+        )}
+      </div>
     </PageTransition>
   );
 }
+
+

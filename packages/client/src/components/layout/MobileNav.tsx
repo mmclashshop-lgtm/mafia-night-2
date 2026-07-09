@@ -25,16 +25,7 @@ export function MobileNav() {
   };
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
-      style={{
-        background: 'rgba(10, 10, 10, 0.9)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(139, 0, 0, 0.1)',
-      }}
-      dir="rtl"
-    >
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#0A0A0A]/90 backdrop-blur-2xl border-t border-[#8B0000]/10" dir="rtl">
       <div className="flex items-center justify-around h-16 px-2">
         {NAV_ITEMS.map(({ path, icon: Icon, labelKey }) => (
           <button
@@ -44,9 +35,7 @@ export function MobileNav() {
               isActive(path) ? 'text-[#FF4444]' : 'text-gray-500 hover:text-gray-300'
             }`}
           >
-            {isActive(path) && (
-              <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-[#8B0000] to-[#FF4444] rounded-full" />
-            )}
+            {isActive(path) && <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-[#8B0000] to-[#FF4444] rounded-full" />}
             <Icon className="w-5 h-5" />
             <span className="text-[10px] font-semibold">{t(labelKey)}</span>
           </button>

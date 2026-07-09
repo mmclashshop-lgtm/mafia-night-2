@@ -19,16 +19,42 @@ const DEFAULTS: Record<string, RateLimitConfig> = {
 };
 
 const stores = new Map<string, Map<string, RateLimitEntry>>();
+const CLEANUP_INTERVAL = 60_000;
 
 function getStore(event: string): Map<string, RateLimitEntry> {
-  if (!stores.has(event)) {
-    stores.set(event, new Map());
+  let store = stores.get(event);
+  if (!store) {
+    store = new Map();
+    stores.set(event, store);
   }
-  return stores.get(event)!;
+  return store;
+}
+
+function cleanupStores(): void {
+  const now = Date.now();
+  for (const [, store] of stores) {
+    for (const [key, entry] of store) {
+      if (now >= entry.resetAt) store.delete(key);
+    }
+  }
+}
+
+let cleanupTimer: ReturnType<typeof setInterval> | null = null;
+export function startRateLimitCleanup(): void {
+  if (cleanupTimer) return;
+  cleanupTimer = setInterval(cleanupStores, CLEANUP_INTERVAL);
+  cleanupTimer.unref();
+}
+
+export function stopRateLimitCleanup(): void {
+  if (cleanupTimer) {
+    clearInterval(cleanupTimer);
+    cleanupTimer = null;
+  }
 }
 
 export function checkRateLimit(socketId: string, event: string): boolean {
-  const config: RateLimitConfig = (DEFAULTS[event] ?? DEFAULTS['default']) ?? { windowMs: 1000, maxRequests: 10 };
+  const config = DEFAULTS[event] ?? DEFAULTS['default'] ?? { windowMs: 1000, maxRequests: 10 };
   const store = getStore(event);
   const now = Date.now();
 

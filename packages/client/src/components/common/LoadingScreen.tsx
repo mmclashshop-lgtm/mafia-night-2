@@ -84,18 +84,36 @@ export function LoadingScreen() {
         {/* Logo */}
         <div className="relative mb-8">
           <div className="absolute inset-0 bg-[#8B0000]/20 rounded-full blur-3xl scale-150" />
-          <svg viewBox="0 0 48 48" width="80" height="80" className="animate-mask-float drop-shadow-[0_0_30px_rgba(139,0,0,0.5)]">
+          <svg viewBox="0 0 120 120" width="80" height="80" className="animate-mask-float drop-shadow-[0_0_30px_rgba(139,0,0,0.5)]">
             <defs>
-              <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="lr" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#8B0000"/>
-                <stop offset="100%" stopColor="#B22222"/>
+                <stop offset="100%" stopColor="#C62828"/>
+              </linearGradient>
+              <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFD700"/>
+                <stop offset="100%" stopColor="#DAA520"/>
               </linearGradient>
             </defs>
-            <rect x="4" y="4" width="40" height="40" rx="10" fill="#0A0A0A" stroke="#8B0000" strokeWidth="1.5"/>
-            <path d="M10,16 C10,16 14,10 24,10 C34,10 38,16 38,16 C38,24 40,32 38,36 C36,40 30,44 24,44 C18,44 12,40 10,36 C8,32 10,24 10,16Z" fill="url(#lg2)" opacity="0.85"/>
-            <circle cx="18" cy="22" r="4" fill="#0A0A0A"/>
-            <circle cx="30" cy="22" r="4" fill="#0A0A0A"/>
-            <path d="M18,32 Q24,36 30,32" stroke="#0A0A0A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            <circle cx="60" cy="60" r="56" fill="#0A0A0A" stroke="url(#lg)" strokeWidth="1.5"/>
+            <circle cx="60" cy="60" r="48" stroke="url(#lr)" strokeWidth="0.5" strokeDasharray="3 4" opacity="0.25"/>
+            <circle cx="60" cy="60" r="38" stroke="#8B0000" strokeWidth="0.7" opacity="0.3"/>
+            <line x1="22" y1="60" x2="42" y2="60" stroke="#8B0000" strokeWidth="1" opacity="0.35"/>
+            <line x1="78" y1="60" x2="98" y2="60" stroke="#8B0000" strokeWidth="1" opacity="0.35"/>
+            <line x1="60" y1="22" x2="60" y2="38" stroke="#8B0000" strokeWidth="1" opacity="0.35"/>
+            <line x1="60" y1="82" x2="60" y2="98" stroke="#8B0000" strokeWidth="1" opacity="0.35"/>
+            <path d="M36,32 Q60,26 84,32 Q60,36 36,32Z" fill="url(#lr)" opacity="0.95"/>
+            <path d="M42,32 L42,18 Q42,12 60,12 Q78,12 78,18 L78,32Z" fill="url(#lr)" opacity="0.95"/>
+            <rect x="42" y="26" width="36" height="3" rx="1.5" fill="url(#lg)"/>
+            <path d="M52,16 Q60,20 68,16" stroke="#0A0A0A" strokeWidth="1" fill="none" opacity="0.35"/>
+            <path d="M46,32 L46,40 Q46,44 50,44 L70,44 Q74,44 74,40 L74,32Z" fill="url(#lr)" opacity="0.95"/>
+            <rect x="52" y="44" width="16" height="6" fill="url(#lr)" opacity="0.95"/>
+            <path d="M34,50 L46,50 L46,56 Q46,60 50,60 L70,60 Q74,60 74,56 L74,50 L86,50 Q88,54 88,60 Q88,72 86,76 L82,78 Q78,76 78,74 L42,74 Q42,76 38,78 L34,76 Q32,72 32,60 Q32,54 34,50Z" fill="url(#lr)" opacity="0.95"/>
+            <path d="M57,50 L60,56 L63,50 L62,68 L60,72 L58,68 Z" fill="#6B0000" opacity="0.6"/>
+            <path d="M48,76 L46,98 L52,98 L54,78Z" fill="url(#lr)" opacity="0.95"/>
+            <path d="M72,76 L74,98 L68,98 L66,78Z" fill="url(#lr)" opacity="0.95"/>
+            <circle cx="60" cy="54" r="4" fill="url(#lg)" opacity="0.7"/>
+            <circle cx="60" cy="54" r="1.5" fill="#0A0A0A"/>
           </svg>
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-[#8B0000] to-transparent rounded-full animate-pulse" />
         </div>

@@ -9,7 +9,7 @@ export function useGlobalSound() {
       const target = e.target as HTMLElement;
       const btn = target.closest('button, [role="button"], a[href]');
       if (!btn) return;
-      if (btn.closest('.ripple-wrapper') || btn.closest('[data-no-sound]')) return;
+      if (btn.closest('[data-no-sound]') !== null) return;
       if (btn.getAttribute('data-no-sound') !== null) return;
       sound.click();
     };
@@ -18,16 +18,16 @@ export function useGlobalSound() {
       const target = e.target as HTMLElement;
       const btn = target.closest('button, [role="button"], a[href]');
       if (!btn) return;
-      if (btn.closest('.ripple-wrapper') || btn.closest('[data-no-sound]')) return;
+      if (btn.closest('[data-no-sound]') !== null) return;
       clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => sound.hover(), 60);
     };
 
     document.addEventListener('click', handleClick);
-    document.addEventListener('mouseover', handleHover);
+    document.addEventListener('mouseenter', handleHover, { passive: true });
     return () => {
       document.removeEventListener('click', handleClick);
-      document.removeEventListener('mouseover', handleHover);
+      document.removeEventListener('mouseenter', handleHover);
       clearTimeout(hoverTimer);
     };
   }, []);

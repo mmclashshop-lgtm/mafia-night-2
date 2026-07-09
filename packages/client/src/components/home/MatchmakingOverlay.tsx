@@ -15,21 +15,10 @@ export function MatchmakingOverlay({ onCancel }: MatchmakingOverlayProps) {
 
   useEffect(() => {
     const socket = getSocket();
-
-    const handleUpdate = (data: { queueSize: number }) => {
-      setQueueSize(data.queueSize);
-    };
-
+    const handleUpdate = (data: { queueSize: number }) => setQueueSize(data.queueSize);
     socket.on('matchmaking:update', handleUpdate);
-
-    const timer = setInterval(() => {
-      setSearchTime((prev) => prev + 1);
-    }, 1000);
-
-    return () => {
-      socket.off('matchmaking:update', handleUpdate);
-      clearInterval(timer);
-    };
+    const timer = setInterval(() => setSearchTime((prev) => prev + 1), 1000);
+    return () => { socket.off('matchmaking:update', handleUpdate); clearInterval(timer); };
   }, []);
 
   const handleCancel = useCallback(() => {
@@ -45,7 +34,7 @@ export function MatchmakingOverlay({ onCancel }: MatchmakingOverlayProps) {
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="card-glow p-8 max-w-sm w-full mx-4 text-center animate-scale-in">
+      <div className="card-elevated p-8 max-w-sm w-full mx-4 text-center animate-scale-in">
         <div className="relative mb-6">
           <div className="w-20 h-20 mx-auto relative">
             <div className="absolute inset-0 border-2 border-[#8B0000]/30 rounded-full animate-ping" />
@@ -67,20 +56,11 @@ export function MatchmakingOverlay({ onCancel }: MatchmakingOverlayProps) {
 
         <div className="flex justify-center gap-1.5 mb-6">
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                i < queueSize ? 'bg-[#8B0000] animate-pulse' : 'bg-gray-700'
-              }`}
-              style={{ animationDelay: `${i * 0.2}s` }}
-            />
+            <div key={i} className={`w-2 h-2 rounded-full transition-all duration-300 ${i < queueSize ? 'bg-[#8B0000] animate-pulse' : 'bg-gray-700'}`} style={{ animationDelay: `${i * 0.2}s` }} />
           ))}
         </div>
 
-        <button
-          onClick={handleCancel}
-          className="btn-secondary flex items-center justify-center gap-2 w-full"
-        >
+        <button onClick={handleCancel} className="btn-danger flex items-center justify-center gap-2 w-full">
           <X className="w-4 h-4" />
           {cancelText}
         </button>

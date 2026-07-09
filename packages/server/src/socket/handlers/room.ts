@@ -1,12 +1,13 @@
-import { Socket } from 'socket.io';
-import { Server } from 'socket.io';
+import { Socket, Server } from 'socket.io';
 import { RoomId } from '@mafia/shared';
 import { roomStore } from '../../rooms/store';
 import { RoomManager } from '../../rooms/manager';
 import { joinRoomSchema, createRoomSchema, reconnectSchema, updateSettingsSchema, addBotsSchema } from '@mafia/shared';
 import { withRateLimit } from '../../auth/rateLimitWrapper';
 
-function safeCall(roomOp: () => void, socket: Socket, callback?: (r: any) => void) {
+type Callback = (...args: any[]) => void;
+
+function safeCall(roomOp: () => void, socket: Socket, callback?: Callback) {
   try {
     roomOp();
   } catch (err) {

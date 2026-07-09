@@ -69,13 +69,13 @@ export function Store() {
             <span className="text-gray-500">{t('store.coins')}</span>
           </p>
         </div>
-        <button onClick={() => navigate(-1)} className="btn-secondary flex items-center gap-2">
+        <button onClick={() => navigate(-1)} className="btn-ghost flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" /> {t('store.back')}
         </button>
       </div>
 
       {error && (
-        <div className="card p-3 border-red-800/30 bg-red-950/20 text-sm text-red-400 text-center">
+        <div className="card-glass p-3 border-red-800/30 bg-red-950/20 text-sm text-red-400 text-center">
           {error}
         </div>
       )}
@@ -84,13 +84,13 @@ export function Store() {
         const catItems = SHOP_ITEMS.filter((i) => i.category === cat.id);
         if (catItems.length === 0) return null;
         return (
-          <div key={cat.id} className="card p-4 space-y-3">
-            <h2 className="text-sm font-semibold text-gray-300">{cat.label}</h2>
+          <div key={cat.id} className="card-glass p-4 space-y-3 card-shine">
+            <h2 className="section-title">{cat.label}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {catItems.map((item) => {
                 const owned = inventory.includes(item.id);
                 return (
-                  <div key={item.id} className={`p-3 rounded-lg border ${owned ? 'border-green-800/30 bg-green-950/10' : 'border-gray-800/50 bg-white/[0.02]'} transition-colors`}>
+                  <div key={item.id} className={`card-hover p-3 rounded-lg border ${owned ? 'border-green-800/30 bg-green-950/10' : 'border-gray-800/30 bg-white/[0.02]'} transition-colors`}>
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5">
                         <span className="text-2xl">{item.icon}</span>
@@ -101,14 +101,14 @@ export function Store() {
                       </div>
                       <div className="shrink-0">
                         {owned ? (
-                          <span className="text-xs px-2 py-1 rounded bg-green-900/30 text-green-400 flex items-center gap-1">
+                          <span className="badge badge-green text-xs px-2 py-1 rounded bg-green-900/30 text-green-400 flex items-center gap-1 border-green-800/30">
                             <Check className="w-3 h-3" /> {t('store.owned')}
                           </span>
                         ) : (
                           <button
                             onClick={() => handleBuy(item.id, item.price)}
                             disabled={buying === item.id}
-                            className="text-xs px-3 py-1.5 rounded bg-[#8B0000]/20 text-[#B22222] hover:bg-[#8B0000]/30 transition-colors disabled:opacity-50 flex items-center gap-1"
+                            className="btn-primary text-xs px-3 py-1.5"
                           >
                             {buying === item.id ? (
                               <Loader2 className="w-3 h-3 animate-spin" />

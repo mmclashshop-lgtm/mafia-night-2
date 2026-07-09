@@ -82,15 +82,15 @@ export function Friends() {
             {friends.length} {t('friends.total')}
           </p>
         </div>
-        <button onClick={() => navigate('/')} className="btn-secondary flex items-center gap-2">
+        <button onClick={() => navigate('/')} className="btn-ghost flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" /> {t('friends.back')}
         </button>
       </div>
 
       {/* Add Friend Search */}
-      <div className="card p-4">
-        <h2 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-          <UserPlus className="w-4 h-4" />
+      <div className="card-glass p-4 card-shine">
+        <h2 className="section-title mb-3 flex items-center gap-2">
+          <UserPlus className="w-3.5 h-3.5" />
           {t('friends.addFriend')}
         </h2>
         <div className="flex gap-2">
@@ -100,12 +100,12 @@ export function Friends() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder={t('friends.searchPlaceholder')}
-            className="flex-1 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder-gray-500 focus:border-[#8B0000] focus:outline-none"
+            className="input flex-1"
           />
           <button
             onClick={handleSearch}
             disabled={searching || !searchQuery.trim()}
-            className="px-4 py-2 rounded-lg bg-[#8B0000] text-white text-sm hover:bg-red-800 disabled:opacity-50 transition-colors"
+            className="btn-primary px-3"
           >
             {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           </button>
@@ -116,14 +116,14 @@ export function Friends() {
               <p className="text-sm text-gray-500 py-2">{t('friends.noResults')}</p>
             ) : (
               searchResults.map((r) => (
-                <div key={r.userId} className="flex items-center justify-between p-2 rounded-lg bg-white/5">
+                <div key={r.userId} className="card-hover flex items-center justify-between p-2 rounded-lg">
                   <div className="flex items-center gap-3">
                     <PlayerAvatar avatar={r.avatar} name={r.name} size="sm" />
                     <span className="text-sm text-white">{r.name}</span>
                   </div>
                   <button
                     onClick={() => handleAddFriend(r.userId, r.name)}
-                    className="text-xs px-3 py-1.5 rounded bg-[#8B0000]/20 text-[#B22222] hover:bg-[#8B0000]/30 transition-colors"
+                    className="btn-primary text-xs px-3 py-1.5"
                   >
                     {t('friends.add')}
                   </button>
@@ -136,14 +136,14 @@ export function Friends() {
 
       {/* Friend Requests */}
       {friendRequests.length > 0 && (
-        <div className="card p-4">
-          <h2 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-            <UserPlus className="w-4 h-4" />
+        <div className="card-glass p-4">
+          <h2 className="section-title mb-3 flex items-center gap-2 text-green-400">
+            <UserPlus className="w-3.5 h-3.5" />
             {t('friends.pendingRequests')} ({friendRequests.length})
           </h2>
           <div className="space-y-2">
             {friendRequests.map((req) => (
-              <div key={req.fromUserId} className="flex items-center justify-between p-2 rounded-lg bg-white/5">
+              <div key={req.fromUserId} className="card-hover flex items-center justify-between p-2 rounded-lg">
                 <div className="flex items-center gap-3">
                   <PlayerAvatar avatar={req.fromAvatar} name={req.fromName} size="sm" />
                   <span className="text-sm text-white">{req.fromName}</span>
@@ -170,18 +170,18 @@ export function Friends() {
 
       {/* Online Friends */}
       {onlineFriends.length > 0 && (
-        <div className="card p-4">
-          <h2 className="text-sm font-semibold text-green-400 mb-3">
+        <div className="card-glass p-4">
+          <h2 className="section-title mb-3 text-green-400">
             {t('friends.online')} ({onlineFriends.length})
           </h2>
           <div className="space-y-2">
             {onlineFriends.map((friend) => (
-              <div key={friend.userId} className="flex items-center justify-between p-2 rounded-lg hover:bg-white/5 transition-colors">
+              <div key={friend.userId} className="card-hover flex items-center justify-between p-2 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <PlayerAvatar avatar={friend.avatar} name={friend.name} size="sm" />
                     <span className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-gray-900 ${
-                      friend.status === 'online' ? 'bg-green-500' : 'bg-yellow-500'
+                      friend.status === 'online' ? 'status-dot-online' : 'status-dot-ingame'
                     }`} />
                   </div>
                   <div>
@@ -227,8 +227,8 @@ export function Friends() {
 
       {/* Offline Friends */}
       {offlineFriends.length > 0 && (
-        <div className="card p-4">
-          <h2 className="text-sm font-semibold text-gray-500 mb-3">
+        <div className="card-glass p-4">
+          <h2 className="section-title mb-3 text-gray-500">
             {t('friends.offline')} ({offlineFriends.length})
           </h2>
           <div className="space-y-2">
