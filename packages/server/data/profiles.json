@@ -805,5 +805,69 @@
     "dailyQuestDate": "2026-07-04",
     "friendUserIds": [],
     "pendingFriendRequests": []
+  },
+  "marco": {
+    "userId": "legacy_",
+    "name": "marco",
+    "totalGames": 2,
+    "totalWins": 0,
+    "totalKills": 0,
+    "totalSurvived": 0,
+    "score": 10,
+    "consecutiveWins": 0,
+    "bestWinStreak": 0,
+    "roleStats": {
+      "cop": {
+        "games": 2,
+        "wins": 0
+      }
+    },
+    "recentGames": [
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783616425723
+      },
+      {
+        "winner": "mafia",
+        "role": "cop",
+        "team": "town",
+        "survived": false,
+        "dayCount": 2,
+        "startedAt": 1783616425723
+      }
+    ],
+    "achievements": [],
+    "coins": 20,
+    "inventory": [],
+    "elo": {
+      "casual": 961,
+      "competitive": 1000
+    },
+    "xp": 100,
+    "level": 1,
+    "dailyQuests": [
+      {
+        "id": "play_3",
+        "current": 2,
+        "completed": false
+      },
+      {
+        "id": "play_5",
+        "current": 2,
+        "completed": false
+      },
+      {
+        "id": "win_1",
+        "current": 0,
+        "completed": false
+      }
+    ],
+    "dailyQuestDate": "2026-07-09",
+    "friendUserIds": [],
+    "pendingFriendRequests": []
   }
 }

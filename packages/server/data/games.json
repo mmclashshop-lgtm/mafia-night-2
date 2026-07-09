@@ -2126,5 +2126,113 @@
         "daysSurvived": 0
       }
     ]
+  },
+  {
+    "id": "game_mrdr5wnu68q3tzz",
+    "roomCode": "BELH2L",
+    "startedAt": 1783616575784,
+    "endedAt": 1783616575820,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 36,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "marco",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Bob",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Grace",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Rosa",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 2,
+        "daysSurvived": 1
+      }
+    ]
+  },
+  {
+    "id": "game_mrdr5wnu68q3tzz",
+    "roomCode": "BELH2L",
+    "startedAt": 1783616575784,
+    "endedAt": 1783616693204,
+    "winner": "mafia",
+    "dayCount": 2,
+    "playerCount": 4,
+    "duration": 117420,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "marco",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Bob",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Grace",
+        "role": "doctor",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 1
+      },
+      {
+        "name": "Rosa",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 2,
+        "daysSurvived": 1
+      }
+    ]
   }
 ]
