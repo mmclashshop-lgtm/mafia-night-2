@@ -11,7 +11,9 @@
     "profile": "Profile",
     "friends": "Friends",
     "tutorial": "How to Play",
-    "language": "Language"
+    "language": "Language",
+    "settings": "Settings",
+    "admin": "Admin Panel"
   },
   "home": {
     "hero": {
@@ -377,7 +379,8 @@
     "choosePlayer": "Choose a player to eliminate",
     "voting": "Voting...",
     "eliminate": "Eliminate {{name}}",
-    "selectPlayer": "Select a player"
+    "selectPlayer": "Select a player",
+    "skip": "Skip Vote"
   },
   "settingsPanel": {
     "button": "Settings",
@@ -413,7 +416,63 @@
     "disconnected": "Disconnected"
   },
   "spectatorOverlay": {
-    "title": "ðŸ‘ï¸ Spectator View"
+    "title": "👁️ Spectator View",
+    "alive": "Alive",
+    "dead": "Dead"
+  },
+  "settings": {
+    "title": "Settings",
+    "back": "Back",
+    "language": "Language",
+    "currentLanguage": "Current Language",
+    "testSound": "Test Sound"
+  },
+  "winCelebration": {
+    "mafiaWins": "\uD83D\uDD2A Mafia Wins!",
+    "townWins": "\u2B50 Town Wins!",
+    "neutralWins": "\uD83C\uDF00 Neutral Wins!",
+    "loversWins": "\uD83D\uDC95 Lovers Wins!",
+    "playAgain": "Play Again",
+    "restarting": "Restarting...",
+    "leave": "Leave"
+  },
+  "cinematicDeathOverlay": {
+    "youAreDead": "You Are Dead"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "loginHint": "Enter the admin token to access settings",
+    "tokenPlaceholder": "Admin token",
+    "tokenError": "Invalid token",
+    "unlock": "Unlock",
+    "back": "Back",
+    "branding": "Branding",
+    "brandName": "Brand Name",
+    "brandAccent": "Brand Accent",
+    "tagline": "Tagline",
+    "description": "Description",
+    "backgrounds": "Backgrounds",
+    "bgHint": "Set an image URL to override the canvas renderer with a custom background image. Leave empty to use the renderer below.",
+    "bgRenderer": "Canvas Renderer",
+    "bgImage": "Image URL (optional)",
+    "bgHome": "Home",
+    "bgLobby": "Lobby",
+    "bgGameNight": "Game - Night",
+    "bgGameDay": "Game - Day",
+    "bgGameVoting": "Game - Voting",
+    "bgGameEnded": "Game - Ended",
+    "bgGameDefault": "Game - Default",
+    "bgmUrls": "BGM Music URLs",
+    "soundEffects": "Sound Effects",
+    "sfxHint": "Leave blank to use built-in sounds. Enter a direct URL to a .wav or .mp3 file to override.",
+    "sfxMafiaKill": "Mafia Kill",
+    "sfxTimer": "Timer Countdown",
+    "sfxNightFall": "Night Falls",
+    "sfxDayBreak": "Day Breaks",
+    "bgmHint": "Leave blank to use built-in procedural music. Enter a direct MP3 URL to override.",
+    "save": "Save Changes",
+    "saved": "Saved!",
+    "reset": "Reset to Defaults"
   },
   "errorBoundary": {
     "title": "Something went wrong",
@@ -454,6 +513,7 @@
     "leader": "Leader",
     "invitedYou": "invited you to a party",
     "startSearch": "Start Search",
+    "searching": "Searching...",
     "cancelSearch": "Cancel",
     "ready": "Ready",
     "notReady": "Not Ready"

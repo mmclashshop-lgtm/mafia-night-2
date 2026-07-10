@@ -189,7 +189,7 @@ export function Game() {
             <VoiceChat />
             {isDead && <SpectatorOverlay />}
             <ChatPanel isNight={isNight} isDead={isDead} />
-            <GameLog events={gameState.history ?? []} />
+            <GameLog events={gameState.history ?? []} players={players} />
           </div>
         </div>
       </div>

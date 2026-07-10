@@ -21,16 +21,14 @@ export function useSound() {
     const prev = prevPhase.current;
 
     if (prev && prev !== phase) {
-      if (phase === 'night' && prev === 'day') {
+      sound.nightFall();
+      if (phase === 'night' && (prev === 'day' || prev === 'voting')) {
         sound.nightStart();
-      } else if (phase === 'night' && prev === 'voting') {
-        sound.nightStart();
+        setTimeout(() => sound.nightFall(), 100);
       } else if (phase === 'day' && prev === 'night') {
         sound.nightEnd();
-        setTimeout(() => sound.dayStart(), 600);
-      } else if (phase === 'voting' && prev === 'day') {
-        sound.voteStart();
-      } else if (phase === 'voting' && prev === 'night') {
+        setTimeout(() => { sound.dayStart(); sound.dayBreak(); }, 600);
+      } else if (phase === 'voting' && (prev === 'day' || prev === 'night')) {
         sound.nightEnd();
         setTimeout(() => sound.voteStart(), 400);
       } else if (phase === 'ended') {
@@ -64,6 +62,8 @@ export function useSound() {
     const onPlayerDied = (data: { cause?: string; playerId?: string }) => {
       if (data.cause === 'lynch') {
         sound.lynch();
+      } else if (data.cause === 'night') {
+        sound.mafiaKill();
       } else {
         sound.playerDied();
       }

@@ -56,6 +56,9 @@ export default defineConfig(({ command, mode }) => ({
       '/api': {
         target: 'http://localhost:3001',
       },
+      '/uploads': {
+        target: 'http://localhost:3001',
+      },
     },
   },
   build: {

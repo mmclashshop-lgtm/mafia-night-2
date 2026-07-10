@@ -29,9 +29,15 @@ export function VotingPanel({ players, hasVoted, onSubmit }: VotingPanelProps) {
     );
   }
 
+  const handleSkip = async () => {
+    setSubmitting(true);
+    await onSubmit('skip');
+    setSubmitting(false);
+  };
+
   return (
-    <div className="card p-4">
-      <h3 className="text-lg font-bold mb-3">{t('votingPanel.title')}</h3>
+    <div className="card-glass p-4">
+      <h3 className="text-lg font-bold mb-1">{t('votingPanel.title')}</h3>
       <p className="text-sm text-gray-400 mb-3">
         {t('votingPanel.choosePlayer')}
       </p>
@@ -43,8 +49,8 @@ export function VotingPanel({ players, hasVoted, onSubmit }: VotingPanelProps) {
             onClick={() => setSelected(player.id)}
             className={`px-3 py-2 rounded-lg text-sm transition-all ${
               selected === player.id
-                ? 'bg-orange-600 text-white'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? 'bg-orange-600 text-white shadow-lg shadow-orange-900/30'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700/30'
             }`}
           >
             {player.name}
@@ -52,17 +58,26 @@ export function VotingPanel({ players, hasVoted, onSubmit }: VotingPanelProps) {
         ))}
       </div>
 
-      <button
-        onClick={handleSubmit}
-        disabled={!selected || submitting}
-        className="btn-danger w-full"
-      >
-        {submitting
-          ? t('votingPanel.voting')
-          : selected
-            ? t('votingPanel.eliminate', { name: players.find((p) => p.id === selected)?.name })
-            : t('votingPanel.selectPlayer')}
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={handleSubmit}
+          disabled={!selected || submitting}
+          className="btn-danger flex-1"
+        >
+          {submitting
+            ? t('votingPanel.voting')
+            : selected
+              ? t('votingPanel.eliminate', { name: players.find((p) => p.id === selected)?.name })
+              : t('votingPanel.selectPlayer')}
+        </button>
+        <button
+          onClick={handleSkip}
+          disabled={submitting}
+          className="btn-secondary px-4"
+        >
+          {t('votingPanel.skip')}
+        </button>
+      </div>
     </div>
   );
 }

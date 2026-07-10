@@ -10,6 +10,7 @@ import { createSocketServer } from './socket';
 import { initDatabase } from './db';
 import { apiRoutes } from './routes';
 import { roomStore } from './rooms/store';
+import { getAdminToken, ensureUploadDir } from './siteConfig';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,6 +30,10 @@ app.get('/api/health', (_req, res) => {
 
 // API routes
 app.use('/api', apiRoutes);
+
+// Serve uploaded files
+ensureUploadDir();
+app.use('/uploads', express.static(path.resolve(__dirname, '../../uploads')));
 
 // In production, serve client static files
 if (config.nodeEnv === 'production') {
@@ -58,6 +63,14 @@ httpServer.listen(config.port, () => {
   console.log(`🎭 Mafia Game Server running on port ${config.port}`);
   console.log(`   Client URL: ${config.clientUrl}`);
   console.log(`   Environment: ${config.nodeEnv}`);
+  const token = getAdminToken();
+  console.log('\n' + '='.repeat(55));
+  console.log('  🔐 ADMIN TOKEN (ادخل هذا الرمز في صفحة الإدارة)');
+  console.log('  ───────────────────────────────────────────────');
+  console.log(`  ➜  ${token}`);
+  console.log('  ───────────────────────────────────────────────');
+  console.log(`  ➜  افتح http://localhost:5173/#/admin`);
+  console.log('='.repeat(55) + '\n');
 });
 
 // Graceful shutdown

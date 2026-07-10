@@ -19,6 +19,7 @@ export const PlayerCard = memo(function PlayerCard({ player, isCurrentPlayer, ph
   const isNightActionPhase = phase === 'night';
   const isVotingPhase = phase === 'voting';
   const canInteract = (isNightActionPhase || isVotingPhase) && player.alive && !isCurrentPlayer && !isDead;
+  const showRole = isDead && player.role;
 
   const teamColor = player.team === 'mafia' ? '#8B0000' : player.team === 'town' ? '#2563EB' : '#9333EA';
   const teamColorLight = player.team === 'mafia' ? 'rgba(139,0,0,0.15)' : player.team === 'town' ? 'rgba(37,99,235,0.15)' : 'rgba(147,51,234,0.15)';
@@ -52,7 +53,7 @@ export const PlayerCard = memo(function PlayerCard({ player, isCurrentPlayer, ph
         <div className="w-11 h-11 rounded-full mx-auto flex items-center justify-center overflow-hidden"
           style={{ border: `2px solid ${player.alive ? `${teamColor}60` : '#374151'}` }}
         >
-          {player.role ? <RoleAvatar roleId={player.role.id} size="md" /> : <PlayerAvatar avatar={player.avatar} name={player.name} size="sm" />}
+          {showRole ? <RoleAvatar roleId={player.role.id} size="md" /> : <PlayerAvatar avatar={player.avatar} name={player.name} size="sm" />}
         </div>
         {player.votedFor && (
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg">
@@ -63,7 +64,7 @@ export const PlayerCard = memo(function PlayerCard({ player, isCurrentPlayer, ph
 
       <p className="text-xs font-semibold truncate leading-tight">{player.name}</p>
 
-      {player.role && <p className="text-[10px] mt-0.5 opacity-80" style={{ color: TEAM_COLORS[player.team] }}>{player.role.emoji} {player.role.name}</p>}
+      {showRole && <p className="text-[10px] mt-0.5 opacity-80" style={{ color: TEAM_COLORS[player.team] }}>{player.role.emoji} {player.role.name}</p>}
       {!player.alive && <p className="text-[10px] text-red-400 mt-0.5">{t('playerCard.dead')}</p>}
       {player.disconnected && <p className="text-[10px] text-yellow-400 mt-0.5">{t('playerCard.disconnected')}</p>}
       {isDead && player.role && <p className="text-[10px] mt-0.5 opacity-60" style={{ color: TEAM_COLORS[player.team] }}>{player.team}</p>}

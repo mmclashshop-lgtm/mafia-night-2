@@ -8,13 +8,19 @@ import { useGlobalSound } from './hooks/useGlobalSound';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { connectSocket } from './lib/socket';
 import { sound } from './lib/sound';
+import { useSiteConfigStore } from './store/siteConfigStore';
 
 function AppInit() {
   const connected = useGameStore((s) => s.connected);
+  const loadFromServer = useSiteConfigStore((s) => s.loadFromServer);
 
   useSocialSocket();
   useSocialSound();
   useGlobalSound();
+
+  useEffect(() => {
+    loadFromServer();
+  }, [loadFromServer]);
 
   useEffect(() => {
     if (!connected) {
@@ -38,6 +44,8 @@ const Profile = lazy(() => import('./pages/Profile').then((m) => ({ default: m.P
 const Tutorial = lazy(() => import('./pages/Tutorial').then((m) => ({ default: m.Tutorial })));
 const Friends = lazy(() => import('./pages/Friends').then((m) => ({ default: m.Friends })));
 const Store = lazy(() => import('./pages/Store').then((m) => ({ default: m.Store })));
+const Settings = lazy(() => import('./pages/Settings').then((m) => ({ default: m.Settings })));
+const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })));
 
 function SuspenseWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -71,6 +79,8 @@ export default function App() {
           <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/store" element={<Store />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </SuspenseWrapper>

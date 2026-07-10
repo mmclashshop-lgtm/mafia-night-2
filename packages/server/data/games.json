@@ -2450,5 +2450,261 @@
         "daysSurvived": 1
       }
     ]
+  },
+  {
+    "id": "game_mrdvffrzldtauog",
+    "roomCode": "K65RMG",
+    "startedAt": 1783623721050,
+    "endedAt": 1783623736288,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 15238,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "محمد",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "ننننن",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vito",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Jack",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mrdvffrzldtauog",
+    "roomCode": "K65RMG",
+    "startedAt": 1783623721050,
+    "endedAt": 1783623743733,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 22683,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "محمد",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "ننننن",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vito",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Jack",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mrdvffrzldtauog",
+    "roomCode": "K65RMG",
+    "startedAt": 1783623721050,
+    "endedAt": 1783624059988,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 338938,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "محمد (bot)",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "ننننن",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Vito",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Sam",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Jack",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
+  },
+  {
+    "id": "game_mrdvkshul3dv5zg",
+    "roomCode": "BYQJPH",
+    "startedAt": 1783624146133,
+    "endedAt": 1783624162641,
+    "winner": "town",
+    "dayCount": 1,
+    "playerCount": 5,
+    "duration": 16511,
+    "rolePreset": "classic",
+    "mode": "casual",
+    "players": [
+      {
+        "name": "محمد",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "JOE",
+        "role": "villager",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": false,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Bob",
+        "role": "doctor",
+        "team": "town",
+        "alive": true,
+        "survived": true,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Charlie",
+        "role": "mafia",
+        "team": "mafia",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 1,
+        "daysSurvived": 0
+      },
+      {
+        "name": "Grace",
+        "role": "cop",
+        "team": "town",
+        "alive": false,
+        "survived": false,
+        "isBot": true,
+        "kills": 0,
+        "daysSurvived": 0
+      }
+    ]
   }
 ]

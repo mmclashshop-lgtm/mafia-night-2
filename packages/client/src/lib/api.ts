@@ -57,10 +57,24 @@ export function getTotalStats(): Promise<TotalStats> {
   return fetchJson<{ totalGames: number; activeRooms: number; recentGames: unknown[]; topPlayers: LeaderboardEntry[] }>('/stats')
     .then(data => ({
       totalGames: data.totalGames,
-      totalPlayers: data.topPlayers.reduce((sum, p) => sum + p.games, 0),
+      totalPlayers: data.topPlayers.length,
     }));
 }
 
 export function getPlayerStats(name: string): Promise<PlayerStatsData> {
   return fetchJson<PlayerStatsData>(`/stats/player/${encodeURIComponent(name)}`);
+}
+
+export async function fetchSiteConfig(): Promise<Record<string, any>> {
+  return fetchJson<Record<string, any>>('/config');
+}
+
+export async function saveSiteConfig(data: Record<string, any>): Promise<{ success: boolean; config: Record<string, any> }> {
+  const res = await fetch(`${API_BASE}/config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
 }

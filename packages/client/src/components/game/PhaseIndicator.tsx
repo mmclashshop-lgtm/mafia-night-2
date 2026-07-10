@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Phase } from '@mafia/shared';
 import { formatTime } from '../../lib/utils';
 import { Moon, Sun, Vote, Skull } from 'lucide-react';
+import { sound } from '../../lib/sound';
 
 interface PhaseIndicatorProps {
   phase: Phase;
@@ -23,6 +24,7 @@ export function PhaseIndicator({ phase, day, endsAt }: PhaseIndicatorProps) {
   const [timeLeft, setTimeLeft] = useState(0);
   const config = phaseConfig[phase];
   const Icon = config.icon;
+  const prevTime = useRef(0);
 
   useEffect(() => {
     const update = () => { setTimeLeft(Math.max(0, Math.floor((endsAt - Date.now()) / 1000))); };
@@ -30,6 +32,13 @@ export function PhaseIndicator({ phase, day, endsAt }: PhaseIndicatorProps) {
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
   }, [endsAt]);
+
+  useEffect(() => {
+    if (timeLeft > 0 && timeLeft <= 10 && timeLeft !== prevTime.current) {
+      sound.timerTick();
+    }
+    prevTime.current = timeLeft;
+  }, [timeLeft]);
 
   const isUrgent = timeLeft <= 10 && phase !== 'lobby' && phase !== 'ended';
 

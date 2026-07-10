@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useGameStore } from '../../store/gameStore';
 import {
-  Home, Trophy, User, GraduationCap, Users, ShoppingBag, Globe, Volume2, X,
+  Home, Trophy, User, GraduationCap, Users, ShoppingBag, Globe, Volume2, X, Settings as SettingsIcon, Palette,
 } from 'lucide-react';
 import { SoundSettings } from '../common/SoundSettings';
+import { SiteLogo } from '../common/SiteLogo';
+import { useSiteConfigStore } from '../../store/siteConfigStore';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const roomCode = useGameStore((s) => s.roomCode);
+  const siteConfig = useSiteConfigStore((s) => s.config);
 
   const NAV_ITEMS = [
     { path: '/', icon: Home, labelKey: 'nav.home' },
@@ -26,6 +29,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { path: '/profile/me', icon: User, labelKey: 'nav.profile' },
     { path: '/friends', icon: Users, labelKey: 'nav.friends' },
     { path: '/tutorial', icon: GraduationCap, labelKey: 'nav.tutorial' },
+    { path: '/settings', icon: SettingsIcon, labelKey: 'nav.settings' },
+    { path: '/admin', icon: Palette, labelKey: 'nav.admin' },
   ];
 
   const isActive = (path: string) => {
@@ -45,9 +50,9 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside className={`fixed top-0 right-0 z-50 h-full w-64 bg-[#0A0A0A]/90 backdrop-blur-2xl border-l border-[#8B0000]/10 transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`} dir="rtl">
         <div className="flex items-center justify-between p-5 border-b border-[#8B0000]/10">
           <div className="flex items-center gap-3">
-            <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="" className="w-8 h-8" />
+            <SiteLogo className="w-8 h-8" />
             <div>
-              <span className="font-bold text-sm block">مافيا <span className="text-[#C62828]">نايت</span></span>
+              <span className="font-bold text-sm block">{siteConfig.branding.name} <span className="text-[#C62828]" style={{ color: siteConfig.theme.primaryLight }}>{siteConfig.branding.nameAccent}</span></span>
               {roomCode && <code className="text-[10px] font-mono text-[#B22222]">{roomCode}</code>}
             </div>
           </div>

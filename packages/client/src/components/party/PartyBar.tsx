@@ -15,6 +15,15 @@ export function PartyBar() {
   const playerId = useGameStore((s) => s.playerId);
   const [joining, setJoining] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [searching, setSearching] = useState(false);
+
+  useEffect(() => {
+    const socket = getSocket();
+    const resetSearch = () => setSearching(false);
+    socket.on('matchmaking:update', resetSearch);
+    socket.on('room:created', resetSearch);
+    return () => { socket.off('matchmaking:update', resetSearch); socket.off('room:created', resetSearch); };
+  }, []);
 
   const isHome = location.pathname === '/';
   const isGame = location.pathname === '/game';
@@ -108,10 +117,12 @@ export function PartyBar() {
         <div className="flex items-center gap-2">
           {party.some(m => m.isLeader) && (
             <button
-              onClick={() => getSocket().emit('party:startSearch')}
-              className="text-xs px-2 py-1 rounded bg-green-900/30 text-green-400 hover:bg-green-900/50"
+              onClick={() => { setSearching(true); getSocket().emit('party:startSearch'); }}
+              disabled={searching}
+              className="text-xs px-2 py-1 rounded bg-green-900/30 text-green-400 hover:bg-green-900/50 disabled:opacity-50"
+              title={searching ? t('party.searching') : t('party.startSearch')}
             >
-              <Play className="w-3 h-3" />
+              {searching ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
             </button>
           )}
           <button

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Swords, Heart, Ghost } from 'lucide-react';
 
@@ -9,24 +10,30 @@ interface WinCelebrationProps {
   playAgainLoading: boolean;
 }
 
-const WINNER_CONFIG: Record<string, { emoji: string; color: string; text: string; icon: typeof Trophy }> = {
+const WINNER_CONFIG: Record<string, { emoji: string; color: string; textKey: string; icon: typeof Trophy }> = {
   mafia: {
     emoji: '🔪',
     color: 'from-red-800 via-red-600 to-red-900',
-    text: 'المافيا تفوز!',
+    textKey: 'winCelebration.mafiaWins',
     icon: Swords,
   },
   town: {
     emoji: '⭐',
     color: 'from-amber-800 via-amber-500 to-amber-900',
-    text: 'البلدة تفوز!',
+    textKey: 'winCelebration.townWins',
     icon: Trophy,
   },
   neutral: {
     emoji: '🌀',
     color: 'from-purple-800 via-purple-500 to-purple-900',
-    text: 'المحايدون يفوزون!',
+    textKey: 'winCelebration.neutralWins',
     icon: Ghost,
+  },
+  lovers: {
+    emoji: '💕',
+    color: 'from-pink-800 via-pink-500 to-pink-900',
+    textKey: 'winCelebration.loversWins',
+    icon: Heart,
   },
 };
 
@@ -57,6 +64,7 @@ function ParticleBurst() {
 }
 
 export function WinCelebration({ winner, onPlayAgain, onLeave, playAgainLoading }: WinCelebrationProps) {
+  const { t } = useTranslation();
   const [show, setShow] = useState(false);
   const config = WINNER_CONFIG[winner ?? ''] ?? WINNER_CONFIG['town']!;
   const Icon = config.icon;
@@ -93,7 +101,7 @@ export function WinCelebration({ winner, onPlayAgain, onLeave, playAgainLoading 
               transition={{ delay: 0.5 }}
               className={`text-3xl font-bold bg-gradient-to-r ${config.color} bg-clip-text text-transparent`}
             >
-              {config.text}
+              {t(config.textKey)}
             </motion.h2>
 
             <motion.div
@@ -116,10 +124,10 @@ export function WinCelebration({ winner, onPlayAgain, onLeave, playAgainLoading 
                 disabled={playAgainLoading}
                 className="btn-primary"
               >
-                {playAgainLoading ? 'جارٍ إعادة التشغيل...' : 'العب مرة أخرى'}
+                {playAgainLoading ? t('winCelebration.restarting') : t('winCelebration.playAgain')}
               </button>
               <button onClick={onLeave} className="btn-secondary">
-                مغادرة
+                {t('winCelebration.leave')}
               </button>
             </motion.div>
           </div>

@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { connectSocket, getSocket } from '../lib/socket';
+import { connectSocket, getSocket, emitNoData, emitWithData, emitVoid } from '../lib/socket';
 import { useGameStore } from '../store/gameStore';
 import { useUIStore } from '../store/uiStore';
 import type { GameState, Token } from '@mafia/shared';
@@ -23,36 +23,37 @@ export function useSocket() {
   useEffect(() => {
     const socket = connectSocket();
 
+    let reconnectTimer: ReturnType<typeof setTimeout>;
+
     socket.on('connect', () => {
       setConnected(true);
-      // Reconnect to game if we have a reconnectToken
-      const { roomCode, reconnectToken, playerId } = useGameStore.getState();
+      const { roomCode, reconnectToken, playerId, playerName } = useGameStore.getState();
       if (roomCode && reconnectToken) {
-        socket.emit('room:reconnect', { roomCode, userId: playerId, reconnectToken }, (res: { success: boolean; state?: GameState; token?: Token; error?: string }) => {
-          if (res.success && res.state) {
-            setGameState(res.state);
+        reconnectTimer = setTimeout(async () => {
+          try {
+            const res = await emitWithData<{ success?: boolean; state?: GameState; token?: Token }>('room:reconnect', { roomCode, userId: playerId, reconnectToken }, 8000);
+            if (res.state) setGameState(res.state);
             if (res.token) setToken(res.token);
             addToast('success', 'Reconnected to game');
-          } else {
-            addToast('error', `Failed to reconnect: ${res.error ?? 'unknown'}`);
+          } catch (err) {
+            addToast('error', `Failed to reconnect: ${err instanceof Error ? err.message : 'unknown'}`);
           }
-        });
-      } else if (roomCode) {
-        // Legacy: rejoin by name if no reconnectToken
-        const { playerName } = useGameStore.getState();
-        if (playerName) {
-          socket.emit('room:join', { roomCode, name: playerName }, (res: { success: boolean; state?: GameState; token?: Token; error?: string }) => {
-            if (res.success && res.state) {
+        }, 300);
+      } else if (roomCode && playerName) {
+        reconnectTimer = setTimeout(async () => {
+          try {
+            const res = await emitWithData<{ success?: boolean; state?: GameState; token?: Token }>('room:join', { roomCode, name: playerName }, 8000);
+            if (res.state) {
               setGameState(res.state);
-              if (res.token) setToken(res.token);
               const player = res.state.players.find(p => p.name === playerName);
               if (player) setPlayerId(player.id);
-              addToast('success', 'Reconnected to game');
-            } else {
-              addToast('error', `Failed to rejoin room: ${res.error ?? 'unknown'}`);
             }
-          });
-        }
+            if (res.token) setToken(res.token);
+            addToast('success', 'Reconnected to game');
+          } catch (err) {
+            addToast('error', `Failed to rejoin room: ${err instanceof Error ? err.message : 'unknown'}`);
+          }
+        }, 300);
       }
     });
 
@@ -183,6 +184,7 @@ export function useSocket() {
     });
 
     return () => {
+      clearTimeout(reconnectTimer);
       socket.off('connect');
       socket.off('disconnect');
       socket.off('state:sync');
@@ -198,70 +200,40 @@ export function useSocket() {
     };
   }, []);
 
-  const createRoom = useCallback((settings?: Record<string, unknown>): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const socket = getSocket();
-      socket.emit('room:create', { settings }, (res: { roomCode: string; error?: string }) => {
-        if (res.error) reject(new Error(res.error));
-        else {
-          setRoomCode(res.roomCode);
-          resolve(res.roomCode);
-        }
-      });
-    });
+  const createRoom = useCallback(async (settings?: Record<string, unknown>): Promise<string> => {
+    const res = await emitWithData<{ roomCode: string }>('room:create', { settings });
+    setRoomCode(res.roomCode);
+    return res.roomCode;
   }, []);
 
-  const joinRoom = useCallback((roomCode: string, name: string, reconnectToken?: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const socket = getSocket();
-      socket.emit('room:join', { roomCode, name, reconnectToken }, (res: { success: boolean; state?: GameState; token?: Token; error?: string }) => {
-        if (res.error || !res.success) reject(new Error(res.error || 'Failed to join'));
-        else {
-          setRoomCode(roomCode);
-          setPlayerName(name);
-          if (res.token) setToken(res.token);
-          if (res.state) setGameState(res.state);
-          const player = res.state?.players.find((p) => p.name === name);
-          if (player) {
-            setPlayerId(player.id);
-            if (player.reconnectToken) setReconnectToken(player.reconnectToken);
-          }
-          resolve();
-        }
-      });
-    });
+  const joinRoom = useCallback(async (roomCode: string, name: string, reconnectToken?: string): Promise<void> => {
+    const res = await emitWithData<{ state?: GameState; token?: Token }>('room:join', { roomCode, name, reconnectToken });
+    setRoomCode(roomCode);
+    setPlayerName(name);
+    if (res.token) setToken(res.token);
+    if (res.state) setGameState(res.state);
+    const player = res.state?.players.find((p) => p.name === name);
+    if (player) {
+      setPlayerId(player.id);
+      if (player.reconnectToken) setReconnectToken(player.reconnectToken);
+    }
   }, []);
 
   const leaveRoom = useCallback(() => {
-    getSocket().emit('room:leave');
+    emitVoid('room:leave');
     reset();
   }, []);
 
-  const startGame = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('game:start', (res: { success: boolean; error?: string }) => {
-        if (res.error) reject(new Error(res.error));
-        else resolve();
-      });
-    });
+  const startGame = useCallback(async (): Promise<void> => {
+    await emitNoData('game:start');
   }, []);
 
-  const submitNightAction = useCallback((targetId: string, actionType: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('action:night', { targetId, actionType }, (res: { success: boolean; error?: string }) => {
-        if (res.error) reject(new Error(res.error));
-        else resolve();
-      });
-    });
+  const submitNightAction = useCallback(async (targetId: string, actionType: string): Promise<void> => {
+    await emitWithData('action:night', { targetId, actionType });
   }, []);
 
-  const submitVote = useCallback((targetId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('action:vote', { targetId }, (res: { success: boolean; error?: string }) => {
-        if (res.error) reject(new Error(res.error));
-        else resolve();
-      });
-    });
+  const submitVote = useCallback(async (targetId: string): Promise<void> => {
+    await emitWithData('action:vote', { targetId });
   }, []);
 
   const sendChat = useCallback((text: string) => {
@@ -272,75 +244,38 @@ export function useSocket() {
     getSocket().emit('chat:mafia', { text });
   }, []);
 
-  const toggleReady = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('room:toggleReady', (res: { success: boolean; error?: string }) => {
-        if (res.success) resolve();
-        else reject(new Error(res.error || 'Failed'));
-      });
-    });
+  const toggleReady = useCallback(async (): Promise<void> => {
+    await emitNoData('room:toggleReady');
   }, []);
 
-  const addBots = useCallback((count: number): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('room:addBots', { count }, (res: { success: boolean; state?: GameState; error?: string }) => {
-        if (res.error || !res.success) reject(new Error(res.error || 'Failed to add bots'));
-        else {
-          if (res.state) setGameState(res.state);
-          resolve();
-        }
-      });
-    });
+  const addBots = useCallback(async (count: number): Promise<void> => {
+    const res = await emitWithData<{ state?: GameState }>('room:addBots', { count });
+    if (res.state) setGameState(res.state);
   }, []);
 
-  const playAgain = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('game:playAgain', (res: { success: boolean; error?: string }) => {
-        if (res.success) resolve();
-        else reject(new Error(res.error || 'Failed'));
-      });
-    });
+  const playAgain = useCallback(async (): Promise<void> => {
+    await emitNoData('game:playAgain');
   }, []);
 
-  const joinMatchmaking = useCallback((name: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('matchmaking:join', { name }, (res: { success: boolean; error?: string }) => {
-        if (res.success) resolve();
-        else reject(new Error(res.error || 'Failed to join matchmaking'));
-      });
-    });
+  const joinMatchmaking = useCallback(async (name: string): Promise<void> => {
+    await emitWithData('matchmaking:join', { name });
   }, []);
 
   const leaveMatchmaking = useCallback(() => {
-    getSocket().emit('matchmaking:leave');
+    emitVoid('matchmaking:leave');
   }, []);
 
-  const updateSettings = useCallback((settings: Record<string, unknown>): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getSocket().emit('room:updateSettings', settings, (res: { success: boolean; state?: GameState; error?: string }) => {
-        if (res.error || !res.success) reject(new Error(res.error || 'Failed to update settings'));
-        else {
-          if (res.state) setGameState(res.state);
-          resolve();
-        }
-      });
-    });
+  const updateSettings = useCallback(async (settings: Record<string, unknown>): Promise<void> => {
+    const res = await emitWithData<{ state?: GameState }>('room:updateSettings', settings);
+    if (res.state) setGameState(res.state);
   }, []);
 
-  const reconnectToGame = useCallback((roomCode: string, userId: string, reconnectToken: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const socket = getSocket();
-      socket.emit('room:reconnect', { roomCode, userId, reconnectToken }, (res: { success: boolean; state?: GameState; token?: Token; error?: string }) => {
-        if (res.error || !res.success) reject(new Error(res.error || 'Reconnection failed'));
-        else {
-          setRoomCode(roomCode);
-          if (res.token) setToken(res.token);
-          if (res.state) setGameState(res.state);
-          setPlayerId(userId as any);
-          resolve();
-        }
-      });
-    });
+  const reconnectToGame = useCallback(async (roomCode: string, userId: string, reconnectToken: string): Promise<void> => {
+    const res = await emitWithData<{ token?: Token; state?: GameState }>('room:reconnect', { roomCode, userId, reconnectToken });
+    setRoomCode(roomCode);
+    if (res.token) setToken(res.token);
+    if (res.state) setGameState(res.state);
+    setPlayerId(userId as any);
   }, []);
 
   return {

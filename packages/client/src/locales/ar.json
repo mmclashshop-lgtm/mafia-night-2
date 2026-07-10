@@ -11,7 +11,9 @@
     "profile": "الملف الشخصي",
     "friends": "الأصدقاء",
     "tutorial": "كيف تلعب",
-    "language": "اللغة"
+    "language": "اللغة",
+    "settings": "الإعدادات",
+    "admin": "لوحة التحكم"
   },
   "home": {
     "hero": {
@@ -141,7 +143,9 @@
     "unknown": "غير معروف",
     "days": "يوم",
     "day_one": "يوم",
-    "day_other": "أيام"
+    "day_other": "أيام",
+    "mute": "كتم الصوت",
+    "unmute": "إلغاء كتم الصوت"
   },
   "roles": {
     "mafia": {
@@ -377,7 +381,8 @@
     "choosePlayer": "اختر لاعباً لإقصائه",
     "voting": "جارٍ التصويت...",
     "eliminate": "إقصاء {{name}}",
-    "selectPlayer": "اختر لاعباً"
+    "selectPlayer": "اختر لاعباً",
+    "skip": "تخطي التصويت"
   },
   "settingsPanel": {
     "button": "الإعدادات",
@@ -413,7 +418,63 @@
     "disconnected": "غير متصل"
   },
   "spectatorOverlay": {
-    "title": "👁️ عرض المشاهد"
+    "title": "👁️ عرض المشاهد",
+    "alive": "على قيد الحياة",
+    "dead": "ميت"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "back": "رجوع",
+    "language": "اللغة",
+    "currentLanguage": "اللغة الحالية",
+    "testSound": "اختبار الصوت"
+  },
+  "winCelebration": {
+    "mafiaWins": "🔪 المافيا تفوز!",
+    "townWins": "⭐ البلدة تفوز!",
+    "neutralWins": "🌀 المحايدون يفوزون!",
+    "loversWins": "💕 العاشقان يفوزان!",
+    "playAgain": "العب مرة أخرى",
+    "restarting": "جارٍ إعادة التشغيل...",
+    "leave": "مغادرة"
+  },
+  "cinematicDeathOverlay": {
+    "youAreDead": "لقد مت"
+  },
+  "admin": {
+    "title": "لوحة التحكم",
+    "loginHint": "أدخل رمز المسؤول للوصول إلى الإعدادات",
+    "tokenPlaceholder": "رمز المسؤول",
+    "tokenError": "رمز غير صالح",
+    "unlock": "فتح",
+    "back": "رجوع",
+    "branding": "العلامة التجارية",
+    "brandName": "اسم العلامة",
+    "brandAccent": "الاسم المميز",
+    "tagline": "الشعار",
+    "description": "الوصف",
+    "backgrounds": "الخلفيات",
+    "bgHint": "أدخل رابط صورة لتجاوز الخلفية التفاعلية بخلفية مخصصة. اترك فارغاً لاستخدام الخلفية التفاعلية.",
+    "bgRenderer": "الخلفية التفاعلية",
+    "bgImage": "رابط الصورة (اختياري)",
+    "bgHome": "الرئيسية",
+    "bgLobby": "الانتظار",
+    "bgGameNight": "اللعبة - الليل",
+    "bgGameDay": "اللعبة - النهار",
+    "bgGameVoting": "اللعبة - التصويت",
+    "bgGameEnded": "اللعبة - انتهت",
+    "bgGameDefault": "اللعبة - افتراضي",
+    "bgmUrls": "روابط الموسيقى",
+    "soundEffects": "المؤثرات الصوتية",
+    "sfxHint": "اترك فارغاً لاستخدام الأصوات الافتراضية. أدخل رابط .wav أو .mp3 مباشر للتخصيص.",
+    "sfxMafiaKill": "صوت قتل المافيا",
+    "sfxTimer": "صوت المؤقت",
+    "sfxNightFall": "صوت حلول الليل",
+    "sfxDayBreak": "صوت بزوغ النهار",
+    "bgmHint": "اترك فارغاً لاستخدام الموسيقى الإجرائية. أدخل رابط MP3 مباشر للتخصيص.",
+    "save": "حفظ التغييرات",
+    "saved": "تم الحفظ!",
+    "reset": "إعادة للافتراضي"
   },
   "errorBoundary": {
     "title": "حدث خطأ ما",
@@ -461,6 +522,7 @@
     "leader": "القائد",
     "invitedYou": "دعاك إلى حفلة",
     "startSearch": "بدء البحث",
+    "searching": "جارٍ البحث...",
     "cancelSearch": "إلغاء",
     "ready": "جاهز",
     "notReady": "غير جاهز"

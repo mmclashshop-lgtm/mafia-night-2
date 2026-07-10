@@ -7,11 +7,15 @@ import { useGameStore } from '../store/gameStore';
 import { PageTransition } from '../components/common/PageTransition';
 import { MatchmakingOverlay } from '../components/home/MatchmakingOverlay';
 import { HomeParticles } from '../components/home/HomeParticles';
+import { SiteLogo } from '../components/common/SiteLogo';
 import { Zap, Swords, LogIn, Users, Shield, Key } from 'lucide-react';
+import { useSiteConfigStore } from '../store/siteConfigStore';
 
 export function Home() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const brand = useSiteConfigStore((s) => s.config.branding);
+  const theme = useSiteConfigStore((s) => s.config.theme);
   const { createRoom, joinRoom, joinMatchmaking, leaveMatchmaking } = useSocket();
   const setName = useAuthStore((s) => s.setName);
   const connected = useGameStore((s) => s.connected);
@@ -74,20 +78,16 @@ export function Home() {
           {/* Logo */}
           <div className="relative mb-6 md:mb-8">
             <div className="absolute inset-0 bg-[#8B0000]/20 rounded-full blur-[60px] scale-[2] animate-pulse-glow" />
-            <img
-              src={`${import.meta.env.BASE_URL}logo.svg`}
-              alt="Mafia Night"
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 animate-mask-float drop-shadow-[0_0_40px_rgba(139,0,0,0.5)]"
-            />
+            <SiteLogo className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 animate-mask-float drop-shadow-[0_0_40px_rgba(139,0,0,0.5)]" alt="Mafia Night" />
           </div>
 
           {/* Title */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-center mb-2">
-            <span className="text-gray-100">مافيا</span>{' '}
-            <span className="text-[#C62828]">نايت</span>
+            <span className="text-gray-100">{brand.name}</span>{' '}
+            <span style={{ color: theme.primaryLight }}>{brand.nameAccent}</span>
           </h1>
           <p className="text-sm md:text-base lg:text-lg text-gray-500 tracking-wide mb-8 md:mb-10 text-center">
-            {t('brand.tagline')}
+            {brand.tagline}
           </p>
 
           {/* Name input */}

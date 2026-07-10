@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Skull } from 'lucide-react';
 
 interface CinematicDeathOverlayProps {
@@ -6,6 +7,7 @@ interface CinematicDeathOverlayProps {
 }
 
 export function CinematicDeathOverlay({ onComplete }: CinematicDeathOverlayProps) {
+  const { t } = useTranslation();
   const [phase, setPhase] = useState<'enter' | 'sustain' | 'exit'>('enter');
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export function CinematicDeathOverlay({ onComplete }: CinematicDeathOverlayProps
           <Skull className="w-20 h-20 text-red-500 animate-float" />
         </div>
         <p className="text-2xl font-bold text-red-400 text-center mt-4 animate-pulse">
-          أنت ميت
+          {t('cinematicDeathOverlay.youAreDead')}
         </p>
       </div>
 

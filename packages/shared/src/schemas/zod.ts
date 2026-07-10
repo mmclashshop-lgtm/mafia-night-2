@@ -47,7 +47,7 @@ export const nightActionSchema = z.object({
 }).strict();
 
 export const voteSchema = z.object({
-  targetId: playerIdSchema,
+  targetId: z.union([playerIdSchema, z.literal('skip')]),
 }).strict();
 
 export const chatMessageSchema = z.object({

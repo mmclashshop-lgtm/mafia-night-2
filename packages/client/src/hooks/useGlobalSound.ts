@@ -24,10 +24,10 @@ export function useGlobalSound() {
     };
 
     document.addEventListener('click', handleClick);
-    document.addEventListener('mouseenter', handleHover, { passive: true });
+    document.addEventListener('mouseover', handleHover, { passive: true });
     return () => {
       document.removeEventListener('click', handleClick);
-      document.removeEventListener('mouseenter', handleHover);
+      document.removeEventListener('mouseover', handleHover);
       clearTimeout(hoverTimer);
     };
   }, []);

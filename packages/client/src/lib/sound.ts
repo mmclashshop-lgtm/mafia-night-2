@@ -418,7 +418,7 @@ class SoundEngine {
       const localStart = startTime + i * 0.04;
       this.applyADSR(gain, ctx, localStart, dur, vol, 0.02, 0.15, 0.6, 0.25);
       const panner = ctx.createStereoPanner();
-      panner.pan.value = (i / (notes.length - 1)) * 0.6 - 0.3;
+      panner.pan.value = notes.length > 1 ? (i / (notes.length - 1)) * 0.6 - 0.3 : 0;
       osc.connect(gain);
       gain.connect(panner);
       panner.connect(comp);
@@ -539,6 +539,10 @@ class SoundEngine {
     { name: 'party-invite', category: 'sfx/social', key: 'party-invite' },
     { name: 'match-found', category: 'sfx/social', key: 'match-found' },
     { name: 'game-start', category: 'sfx/social', key: 'game-start' },
+    { name: 'mafia-kill', category: 'sfx/events', key: 'sfx-mafia-kill' },
+    { name: 'timer', category: 'sfx/ui', key: 'sfx-timer' },
+    { name: 'night-fall', category: 'sfx/phase', key: 'sfx-night-fall' },
+    { name: 'day-break', category: 'sfx/phase', key: 'sfx-day-break' },
     { name: 'coin-earn', category: 'sfx/economy', key: 'coin-earn' },
     { name: 'coin-spend', category: 'sfx/economy', key: 'coin-spend' },
     { name: 'achievement', category: 'sfx/economy', key: 'achievement' },
@@ -870,6 +874,32 @@ class SoundEngine {
     }
   }
 
+  mafiaKill() {
+    if (this.playSound('sfx-mafia-kill', 0.7) === null) {
+      this.genImpact(40, 200, 0.8, 0.4, 0.3);
+    }
+  }
+
+  timerTick() {
+    if (this.playSound('sfx-timer', 0.4) === null) {
+      this.playTone(1000, 0.03, 'sine', 0.08);
+    }
+  }
+
+  nightFall() {
+    if (this.playSound('sfx-night-fall', 0.6) === null) {
+      this.genSweep(400, 100, 0.5, 'sine', 0.12);
+      setTimeout(() => this.genChord([220, 330, 440], 0.6, 'sine', 0.08, 0, 0.3), 300);
+    }
+  }
+
+  dayBreak() {
+    if (this.playSound('sfx-day-break', 0.6) === null) {
+      this.genSweep(200, 1200, 0.5, 'sine', 0.12);
+      setTimeout(() => this.genChord([523, 659, 784], 0.5, 'sine', 0.1, 0, 0.3), 300);
+    }
+  }
+
   friendOnline() {
     if (this.playSound('friend-online', 0.5) === null) {
       this.playTone(700, 0.08, 'sine', 0.08);
@@ -1061,7 +1091,7 @@ class SoundEngine {
         osc.frequency.linearRampToValueAtTime(75, now + 0.08);
       }
       count++;
-      setTimeout(schedule, interval * 800);
+      setTimeout(schedule, interval * 1000);
     };
     schedule();
 

@@ -23,7 +23,8 @@ export function MatchmakingOverlay({ onCancel }: MatchmakingOverlayProps) {
 
   const handleCancel = useCallback(() => {
     setCancelText(t('matchmaking.cancelling'));
-    setTimeout(() => onCancel(), 300);
+    getSocket().emit('matchmaking:leave');
+    onCancel();
   }, [onCancel, t]);
 
   const formatTime = (seconds: number) => {

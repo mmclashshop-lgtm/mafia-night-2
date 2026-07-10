@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { MobileNav } from './MobileNav';
@@ -15,6 +16,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
+  const { i18n } = useTranslation();
   const location = useLocation();
   const isHome = location.pathname === '/';
   const isGame = location.pathname === '/game';
@@ -24,9 +26,9 @@ export function Layout({ children }: LayoutProps) {
   const hasLoaded = useRef(false);
 
   useEffect(() => {
-    document.documentElement.dir = 'rtl';
-    document.documentElement.lang = 'ar';
-  }, []);
+    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   useEffect(() => {
     if (!hasLoaded.current) {
@@ -54,7 +56,7 @@ export function Layout({ children }: LayoutProps) {
           className={`min-h-screen transition-all duration-700 ${
             initialLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
           }`}
-          dir="rtl"
+          dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
         >
           <Header onMenuClick={() => setSidebarOpen(true)} />
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

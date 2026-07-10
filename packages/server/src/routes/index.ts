@@ -13,6 +13,7 @@ import {
   buyItem,
 } from '../db';
 import { getRank, SHOP_ITEMS } from '@mafia/shared';
+import { loadSiteConfig, saveSiteConfig, saveUploadedFile, getAdminToken } from '../siteConfig';
 
 const router = Router();
 
@@ -124,6 +125,47 @@ router.post('/store/buy', (req, res) => {
   } else {
     res.status(400).json(result);
   }
+});
+
+// Site config (persistent admin settings)
+router.get('/config', (_req, res) => {
+  res.json(loadSiteConfig());
+});
+
+router.post('/config', (req, res) => {
+  const saved = saveSiteConfig(req.body);
+  res.json({ success: true, config: saved });
+});
+
+// Upload file (base64)
+router.post('/upload', (req, res) => {
+  const { file, name } = req.body;
+  if (!file || !name) {
+    res.status(400).json({ error: 'Missing file or name' });
+    return;
+  }
+  try {
+    const url = saveUploadedFile(file, name);
+    res.json({ success: true, url });
+  } catch {
+    res.status(500).json({ error: 'Failed to save file' });
+  }
+});
+
+// Admin token info (returns token for local dev debugging)
+router.get('/admin/token', (req, res) => {
+  const token = getAdminToken();
+  const host = req.headers['host'] || '';
+  res.json({
+    token: (host.includes('localhost') || host.includes('127.0.0.1')) ? token : null
+  });
+});
+
+// Verify admin token
+router.post('/admin/verify', (req, res) => {
+  const { token } = req.body;
+  const actual = getAdminToken();
+  res.json({ valid: token === actual });
 });
 
 export { router as apiRoutes };

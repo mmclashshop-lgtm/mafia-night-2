@@ -1070,7 +1070,7 @@ export class RoomManager {
     return { success: true };
   }
 
-  submitVote(socketId: string, targetId: PlayerId): { success: boolean; error?: string } {
+  submitVote(socketId: string, targetId: PlayerId | 'skip'): { success: boolean; error?: string } {
     if (this.state.phase !== 'voting') {
       return { success: false, error: 'Not voting phase' };
     }
@@ -1084,22 +1084,34 @@ export class RoomManager {
       return { success: false, error: 'Already voted' };
     }
 
-    const targetExists = this.state.players.some(p => p.id === targetId && p.alive);
-    if (!targetExists) return { success: false, error: 'Invalid target' };
+    if (targetId !== 'skip') {
+      const targetExists = this.state.players.some(p => p.id === targetId && p.alive);
+      if (!targetExists) return { success: false, error: 'Invalid target' };
+    }
 
-    this.state = {
-      ...this.state,
-      votes: [...this.state.votes, { from: playerId, to: targetId }],
-      players: this.state.players.map(p =>
-        p.id === playerId ? { ...p, votedFor: targetId } : p
-      ),
-    };
+    if (targetId === 'skip') {
+      this.state = {
+        ...this.state,
+        players: this.state.players.map(p =>
+          p.id === playerId ? { ...p, votedFor: 'skip' as PlayerId } : p
+        ),
+      };
+    } else {
+      this.state = {
+        ...this.state,
+        votes: [...this.state.votes, { from: playerId, to: targetId }],
+        players: this.state.players.map(p =>
+          p.id === playerId ? { ...p, votedFor: targetId } : p
+        ),
+      };
+      this.io.to(this.roomCode).emit('vote:cast', { from: playerId, to: targetId });
+    }
 
-    this.io.to(this.roomCode).emit('vote:cast', { from: playerId, to: targetId });
     this.broadcast();
 
     const aliveCount = getAlivePlayers(this.state).filter(p => !p.disconnected).length;
-    if (this.state.votes.length >= aliveCount) {
+    const votedCount = this.state.players.filter(p => p.alive && p.votedFor).length;
+    if (votedCount >= aliveCount) {
       this.clearTimer();
       this.resolveVotingPhase();
     }

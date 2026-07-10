@@ -1,10 +1,11 @@
 import { memo, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GameEvent } from '@mafia/shared';
+import { GameEvent, Player } from '@mafia/shared';
 import { ScrollText, Skull, Heart, Search, Vote, Swords, Eye, Moon } from 'lucide-react';
 
 interface GameLogProps {
   events: GameEvent[];
+  players?: Player[];
 }
 
 const eventIcons: Record<string, any> = {
@@ -27,7 +28,13 @@ const eventColors: Record<string, string> = {
   phase_change: 'text-indigo-400',
 };
 
-export const GameLog = memo(function GameLog({ events }: GameLogProps) {
+function getPlayerName(players: Player[] | undefined, id: string | null | undefined): string {
+  if (!id || id === 'skip') return '';
+  const p = players?.find(pl => pl.id === id);
+  return p?.name ?? id.slice(0, 8);
+}
+
+export const GameLog = memo(function GameLog({ events, players }: GameLogProps) {
   const { t } = useTranslation();
   const logEndRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,7 +53,7 @@ export const GameLog = memo(function GameLog({ events }: GameLogProps) {
   }, [events]);
 
   return (
-    <div className="card flex flex-col" style={{ height: '280px' }}>
+    <div className="card-glass flex flex-col" style={{ height: '280px' }}>
       <div className="flex items-center gap-2 p-3 border-b border-[#8B0000]/10">
         <ScrollText className="w-4 h-4 text-gray-400" />
         <span className="text-xs font-semibold text-gray-400">{t('gameLog.title')}</span>
@@ -65,7 +72,7 @@ export const GameLog = memo(function GameLog({ events }: GameLogProps) {
               <span className="text-gray-500 font-mono text-[10px]">
                 {new Date(event.timestamp).toLocaleTimeString([], { minute: '2-digit', second: '2-digit' })}
               </span>
-              <span className="text-gray-300">{formatEvent(event, t)}</span>
+              <span className="text-gray-300">{formatEvent(event, t, players)}</span>
             </div>
           );
         })}
@@ -75,15 +82,37 @@ export const GameLog = memo(function GameLog({ events }: GameLogProps) {
   );
 });
 
-function formatEvent(event: GameEvent, t: (key: string) => string): string {
+function formatEvent(event: GameEvent, t: (key: string) => string, players?: Player[]): string {
+  const d = event.data as Record<string, any> | undefined;
+  if (!d) return t('gameLog.unknownEvent');
+
   switch (event.type) {
-    case 'kill': return t('gameLog.killed');
-    case 'heal': return t('gameLog.healed');
-    case 'investigate': return t('gameLog.investigated');
+    case 'kill': {
+      const target = getPlayerName(players, d['targetId']);
+      const killer = getPlayerName(players, d['killerId']);
+      return killer ? `${killer} ☠ ${target}` : `☠ ${target}`;
+    }
+    case 'heal': {
+      const healer = getPlayerName(players, d['sourceId']);
+      const target = getPlayerName(players, d['targetId']);
+      return target ? `${healer} 💊 ${target}` : t('gameLog.healed');
+    }
+    case 'investigate': {
+      const source = getPlayerName(players, d['sourceId']);
+      const target = getPlayerName(players, d['targetId']);
+      return `${source} 🔍 ${target}`;
+    }
     case 'vote': return t('gameLog.voteCast');
-    case 'lynch': return t('gameLog.lynched');
+    case 'lynch': {
+      const target = getPlayerName(players, d['targetId']);
+      return target ? `⚖️ ${target} ${t('gameLog.lynched')}` : t('gameLog.lynched');
+    }
     case 'reveal': return t('gameLog.roleRevealed');
-    case 'phase_change': return t('gameLog.phaseChanged');
+    case 'phase_change': {
+      const from = d['from'] as string ?? '';
+      const to = d['to'] as string ?? '';
+      return `${from} → ${to}`;
+    }
     default: return t('gameLog.unknownEvent');
   }
 }

@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '../../store/gameStore';
+import { useSiteConfigStore } from '../../store/siteConfigStore';
+import { useDynamicHead } from '../../hooks/useDynamicHead';
+import { SiteLogo } from '../common/SiteLogo';
 import { Menu } from 'lucide-react';
 
 interface HeaderProps {
@@ -8,9 +11,12 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
+  useDynamicHead();
   const { t } = useTranslation();
   const connected = useGameStore((s) => s.connected);
   const roomCode = useGameStore((s) => s.roomCode);
+  const brand = useSiteConfigStore((s) => s.config.branding);
+  const theme = useSiteConfigStore((s) => s.config.theme);
 
   return (
     <header className="glass-header sticky top-0 z-30">
@@ -20,13 +26,9 @@ export function Header({ onMenuClick }: HeaderProps) {
             <Menu className="w-5 h-5" />
           </button>
           <Link to="/" className="flex items-center gap-2.5">
-            <img
-              src={`${import.meta.env.BASE_URL}logo.svg`}
-              alt="Mafia Night"
-              className="w-7 h-7 shrink-0"
-            />
+            <SiteLogo className="w-7 h-7 shrink-0" />
             <span className="text-base font-bold tracking-tight hidden sm:inline">
-              مافيا <span className="text-[#C62828]">نايت</span>
+              {brand.name} <span style={{ color: theme.primaryLight }}>{brand.nameAccent}</span>
             </span>
           </Link>
           {roomCode && (
