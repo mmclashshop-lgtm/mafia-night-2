@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTransition } from '../components/common/PageTransition';
@@ -6,102 +6,14 @@ import { useSiteConfigStore, type BgKey } from '../store/siteConfigStore';
 import { BG_OPTIONS } from '../components/backgrounds/bgRegistry';
 import { FileUpload } from '../components/common/FileUpload';
 import { SiteLogo } from '../components/common/SiteLogo';
-import { ArrowLeft, Save, RotateCcw, Palette, Music, Image, Type, Volume2, Bell, Lock, Eye, Monitor } from 'lucide-react';
-
-const adminAPI = (path: string) => `/api${path}`;
-
-function AdminLogin({ onVerify }: { onVerify: () => void }) {
-  const { t } = useTranslation();
-  const [token, setToken] = useState('');
-  const [error, setError] = useState(false);
-  const [checking, setChecking] = useState(false);
-  const [serverToken, setServerToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(adminAPI('/admin/token'))
-      .then(r => r.json())
-      .then(d => { if (d.token) setServerToken(d.token); })
-      .catch(() => {});
-  }, []);
-
-  const handleSubmit = async () => {
-    setChecking(true);
-    setError(false);
-    try {
-      const res = await fetch(adminAPI('/admin/verify'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
-      });
-      const data = await res.json();
-      if (data.valid) {
-        localStorage.setItem('mafia-admin-token', token);
-        onVerify();
-      } else {
-        setError(true);
-      }
-    } catch {
-      setError(true);
-    }
-    setChecking(false);
-  };
-
-  return (
-    <div className="min-h-[60vh] flex items-center justify-center">
-      <div className="card-glass p-8 max-w-sm w-full text-center space-y-6">
-        <div className="w-16 h-16 rounded-full bg-[#8B0000]/20 flex items-center justify-center mx-auto">
-          <Lock className="w-8 h-8 text-[#8B0000]" />
-        </div>
-        <h2 className="text-xl font-bold">{t('admin.title')}</h2>
-        <p className="text-sm text-gray-400">{t('admin.loginHint')}</p>
-        <input
-          className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-sm text-white text-center outline-none focus:border-[#8B0000]/40"
-          type="password"
-          placeholder={t('admin.tokenPlaceholder')}
-          value={token}
-          onChange={(e) => { setToken(e.target.value); setError(false); }}
-          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-          autoFocus
-        />
-        {error && <p className="text-red-400 text-xs">{t('admin.tokenError')}</p>}
-        {serverToken && (
-          <p className="text-[10px] text-gray-500 text-center font-mono">
-            الرمز المتوقع من السيرفر: <span className="text-yellow-400">{serverToken}</span>
-          </p>
-        )}
-        <button onClick={handleSubmit} disabled={checking || !token.trim()} className="btn-primary w-full">
-          {checking ? '...' : t('admin.unlock')}
-        </button>
-      </div>
-    </div>
-  );
-}
+import { ArrowLeft, Save, RotateCcw, Palette, Music, Image, Type, Volume2, Bell, Eye } from 'lucide-react';
 
 export function Admin() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const store = useSiteConfigStore();
   const [saved, setSaved] = useState(false);
-  const [authorized, setAuthorized] = useState(() => !!localStorage.getItem('mafia-admin-token'));
   const [previewTab, setPreviewTab] = useState<'logo' | 'hero'>('logo');
-
-  useEffect(() => {
-    const savedToken = localStorage.getItem('mafia-admin-token');
-    if (savedToken) {
-      fetch(adminAPI('/admin/verify'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: savedToken }),
-      })
-        .then(r => r.json())
-        .then(d => { if (!d.valid) { localStorage.removeItem('mafia-admin-token'); setAuthorized(false); } })
-        .catch(() => {});
-    }
-  }, []);
-
-  if (!authorized) {
-    return <AdminLogin onVerify={() => setAuthorized(true)} />;
-  }
 
   const handleSave = () => {
     store.saveToServer();
