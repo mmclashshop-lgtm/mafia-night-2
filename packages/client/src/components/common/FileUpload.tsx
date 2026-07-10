@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react';
-import { Upload, Link, X } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
+
+const VITE_URL = import.meta.env['VITE_SOCKET_URL'] as string | undefined;
+const API_ORIGIN = VITE_URL || '';
 
 interface FileUploadProps {
   value: string;
@@ -8,15 +11,16 @@ interface FileUploadProps {
   placeholder?: string;
 }
 
-export function FileUpload({ value, onChange, accept = 'image/*,.mp3,.wav,.ogg', placeholder = 'https://...' }: FileUploadProps) {
+export function FileUpload({ value, onChange, accept, placeholder = 'https://...' }: FileUploadProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const actualAccept = accept ?? '*/*';
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (f.size > 10 * 1024 * 1024) {
-      alert('File too large (max 10MB)');
+    if (f.size > 50 * 1024 * 1024) {
+      alert('File too large (max 50MB)');
       return;
     }
     setUploading(true);
@@ -29,14 +33,14 @@ export function FileUpload({ value, onChange, accept = 'image/*,.mp3,.wav,.ogg',
       });
       const dataUrl = reader.result as string;
       const base64 = dataUrl.split(',')[1];
-      const res = await fetch('/api/upload', {
+      const res = await fetch(`${API_ORIGIN}/api/upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ file: base64, name: f.name }),
       });
       if (!res.ok) throw new Error('Upload failed');
       const data = await res.json();
-      if (data.success) {
+      if (data.url) {
         onChange(data.url);
       }
     } catch {
@@ -67,7 +71,7 @@ export function FileUpload({ value, onChange, accept = 'image/*,.mp3,.wav,.ogg',
       <label className={`btn-secondary text-xs flex items-center gap-1.5 cursor-pointer px-3 py-2 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
         <Upload className="w-3.5 h-3.5" />
         {uploading ? '...' : 'Upload'}
-        <input ref={fileRef} type="file" accept={accept} className="hidden" onChange={handleFile} disabled={uploading} />
+        <input ref={fileRef} type="file" accept={actualAccept} className="hidden" onChange={handleFile} disabled={uploading} />
       </label>
     </div>
   );

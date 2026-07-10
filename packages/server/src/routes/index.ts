@@ -152,8 +152,11 @@ router.post('/upload', (req, res) => {
     return;
   }
   try {
-    const url = saveUploadedFile(file, name);
-    res.json({ success: true, url });
+    const relUrl = saveUploadedFile(file, name);
+    const proto = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers['host'] || 'localhost:3001';
+    const fullUrl = `${proto}://${host}${relUrl}`;
+    res.json({ success: true, url: fullUrl });
   } catch {
     res.status(500).json({ error: 'Failed to save file' });
   }
