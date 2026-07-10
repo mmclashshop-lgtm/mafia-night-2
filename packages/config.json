@@ -1,3 +1,51 @@
 {
-  "adminToken": "123"
+  "adminToken": "123",
+  "branding": {
+    "name": "مافيا",
+    "nameAccent": "نايت",
+    "tagline": "",
+    "description": "",
+    "logoUrl": "",
+    "faviconUrl": ""
+  },
+  "backgrounds": {
+    "home": "nightCity",
+    "lobby": "nightCity",
+    "gameNight": "nightSky",
+    "gameDay": "dayTown",
+    "gameVoting": "courtroom",
+    "gameEnded": "theater",
+    "gameDefault": "nightCity"
+  },
+  "bgImages": {
+    "home": "",
+    "lobby": "https://i.pinimg.com/236x/fb/c7/7c/fbc77c24c2506eec53ebdbdeac715775.jpg",
+    "gameNight": "https://i.pinimg.com/1200x/77/53/52/775352db00ab72ffbc0a2e7abda3fecd.jpg",
+    "gameDay": "https://i.pinimg.com/1200x/30/83/3c/30833c5a3c204e6a803088fed9c1d862.jpg",
+    "gameVoting": "",
+    "gameEnded": "",
+    "gameDefault": ""
+  },
+  "bgmUrls": {
+    "bgm-main": "https://soundcloud.com/visualgamer-484248341/battlefield-1942-soundtrack-intro-theme-with-in-game-sounds?si=fb45a921027146e796d06c0a0c68ae25&utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing",
+    "bgm-lobby": "",
+    "bgm-night": "",
+    "bgm-day": "",
+    "bgm-voting": "",
+    "bgm-mafia-win": "",
+    "bgm-town-win": "",
+    "bgm-death": ""
+  },
+  "soundUrls": {
+    "sfx-mafia-kill": "",
+    "sfx-timer": "",
+    "sfx-night-fall": "",
+    "sfx-day-break": ""
+  },
+  "theme": {
+    "primary": "#8B0000",
+    "primaryLight": "#C62828",
+    "gold": "#FFD700",
+    "bgDark": "#0A0A0A"
+  }
 }
