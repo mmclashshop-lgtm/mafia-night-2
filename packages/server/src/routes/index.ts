@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import { execSync } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { roomStore } from '../rooms/store';
 import {
   getTotalGames,
@@ -134,6 +137,10 @@ router.get('/config', (_req, res) => {
 
 router.post('/config', (req, res) => {
   const saved = saveSiteConfig(req.body);
+  try {
+    const root = path.resolve(fileURLToPath(import.meta.url), '../../../..');
+    execSync(`git add packages/config.json && git commit --no-verify -m "تحديث الإعدادات من لوحة التحكم" && git push origin master`, { cwd: root, timeout: 30000, stdio: 'pipe' });
+  } catch { /* git fail is non-fatal */ }
   res.json({ success: true, config: saved });
 });
 
