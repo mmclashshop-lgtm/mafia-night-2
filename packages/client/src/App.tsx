@@ -13,6 +13,7 @@ import { useSiteConfigStore } from './store/siteConfigStore';
 function AppInit() {
   const connected = useGameStore((s) => s.connected);
   const loadFromServer = useSiteConfigStore((s) => s.loadFromServer);
+  const config = useSiteConfigStore((s) => s.config);
 
   useSocialSocket();
   useSocialSound();
@@ -21,6 +22,29 @@ function AppInit() {
   useEffect(() => {
     loadFromServer();
   }, [loadFromServer]);
+
+  useEffect(() => {
+    const soundUrls = config.soundUrls as Record<string, string> | undefined;
+    if (soundUrls) {
+      const custom: Record<string, string> = {};
+      for (const [key, url] of Object.entries(soundUrls)) {
+        if (url?.trim()) custom[key] = url.trim();
+      }
+      if (Object.keys(custom).length > 0) {
+        sound.setCustomSoundUrls(custom);
+      }
+    }
+    const bgmUrls = config.bgmUrls as Record<string, string> | undefined;
+    if (bgmUrls) {
+      const custom: Record<string, string> = {};
+      for (const [key, url] of Object.entries(bgmUrls)) {
+        if (url?.trim()) custom[key] = url.trim();
+      }
+      if (Object.keys(custom).length > 0) {
+        sound.setCustomBgmUrls(custom);
+      }
+    }
+  }, [config.soundUrls, config.bgmUrls]);
 
   useEffect(() => {
     if (!connected) {

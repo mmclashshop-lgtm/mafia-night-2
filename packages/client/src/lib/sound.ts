@@ -33,6 +33,10 @@ class SoundEngine {
   private currentRealBgmKey: string | null = null;
   private currentRealBgmId: number | null = null;
 
+  /* ── Custom URLs from admin panel ── */
+  private customSoundUrls: Record<string, string> = {};
+  private customBgmUrls: Record<string, string> = {};
+
   /* ── BGM file manifest ── */
   private bgmFiles: Array<{ key: string; filename: string }> = [
     { key: 'bgm-main', filename: 'main-theme' },
@@ -564,10 +568,35 @@ class SoundEngine {
 
   private erroredKeys = new Set<string>();
 
+  setCustomSoundUrls(map: Record<string, string>) {
+    this.customSoundUrls = { ...map };
+  }
+
+  setCustomBgmUrls(map: Record<string, string>) {
+    this.customBgmUrls = { ...map };
+  }
+
   private ensureSound(key: string): Howl | undefined {
     if (this.erroredKeys.has(key)) return undefined;
     let howl = this.sounds.get(key);
     if (howl) return howl;
+    const customUrl = this.customSoundUrls[key];
+    if (customUrl) {
+      try {
+        howl = new Howl({
+          src: [customUrl], volume: 0.7, preload: true,
+          onloaderror: () => {
+            this.erroredKeys.add(key);
+            this.sounds.delete(key);
+          },
+        });
+        this.sounds.set(key, howl);
+        return howl;
+      } catch {
+        this.erroredKeys.add(key);
+        return undefined;
+      }
+    }
     const entry = this.soundManifest.find(e => e.key === key);
     if (!entry) {
       this.erroredKeys.add(key);
@@ -675,7 +704,15 @@ class SoundEngine {
     if (this.currentRealBgmKey === key) return true;
     this.stopRealBgm();
     this.stopBgmNodes();
-    const howl = this.realBgmMap.get(key);
+    let howl = this.realBgmMap.get(key);
+    const customUrl = !howl ? this.customBgmUrls[key] : undefined;
+    if (!howl && customUrl) {
+      howl = new Howl({
+        src: [customUrl], volume: 0.7, loop: true, preload: true,
+        onloaderror: () => { this.realBgmErrored.add(key); },
+      });
+      this.realBgmMap.set(key, howl);
+    }
     if (howl && howl.state() === 'loaded') {
       const id = howl.play();
       howl.volume(0.7);
