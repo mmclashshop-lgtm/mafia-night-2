@@ -89,10 +89,8 @@ export const useSiteConfigStore = create<SiteConfigStore>()(
       resetToDefaults: () => set({ config: { ...DEFAULTS } }),
 
       saveToServer: async () => {
-        try {
-          const { config } = get();
-          await apiSaveSiteConfig(config);
-        } catch { /* silent */ }
+        const { config } = get();
+        await apiSaveSiteConfig(config);
       },
 
       loadFromServer: async () => {

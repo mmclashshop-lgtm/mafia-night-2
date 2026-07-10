@@ -1,29 +1,56 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageTransition } from '../components/common/PageTransition';
 import { useSiteConfigStore, type BgKey } from '../store/siteConfigStore';
+import { useUIStore } from '../store/uiStore';
 import { BG_OPTIONS } from '../components/backgrounds/bgRegistry';
 import { FileUpload } from '../components/common/FileUpload';
 import { SiteLogo } from '../components/common/SiteLogo';
-import { ArrowLeft, Save, RotateCcw, Palette, Music, Image, Type, Volume2, Bell, Eye } from 'lucide-react';
+import { ArrowLeft, Save, RotateCcw, Palette, Music, Image, Type, Volume2, Bell, Eye, Loader2 } from 'lucide-react';
 
 export function Admin() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const store = useSiteConfigStore();
-  const [saved, setSaved] = useState(false);
+  const addToast = useUIStore((s) => s.addToast);
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [previewTab, setPreviewTab] = useState<'logo' | 'hero'>('logo');
+  const statusTimer = useRef<ReturnType<typeof setTimeout>>();
 
-  const handleSave = () => {
-    store.saveToServer();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    return () => clearTimeout(statusTimer.current);
+  }, []);
+
+  const showStatus = (s: 'saved' | 'error') => {
+    setStatus(s);
+    clearTimeout(statusTimer.current);
+    statusTimer.current = setTimeout(() => setStatus('idle'), 2000);
   };
 
-  const handleReset = () => {
-    if (window.confirm('Reset all settings to defaults?')) {
-      store.resetToDefaults();
+  const handleSave = async () => {
+    setStatus('saving');
+    try {
+      await store.saveToServer();
+      addToast('success', 'تم حفظ الإعدادات');
+      showStatus('saved');
+    } catch {
+      addToast('error', 'فشل الحفظ');
+      showStatus('error');
+    }
+  };
+
+  const handleReset = async () => {
+    if (!window.confirm('مسح كل الإعدادات وإرجاعها للافتراضي؟')) return;
+    store.resetToDefaults();
+    setStatus('saving');
+    try {
+      await store.saveToServer();
+      addToast('success', 'تم reset الإعدادات');
+      showStatus('saved');
+    } catch {
+      addToast('error', 'فشل reset الإعدادات');
+      showStatus('error');
     }
   };
 
@@ -259,11 +286,12 @@ export function Admin() {
 
         {/* Actions */}
         <div className="sticky bottom-4 bg-[#0A0A0A]/90 backdrop-blur-xl rounded-2xl border border-white/5 p-4 flex items-center justify-between gap-4">
-          <button onClick={handleReset} className="btn-secondary text-sm flex items-center gap-2">
+          <button onClick={handleReset} disabled={status === 'saving'} className="btn-secondary text-sm flex items-center gap-2">
             <RotateCcw className="w-4 h-4" /> {t('admin.reset')}
           </button>
-          <button onClick={handleSave} className="btn-primary text-sm flex items-center gap-2 px-6">
-            <Save className="w-4 h-4" /> {saved ? t('admin.saved') : t('admin.save')}
+          <button onClick={handleSave} disabled={status === 'saving'} className="btn-primary text-sm flex items-center gap-2 px-6">
+            {status === 'saving' ? <Loader2 className="w-4 h-4 animate-spin" /> : status === 'saved' ? <Save className="w-4 h-4 text-green-400" /> : status === 'error' ? <Save className="w-4 h-4 text-red-400" /> : <Save className="w-4 h-4" />}
+            {status === 'saving' ? 'جاري الحفظ...' : status === 'saved' ? 'تم الحفظ ✓' : status === 'error' ? 'فشل!' : t('admin.save')}
           </button>
         </div>
       </div>
