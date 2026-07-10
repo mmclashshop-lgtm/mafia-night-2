@@ -1,10 +1,9 @@
 import { io, Socket } from 'socket.io-client';
 
-// If on localhost, use same-origin (Vite proxies to backend)
-// Otherwise use VITE_SOCKET_URL (for production cross-origin deployments)
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// Use same-origin by default — Vite proxies /socket.io to the backend in dev mode
+// For production cross-origin deployments, set VITE_SOCKET_URL in client .env
 const VITE_URL = import.meta.env['VITE_SOCKET_URL'] as string | undefined;
-const SOCKET_URL = isLocal ? '' : (VITE_URL || '');
+const SOCKET_URL = VITE_URL || '';
 
 let socket: Socket | null = null;
 
